@@ -2,21 +2,21 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useAuth } from "@/context/auth/useAuth";
 
-const ConsoleShell = () => {
+const ManageScreen = () => {
   const { user, logout } = useAuth();
   const nav = useNavigate();
 
   return (
     <Box p={2}>
       <Stack spacing={2}>
-        <Typography variant="h5">Console</Typography>
+        <Typography variant="h5">Manage</Typography>
         <Typography>
           User: <b>{user?.name}</b>
         </Typography>
 
         <Stack direction="row" spacing={1}>
-          <Button variant="contained" onClick={() => nav("/terminal")}>
-            Go Terminal
+          <Button variant="contained" onClick={() => nav("/sales")}>
+            Go Sales
           </Button>
           <Button variant="outlined" onClick={logout}>
             Logout
@@ -27,4 +27,4 @@ const ConsoleShell = () => {
   );
 };
 
-export default ConsoleShell;
+export default ManageScreen;

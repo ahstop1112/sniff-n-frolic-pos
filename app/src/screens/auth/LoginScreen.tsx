@@ -55,7 +55,7 @@ const LoginScreen = () => {
                 POS Login
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Sign in to access Console / Terminal.
+                Sign in to access Manage / Sales.
               </Typography>
             </Box>
 
