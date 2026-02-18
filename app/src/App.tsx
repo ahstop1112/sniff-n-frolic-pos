@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/providers/RequireAuth";
-import { LoginScreen } from "@/screens/auth/LoginScreen";
-import { ConsoleShell } from "@/screens/console/ConsoleShell";
-import { TerminalShell } from "@/screens/terminal/TerminalShell";
+import LoginScreen from "@/screens/auth/LoginScreen";
+import ConsoleShell from "@/screens/console/ConsoleShell";
+import TerminalShell from "@/screens/terminal/TerminalShell";
 
 const App = () => {
   return (
