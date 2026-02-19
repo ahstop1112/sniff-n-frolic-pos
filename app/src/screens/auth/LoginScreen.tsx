@@ -5,15 +5,27 @@ import {
   Button,
   CircularProgress,
   Container,
-  Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { useAuth } from "@/context/auth/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/domains/auth/store";
+import { FullPageContainer } from "@/screens/layout/PageContainer/styles";
+import { Card } from "./styles";
+
+type LocationState = {
+  from?: { pathname?: string };
+};
 
 const LoginScreen = () => {
-  const { login } = useAuth();
+  const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from =
+    (location.state as LocationState | null)?.from?.pathname ?? "/start";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -23,8 +35,10 @@ const LoginScreen = () => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
+
     try {
       await login({ email, password });
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
       setSubmitting(false);
@@ -32,23 +46,8 @@ const LoginScreen = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        bgcolor: "background.default",
-        p: 2,
-      }}
-    >
-      <Container maxWidth="sm">
-        <Paper
-          elevation={6}
-          sx={{
-            p: { xs: 2.5, sm: 3 },
-            borderRadius: 3,
-          }}
-        >
+    <FullPageContainer>
+        <Card elevation={6}>
           <Stack spacing={2}>
             <Box>
               <Typography variant="h5" fontWeight={800}>
@@ -91,19 +90,6 @@ const LoginScreen = () => {
                 >
                   {submitting ? "Signing in…" : "Sign in"}
                 </Button>
-
-                <Button
-                  type="button"
-                  variant="outlined"
-                  size="large"
-                  fullWidth
-                  onClick={() => {
-                    setEmail("demo@pos.local");
-                    setPassword("demo");
-                  }}
-                >
-                  Fill demo credentials
-                </Button>
               </Stack>
             </Box>
 
@@ -111,9 +97,8 @@ const LoginScreen = () => {
               Tip: you can later wire this to your backend “services” login API.
             </Typography>
           </Stack>
-        </Paper>
-      </Container>
-    </Box>
+        </Card>
+    </FullPageContainer>
   );
 };
 

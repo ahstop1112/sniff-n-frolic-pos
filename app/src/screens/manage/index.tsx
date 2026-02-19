@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useAuth } from "@/context/auth/useAuth";
+import { useAuthStore } from "@/domains/auth/store";
 
 const ManageScreen = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthStore();
   const nav = useNavigate();
 
   return (

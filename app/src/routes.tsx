@@ -1,8 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { RequireAuth } from "@/providers/RequireAuth";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { RequireAuth } from "@/app/RequireAuth";
+import { RequireShift } from "@/app/RequireShift";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import ManageScreen from "@/screens/manage";
 import SalesScreen from "@/screens/sales";
+import HomeScreen from "@/screens/start/Home";
+import ShiftStartScreen from "./screens/start/ShiftStart";
 
 const AppRoutes = () => {
   return (
@@ -11,27 +14,24 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginScreen />} />
 
         {/* Protected */}
-        <Route
-          path="/manage/*"
-          element={
-            <RequireAuth>
-              <ManageScreen />
-            </RequireAuth>
-          }
-        />
+        <Route path="/pos" element={<RequireAuth />}>
+          {/* App start */}
+          <Route index element={<Navigate to="start" replace />} />
+          <Route path="start" element={<ShiftStartScreen />} />
+          <Route path="home/*" element={<HomeScreen />} />
 
-        <Route
-          path="/sales/*"
-          element={
-            <RequireAuth>
-              <SalesScreen />
-            </RequireAuth>
-          }
-        />
+          {/* Other protected areas */}
+          <Route path="manage/*" element={<ManageScreen />} />
+        
+          {/* ✅ Sales requires shift */}
+          <Route element={<RequireShift />}>
+            <Route path="sales/*" element={<SalesScreen />} />
+          </Route>
+        </Route>
 
         {/* Default */}
-        <Route path="/" element={<Navigate to="/sales" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route index element={<Navigate to="/pos" replace />} />
+        <Route path="*" element={<Navigate to="/pos" replace />} />
       </Routes>
   );
 };
