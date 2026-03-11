@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
+    
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
+  public getHello = (): string => {
+    return 'Sniff & Frolic POS API is running';
+  };
 }
