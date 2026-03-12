@@ -7,9 +7,7 @@ export const RequireAuth = () => {
   const status = useAuthStore((s) => s.status);
   const location = useLocation();
 
-  const hasHydrated = useAuthStore.persist.hasHydrated();
-
-  if (!hasHydrated || status === "checking") {
+  if (status === "checking") {
     return (
       <PageContainer>
         <CircularProgress />
@@ -20,12 +18,9 @@ export const RequireAuth = () => {
     );
   }
 
-  if (status !== "authenticated")
-    return <Navigate
-        to="/login"
-        replace
-        state={{ from: location }}
-      />;
-
+  if (status !== "authenticated"){
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+  
   return <Outlet />;
 };

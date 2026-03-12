@@ -1,23 +1,14 @@
-import type { AuthUser } from '../types';
+import type {
+  MeResponse,
+  RequestCodeResponse,
+  VerifyCodeResponse,
+} from '../types';
 
 const API_BASE_URL = 'http://localhost:4000'; // local
 
 type ApiErrorResponse = {
   message?: string;
   error?: string;
-};
-
-type RequestCodeResponse = {
-  success: boolean;
-  message?: string;
-};
-
-type VerifyCodeResponse = {
-  accessToken: string;
-};
-
-type GetMeResponse = {
-  user: AuthUser;
 };
 
 type LogoutResponse = {
@@ -71,8 +62,8 @@ export const verifyCode = async (
   });
 };
 
-export const getMe = async (accessToken: string): Promise<GetMeResponse> => {
-  return request<GetMeResponse>('/auth/me', {
+export const getMe = async (accessToken: string): Promise<MeResponse> => {
+  return request<MeResponse>('/auth/me', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${accessToken}`,

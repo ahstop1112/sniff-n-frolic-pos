@@ -12,6 +12,7 @@ import {
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PetsIcon from "@mui/icons-material/Pets";
+import { useAuthStore } from "@/domains/auth/store";
 import type { AppMode } from "@/app/types";
 import type { HeaderProps } from "./types";
 import {
@@ -37,11 +38,11 @@ const Header = ({
   staff,
   onCashIn,
   onCashOut,
-  onLogout,
   onOpenOnlineOrders,
 }: HeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
+  const { logout } = useAuthStore();
 
   const initials = useMemo(() => {
     const parts = (staff?.name || `perry`).trim().split(/\s+/).filter(Boolean);
@@ -70,7 +71,7 @@ const Header = ({
 
       <Right>
         <HeaderIconButton onClick={onOpenOnlineOrders} aria-label="Online orders">
-          <Badge badgeContent={onlineOrderCount > 0 ? formatBadge(onlineOrderCount) : null}>
+          <Badge badgeContent={onlineOrderCount || 0}>
             <NotificationsNoneIcon />
           </Badge>
         </HeaderIconButton>
@@ -129,7 +130,7 @@ const Header = ({
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                // onLogout();
+                logout();
               }}
               sx={{ color: "error.main", fontWeight: 800 }}
             >

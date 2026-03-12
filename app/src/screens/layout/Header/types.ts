@@ -11,7 +11,7 @@ export interface HeaderProps {
   branchName?: string;
   networkStatus?: NetworkStatus;
 
-  onlineOrderCount?: number;
+  onlineOrderCount?: number | 0;
 
   mode?: AppMode;
   onModeChange?: (mode: AppMode) => void;

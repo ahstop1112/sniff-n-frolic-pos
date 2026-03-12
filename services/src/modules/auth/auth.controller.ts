@@ -17,7 +17,7 @@ type AuthenticatedRequest = Request & {
   authUser?: {
     id: string;
     email: string;
-    status: string;
+    status: 'active' | 'inactive';
   };
   authSession?: {
     id: string;

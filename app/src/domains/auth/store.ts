@@ -96,23 +96,19 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
     try {
       const verifyResponse = await verifyCodeApi(email, code);
-      const accessToken = verifyResponse.accessToken;
 
-      setStoredAccessToken(accessToken);
-
-      const meResponse = await getMe(accessToken);
-      const appUser = mapAuthUserToAppUser(meResponse.user);
+      localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, verifyResponse.accessToken);
 
       set({
         status: 'authenticated',
-        token: accessToken,
-        authUser: meResponse.user,
-        user: appUser,
+        token: verifyResponse.accessToken,
+        authUser: verifyResponse.user,
+        user: mapAuthUserToAppUser(verifyResponse.user),
         isLoading: false,
         error: null,
       });
     } catch (error) {
-      removeStoredAccessToken();
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
 
       set({
         status: 'anonymous',
@@ -150,18 +146,17 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
 
     try {
       const meResponse = await getMe(token);
-      const appUser = mapAuthUserToAppUser(meResponse.user);
 
       set({
         status: 'authenticated',
         token,
         authUser: meResponse.user,
-        user: appUser,
+        user: mapAuthUserToAppUser(meResponse.user),
         isLoading: false,
         error: null,
       });
     } catch (error) {
-      removeStoredAccessToken();
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
 
       set({
         status: 'anonymous',

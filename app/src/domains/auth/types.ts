@@ -3,7 +3,7 @@ export type AuthStatus = 'checking' | 'anonymous' | 'authenticated';
 export type AuthUser = {
   id: string;
   email: string;
-  status: string;
+  status: 'active' | 'inactive';
 };
 
 export type AuthSession = {
@@ -33,7 +33,7 @@ export type MeResponse = {
   session: AuthSession;
 };
 
-export type AuthContextValue = {
+export type AuthStoreState = {
   status: AuthStatus;
   user: AuthUser | null;
   token: string | null;
