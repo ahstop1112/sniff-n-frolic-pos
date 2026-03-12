@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Alert,
   Box,
   Button,
   CircularProgress,
-  Container,
   Stack,
   TextField,
   Typography,
@@ -19,7 +18,11 @@ type LocationState = {
 };
 
 const LoginScreen = () => {
-  const login = useAuthStore((s) => s.login);
+  const requestCode = useAuthStore((s) => s.requestCode);
+  const verifyCode = useAuthStore((s) => s.verifyCode);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const storeError = useAuthStore((s) => s.error);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,40 +30,96 @@ const LoginScreen = () => {
     (location.state as LocationState | null)?.from?.pathname ?? "/start";
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [step, setStep] = useState<'email' | 'code'>('email');
+  const [localError, setLocalError] = useState<string | null>(null);
 
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  const error = localError ?? storeError;
+
+  const isEmailValid = useMemo(() => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }, [email]);
+
+  const onRequestCode: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setError(null);
-    setSubmitting(true);
+    setLocalError(null);
+
+    if (!email.trim()) {
+      setLocalError('Email is required.');
+      return;
+    }
+
+    if (!isEmailValid) {
+      setLocalError('Please enter a valid email address.');
+      return;
+    }
 
     try {
-      await login({ email, password });
+      await requestCode(email.trim());
+      setStep('code');
+    } catch (err) {
+      setLocalError(
+        err instanceof Error ? err.message : 'Failed to send verification code.',
+      );
+    }
+  };
+
+  const onVerifyCode: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    setLocalError(null);
+
+    if (!code.trim()) {
+      setLocalError('Verification code is required.');
+      return;
+    }
+
+    try {
+      await verifyCode({
+        email: email.trim(),
+        code: code.trim(),
+      });
+
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed.");
-      setSubmitting(false);
+      setLocalError(err instanceof Error ? err.message : 'Login failed.');
+    }
+  };
+
+  const onBackToEmail = () => {
+    setCode('');
+    setLocalError(null);
+    setStep('email');
+  };
+
+  const onResendCode = async () => {
+    setLocalError(null);
+
+    try {
+      await requestCode(email.trim());
+    } catch (err) {
+      setLocalError(
+        err instanceof Error ? err.message : 'Failed to resend verification code.',
+      );
     }
   };
 
   return (
     <FullPageContainer>
-        <Card elevation={6}>
-          <Stack spacing={2}>
-            <Box>
-              <Typography variant="h5" fontWeight={800}>
-                POS Login
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Sign in to access Manage / Sales.
-              </Typography>
-            </Box>
+      <Card elevation={6}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="h5" fontWeight={800}>
+              POS Login
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Sign in to access Manage / Sales.
+            </Typography>
+          </Box>
 
-            {error ? <Alert severity="error">{error}</Alert> : null}
+          {error ? <Alert severity="error">{error}</Alert> : null}
 
-            <Box component="form" onSubmit={onSubmit}>
+          {step === 'email' ? (
+            <Box component="form" onSubmit={onRequestCode}>
               <Stack spacing={1.5}>
                 <TextField
                   label="Email"
@@ -68,36 +127,84 @@ const LoginScreen = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="username"
                   fullWidth
-                />
-                <TextField
-                  label="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  type="password"
-                  fullWidth
+                  disabled={isLoading}
                 />
 
                 <Button
                   type="submit"
                   variant="contained"
                   size="large"
-                  disabled={submitting}
+                  disabled={isLoading}
                   fullWidth
                   startIcon={
-                    submitting ? <CircularProgress size={18} /> : undefined
+                    isLoading ? <CircularProgress size={18} /> : undefined
                   }
                 >
-                  {submitting ? "Signing in…" : "Sign in"}
+                  {isLoading ? 'Sending code…' : 'Send verification code'}
                 </Button>
               </Stack>
             </Box>
+          ) : (
+            <Box component="form" onSubmit={onVerifyCode}>
+              <Stack spacing={1.5}>
+                <TextField
+                  label="Email"
+                  value={email}
+                  fullWidth
+                  disabled
+                />
 
-            <Typography variant="caption" color="text.secondary">
-              Tip: you can later wire this to your backend “services” login API.
-            </Typography>
-          </Stack>
-        </Card>
+                <TextField
+                  label="6-digit code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  autoComplete="one-time-code"
+                  fullWidth
+                  disabled={isLoading}
+                  inputProps={{ maxLength: 6 }}
+                />
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={isLoading}
+                  fullWidth
+                  startIcon={
+                    isLoading ? <CircularProgress size={18} /> : undefined
+                  }
+                >
+                  {isLoading ? 'Verifying…' : 'Verify and sign in'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="text"
+                  onClick={onResendCode}
+                  disabled={isLoading}
+                  fullWidth
+                >
+                  Resend code
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="text"
+                  onClick={onBackToEmail}
+                  disabled={isLoading}
+                  fullWidth
+                >
+                  Use another email
+                </Button>
+              </Stack>
+            </Box>
+          )}
+
+          <Typography variant="caption" color="text.secondary">
+            We’ll send a one-time login code to your email.
+          </Typography>
+        </Stack>
+      </Card>
     </FullPageContainer>
   );
 };

@@ -6,9 +6,12 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
+import { CurrentSession, CurrentUser } from './auth.decorators';
+import type { AuthSession, AuthUser } from './auth.types';
 import { RequestCodeDto } from './dto/request-code.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
-import { AuthGuard } from './auth.guard';
+import { extractBearerToken } from './auth-header.utils';
 
 type AuthenticatedRequest = Request & {
   authUser?: {
@@ -49,33 +52,25 @@ export class AuthController {
 
     @Get('me')
     @UseGuards(AuthGuard)
-    public async me(@Req() req: AuthenticatedRequest) {
-        if (!req.authUser || !req.authSession) {
+    public async me(
+        @CurrentUser() user?: AuthUser,
+        @CurrentSession() session?: AuthSession,
+    ) {
+        if (!user || !session) {
             throw new UnauthorizedException('Unauthorized.');
         }
 
         return {
             ok: true,
-            user: req.authUser,
-            session: req.authSession,
+            user,
+            session,
         };
     }
 
     @Post('logout')
     @UseGuards(AuthGuard)
     public async logout(@Req() req: Request) {
-        const authorizationHeader = req.headers.authorization;
-
-        if (!authorizationHeader) {
-            throw new UnauthorizedException('Missing authorization header.');
-        }
-
-        const [, token] = authorizationHeader.split(' ');
-
-        if (!token) {
-            throw new UnauthorizedException('Invalid authorization header.');
-        }
-
+        const token = extractBearerToken(req.headers.authorization);
         return this.authService.logout(token);
     }
 }

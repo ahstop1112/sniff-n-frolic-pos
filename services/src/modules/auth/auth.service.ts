@@ -1,6 +1,7 @@
 import {
   BadRequestException, Injectable,
-  HttpException, HttpStatus
+  HttpException, HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import {
@@ -10,12 +11,31 @@ import {
   hashSessionToken,
   normalizeEmail,
 } from '../../common/utils/auth.utils';
+import { FeatureFlagsService } from '../feature-flags/feature-flags.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly authRepository: AuthRepository) {}
+  constructor(
+    private readonly authRepository: AuthRepository,
+    private readonly featureFlagsService: FeatureFlagsService,
+  ) {}
 
   public requestCode = async (rawEmail: string) => {
+    // Check Feature Flags
+    const authEnabled = await this.featureFlagsService.isEnabled('auth_enabled');
+
+    if (!authEnabled) {
+      throw new NotFoundException('Authentication is not available.');
+    }
+
+    const emailOtpLoginEnabled =
+      await this.featureFlagsService.isEnabled('email_otp_login');
+
+    if (!emailOtpLoginEnabled) {
+      throw new NotFoundException('Email OTP login is not available.');
+    }
+
+    // Check Email
     const email = normalizeEmail(rawEmail);
 
     if (!email) {
@@ -68,6 +88,20 @@ export class AuthService {
     userAgent?: string | null;
     ipAddress?: string | null;
   }) {
+    // Check Feature Flags
+    const authEnabled = await this.featureFlagsService.isEnabled('auth_enabled');
+
+    if (!authEnabled) {
+      throw new NotFoundException('Authentication is not available.');
+    }
+
+    const emailOtpLoginEnabled =
+      await this.featureFlagsService.isEnabled('email_otp_login');
+
+    if (!emailOtpLoginEnabled) {
+      throw new NotFoundException('Email OTP login is not available.');
+    }
+
     const email = normalizeEmail(params.email);
     const code = params.code.trim();
 

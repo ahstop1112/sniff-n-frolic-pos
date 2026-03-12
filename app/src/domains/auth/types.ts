@@ -1,29 +1,44 @@
+export type AuthStatus = 'checking' | 'anonymous' | 'authenticated';
 
-import type { Permission } from "./permissions";
-import { ROLE_PERMISSIONS } from "./permissions";
-
-export type UserRole = "staff" | "manager" | "admin";
+export type AuthUser = {
+  id: string;
+  email: string;
+  status: string;
+};
 
 export type AuthSession = {
-    staffId: string;
-    staffName: string;
-    role: UserRole;
-    shiftId: string;
+  id: string;
+  userId: string;
+  expiresAt: string;
+  revokedAt: string | null;
 };
 
-export type User = {
-    id: string;
-    name: string;
-    role: UserRole;
-    permissions?: Permission[];
+export type RequestCodeResponse = {
+  ok: true;
+  message: string;
+  expiresAt: string;
+  resendAfter: string;
 };
 
-export type AuthStatus = "checking" | "anonymous" | "authenticated";
+export type VerifyCodeResponse = {
+  ok: true;
+  accessToken: string;
+  user: AuthUser;
+  sessionExpiresAt: string;
+};
+
+export type MeResponse = {
+  ok: true;
+  user: AuthUser;
+  session: AuthSession;
+};
 
 export type AuthContextValue = {
-    status: AuthStatus;
-    user: User | null;
-    token: string | null;
-    login: (args: { email: string; password: string }) => Promise<void>;
-    logout: () => void;
+  status: AuthStatus;
+  user: AuthUser | null;
+  token: string | null;
+  requestCode: (email: string) => Promise<void>;
+  verifyCode: (args: { email: string; code: string }) => Promise<void>;
+  restoreSession: () => Promise<void>;
+  logout: () => Promise<void>;
 };

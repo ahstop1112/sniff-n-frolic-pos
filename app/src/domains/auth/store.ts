@@ -1,67 +1,222 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { AuthStatus, User } from "./types";
-import type { Permission } from "./permissions";
-import { ROLE_PERMISSIONS } from "./permissions";
+import { create } from 'zustand';
+import {
+  getMe,
+  logout as logoutApi,
+  requestCode as requestCodeApi,
+  verifyCode as verifyCodeApi,
+} from './api/authApi';
+import type { AuthStatus, AuthUser } from './types';
+import type { AppUser } from '@/domains/users/types';
+import {
+  ROLE_PERMISSIONS,
+  type Permission,
+  type UserRole,
+} from '@/domains/authorization/permissions';
 
-// --- replace this with real API later ---
-const fakeAuthApi = async (args: { email: string; password: string }) => {
-  // simulate latency
-  await new Promise((r) => setTimeout(r, 350));
+const ACCESS_TOKEN_STORAGE_KEY = 'snf_pos_access_token';
 
-  if (!args.email.trim() || !args.password.trim()) {
-    throw new Error("Please enter email and password.");
-  }
+const getStoredAccessToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+};
 
-  // demo token + user
+const setStoredAccessToken = (token: string) => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+};
+
+const removeStoredAccessToken = () => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+};
+
+const mapAuthUserToAppUser = (authUser: AuthUser): AppUser => {
+  const role: UserRole = 'admin';
+
   return {
-    token: `demo_${Date.now()}`,
-    user: {
-      id: "u_demo",
-      name: args.email.split("@")[0] || "Demo User",
-      role: "manager",
-    } satisfies User,
+    id: authUser.id,
+    email: authUser.email,
+    status: authUser.status,
+    name: authUser.email.split('@')[0],
+    role,
+    permissions: [...ROLE_PERMISSIONS[role]],
   };
 };
 
-type AuthStore = {
-    status: AuthStatus;
-    token: string | null;
-    user: User | null;
-    setUser: (user: User | null) => void;
-    getPermissions: () => Permission[];
-    login: (args: { email: string; password: string }) => Promise<void>;
-    logout: () => void;
+type AuthStoreState = {
+  status: AuthStatus;
+  token: string | null;
+  authUser: AuthUser | null;
+  user: AppUser | null;
+  isLoading: boolean;
+  error: string | null;
+
+  requestCode: (email: string) => Promise<void>;
+  verifyCode: (args: { email: string; code: string }) => Promise<void>;
+  restoreSession: () => Promise<void>;
+  logout: () => Promise<void>;
+  clearAuth: () => void;
+  getPermissions: () => Permission[];
 };
 
-export const useAuthStore = create<AuthStore>()(
-    persist(
-    (set) => ({
-        status: "anonymous",
+export const useAuthStore = create<AuthStoreState>((set, get) => ({
+  status: 'checking',
+  token: getStoredAccessToken(),
+  authUser: null,
+  user: null,
+  isLoading: false,
+  error: null,
+
+  requestCode: async (email: string) => {
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      await requestCodeApi(email);
+
+      set({
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to request code.',
+      });
+      throw error;
+    }
+  },
+
+  verifyCode: async ({ email, code }) => {
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      const verifyResponse = await verifyCodeApi(email, code);
+      const accessToken = verifyResponse.accessToken;
+
+      setStoredAccessToken(accessToken);
+
+      const meResponse = await getMe(accessToken);
+      const appUser = mapAuthUserToAppUser(meResponse.user);
+
+      set({
+        status: 'authenticated',
+        token: accessToken,
+        authUser: meResponse.user,
+        user: appUser,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      removeStoredAccessToken();
+
+      set({
+        status: 'anonymous',
         token: null,
+        authUser: null,
         user: null,
-        setUser: (user) => set({ user }),
-        getPermissions: () => {
-            const user = get().user;
-            if (!user) return [];
-            // API 有 permissions 就用 API（override）
-            if (user.permissions && user.permissions.length > 0) return user.permissions;
-            // 否則用本地 role map
-            return [...(ROLE_PERMISSIONS[user.role] ?? [])];
-        },
-        login: async (args) => {
-            const res = await fakeAuthApi(args);
-            set({ token: res.token, user: res.user, status: "authenticated" });
-        },
-        logout: () => set({ token: null, user: null, status: "anonymous" }),
-    }),
-    {
-      name: "pos.auth",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ token: s.token, user: s.user }),
-      onRehydrateStorage: () => (state) => {
-        const hasSession = !!state?.token && !!state?.user;
-        state?.status && (state.status = hasSession ? "authenticated" : "anonymous");
-      },
-    },
-  ));
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Login failed.',
+      });
+
+      throw error;
+    }
+  },
+
+  restoreSession: async () => {
+    const token = get().token;
+
+    if (!token) {
+      set({
+        status: 'anonymous',
+        token: null,
+        authUser: null,
+        user: null,
+        isLoading: false,
+        error: null,
+      });
+      return;
+    }
+
+    set({
+      status: 'checking',
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      const meResponse = await getMe(token);
+      const appUser = mapAuthUserToAppUser(meResponse.user);
+
+      set({
+        status: 'authenticated',
+        token,
+        authUser: meResponse.user,
+        user: appUser,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      removeStoredAccessToken();
+
+      set({
+        status: 'anonymous',
+        token: null,
+        authUser: null,
+        user: null,
+        isLoading: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to restore session.',
+      });
+    }
+  },
+
+  logout: async () => {
+    const token = get().token;
+
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      if (token) {
+        await logoutApi(token);
+      }
+    } catch {
+      // ignore API failure and clear local state anyway
+    } finally {
+      removeStoredAccessToken();
+
+      set({
+        status: 'anonymous',
+        token: null,
+        authUser: null,
+        user: null,
+        isLoading: false,
+        error: null,
+      });
+    }
+  },
+
+  clearAuth: () => {
+    removeStoredAccessToken();
+
+    set({
+      status: 'anonymous',
+      token: null,
+      authUser: null,
+      user: null,
+      isLoading: false,
+      error: null,
+    });
+  },
+
+  getPermissions: () => {
+    return get().user?.permissions ?? [];
+  },
+}));

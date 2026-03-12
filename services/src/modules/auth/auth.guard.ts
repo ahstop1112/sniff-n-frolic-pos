@@ -6,20 +6,9 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
+import type { AuthenticatedRequestUserData } from './auth.types';
 
-type AuthenticatedRequest = Request & {
-  authUser?: {
-    id: string;
-    email: string;
-    status: string;
-  };
-  authSession?: {
-    id: string;
-    userId: string;
-    expiresAt: Date;
-    revokedAt: Date | null;
-  };
-};
+type AuthenticatedRequest = Request & AuthenticatedRequestUserData;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -40,14 +29,14 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid authorization header.');
     }
 
-    const session = await this.authService.validateAccessToken(token);
+    const auth = await this.authService.validateAccessToken(token);
 
-    if (!session) {
+    if (!auth) {
       throw new UnauthorizedException('Invalid or expired session.');
     }
 
-    request.authUser = session.user;
-    request.authSession = session.session;
+    request.authUser = auth.user;
+    request.authSession = auth.session;
 
     return true;
   }
