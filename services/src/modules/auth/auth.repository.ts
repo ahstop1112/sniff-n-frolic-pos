@@ -145,17 +145,17 @@ export class AuthRepository {
 
     public async createUser(email: string) {
         const query = `
-        INSERT INTO users (email)
-        VALUES ($1)
+        INSERT INTO users (email, status, created_at, updated_at)
+        VALUES ($1, 'active', NOW(), NOW())
         RETURNING id, email, status, created_at, updated_at
         `;
 
         const result = await this.databaseService.query<{
-        id: string;
-        email: string;
-        status: string;
-        created_at: Date;
-        updated_at: Date;
+            id: string;
+            email: string;
+            status: string;
+            created_at: Date;
+            updated_at: Date;
         }>(query, [email]);
 
         return result.rows[0];
@@ -169,9 +169,9 @@ export class AuthRepository {
         ipAddress: string | null;
     }) {
         const query = `
-        INSERT INTO sessions (
+        INSERT INTO auth_sessions (
             user_id,
-            token_hash,
+            access_token_hash,
             expires_at,
             user_agent,
             ip_address
@@ -201,17 +201,17 @@ export class AuthRepository {
     public async findSessionByTokenHash(tokenHash: string) {
         const query = `
             SELECT
-            s.id AS session_id,
-            s.user_id,
-            s.expires_at,
-            s.revoked_at,
-            u.id AS user_id_ref,
-            u.email,
-            u.status
-            FROM sessions s
+                s.id AS session_id,
+                s.user_id,
+                s.expires_at,
+                s.revoked_at,
+                u.id AS user_id_ref,
+                u.email,
+                u.status
+            FROM auth_sessions s
             INNER JOIN users u
             ON u.id = s.user_id
-            WHERE s.token_hash = $1
+            WHERE s.access_token_hash = $1
             LIMIT 1
         `;
 
@@ -230,9 +230,9 @@ export class AuthRepository {
 
     public async revokeSessionByTokenHash(tokenHash: string) {
         const query = `
-            UPDATE sessions
+            UPDATE auth_sessions
             SET revoked_at = NOW()
-            WHERE token_hash = $1
+            WHERE access_token_hash = $1
             AND revoked_at IS NULL
             RETURNING id, user_id, expires_at, revoked_at
         `;
