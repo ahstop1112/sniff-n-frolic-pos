@@ -1,16 +1,34 @@
-import { PropsWithChildren } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSessionStore } from "@/domains/session/store";
 
-export const RequireShift = ({ children }: PropsWithChildren) => {
+const RequireShift = () => {
   const shiftStatus = useSessionStore((s) => s.shiftStatus);
-    const location = useLocation();
-    
-    console.log("RequireShift: shiftStatus =", shiftStatus);
+  const shiftReady = useSessionStore((s) => s.shiftReady);
+  const branchId = useSessionStore((s) => s.branchId);
+  const deviceName = useSessionStore((s) => s.deviceName);
+  const drawerId = useSessionStore((s) => s.drawerId);
+  const hasHydrated = useSessionStore((s) => s.hasHydrated);
+  const location = useLocation();
 
-  if (shiftStatus !== "active") {
-    return <Navigate to="/home" replace state={{ from: location }} />;
+  // console.log("RequireShift", {
+  //   hasHydrated,
+  //   shiftStatus,
+  //   shiftReady,
+  //   branchId,
+  //   deviceName,
+  //   drawerId,
+  //   pathname: location.pathname,
+  // });
+
+  if (!hasHydrated) {
+    return null;
   }
 
-  return <>{children}</>;
+  if (shiftStatus !== "active") {
+    return <Navigate to="/pos/start" replace state={{ from: location }} />;
+  }
+
+  return <Outlet />;
 };
+
+export default RequireShift;

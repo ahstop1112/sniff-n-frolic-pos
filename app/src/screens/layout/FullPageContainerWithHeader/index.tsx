@@ -2,13 +2,13 @@ import type { PropsWithChildren } from "react";
 import Header from "../Header";
 import { PageContainerWrapper, Body } from "./styles";
 
-const PageContainer = ({ children }: PropsWithChildren) => {
+const FullPageContainerWithHeader = ({ children }: PropsWithChildren) => {
   return (
     <PageContainerWrapper>
       <Header />
-      <Body>{children}</Body>
+      {children}
     </PageContainerWrapper>
   );
 };
 
-export default PageContainer;
+export default FullPageContainerWithHeader;

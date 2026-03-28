@@ -1,0 +1,24 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.tab {
+  min-width: 112px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: #3f3832;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.active {
+  background: #f58a1f;
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(245, 138, 31, 0.22);
+}

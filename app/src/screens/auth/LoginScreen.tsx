@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/domains/auth/store";
+import OtpCodeInput from "./components/OtpCodeInput"
 import { FullPageContainer } from "@/screens/layout/PageContainer/styles";
 import { Card } from "./styles";
 
@@ -154,21 +155,28 @@ const LoginScreen = () => {
                   disabled
                 />
 
-                <TextField
-                  label="6-digit code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  autoComplete="one-time-code"
-                  fullWidth
-                  disabled={isLoading}
-                  inputProps={{ maxLength: 6 }}
-                />
+                <Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 1 }}
+                  >
+                    Enter the 6-digit code
+                  </Typography>
+
+                  <OtpCodeInput
+                    value={code}
+                    onChange={setCode}
+                    disabled={isLoading}
+                    autoFocus
+                  />
+                </Box>
 
                 <Button
                   type="submit"
                   variant="contained"
                   size="large"
-                  disabled={isLoading}
+                  disabled={isLoading || code.replace(/\D/g, '').length !== 6}
                   fullWidth
                   startIcon={
                     isLoading ? <CircularProgress size={18} /> : undefined

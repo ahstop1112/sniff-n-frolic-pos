@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/app/RequireAuth";
-import { RequireShift } from "@/app/RequireShift";
+import RequireShift from "@/app/RequireShift";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import ManageScreen from "@/screens/manage";
 import SalesScreen from "@/screens/sales";

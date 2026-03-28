@@ -1,0 +1,140 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 22px 18px;
+  background: #fcfbfa;
+  border-left: 1px solid #efeae5;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #241f1a;
+}
+
+.settingButton {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  margin-bottom: 22px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.itemInfo {
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #241f1a;
+}
+
+.itemPrice {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #f58a1f;
+}
+
+.qtyControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qtyButton {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 6px;
+  background: #f58a1f;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtyValue {
+  min-width: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary {
+  margin-top: auto;
+  padding: 18px 16px;
+  background: #f5f2ef;
+  border-radius: 14px;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+  color: #7f776f;
+
+  & + & {
+    margin-top: 8px;
+  }
+}
+
+.divider {
+  margin: 18px 0;
+  border-top: 1px dashed #cfc6bf;
+}
+
+.totalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 28px;
+  font-weight: 800;
+  color: #231e19;
+}
+
+.payButton {
+  margin-top: 18px;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: #f58a1f;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}

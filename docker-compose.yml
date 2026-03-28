@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:16
-    container_name: sniff-n-frolic-pos-postgres
+    container_name: sniff-n-frolic-pos
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: snf
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sniff_n_frolic_pos
     ports:
