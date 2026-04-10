@@ -4,8 +4,8 @@ import { RequireShift } from "@/app/RequireShift";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import ManageScreen from "@/screens/manage";
 import SalesScreen from "@/screens/sales";
-import HomeScreen from "@/screens/start/Home";
-import ShiftStartScreen from "./screens/start/ShiftStart";
+import HomeScreen from  "@/screens/start/Home";
+import ShiftStartScreen from "@/screens/start/ShiftStart";
 
 const AppRoutes = () => {
   return (
@@ -30,8 +30,8 @@ const AppRoutes = () => {
         </Route>
 
         {/* Default */}
-        <Route index element={<Navigate to="/pos" replace />} />
-        <Route path="*" element={<Navigate to="/pos" replace />} />
+        <Route index element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
   );
 };

@@ -1,0 +1,26 @@
+.fullPage {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: var(--mui-palette-background-default);
+  padding: 16px; // theme.spacing(2)
+}
+
+// Used by PageContainer
+.wrapper {
+  width: 100%;
+  max-width: 3000px;
+  min-height: 100vh;
+  display: grid;
+  place-items: start;
+  background-color: var(--mui-palette-background-default);
+  margin: 0;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.body {
+  width: 100%;
+  padding: 16px; // theme.spacing(2)
+}

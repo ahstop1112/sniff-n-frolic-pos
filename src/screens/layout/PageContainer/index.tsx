@@ -1,14 +1,22 @@
-import type { PropsWithChildren } from "react";
-import Header from "../Header";
-import { PageContainerWrapper, Body } from "./styles";
+import type { PropsWithChildren } from "react"
+import styles from "./PageContainer.module.scss"
 
-const PageContainer = ({ children }: PropsWithChildren) => {
-  return (
-    <PageContainerWrapper maxWidth={false}>
-      <Header />
-      <Body>{children}</Body>
-    </PageContainerWrapper>
-  );
-};
+const PageContainer = ({ children }: PropsWithChildren) => (
+  <div className={styles.wrapper}>
+    <div className={styles.body}>
+      {children}
+    </div>
+  </div>
+)
 
 export default PageContainer;
+
+// ── Named exports for direct use ──────────────────
+// replaces: import { FullPageContainer } from '@/screens/layout/PageContainer/styles'
+// usage:    <FullPageContainer> ... </FullPageContainer>
+
+export const FullPageContainer = ({ children }: PropsWithChildren) => (
+  <div className={styles.fullPage}>
+    {children}
+  </div>
+);
