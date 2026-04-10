@@ -1,61 +1,51 @@
-import { useMemo, useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Typography from "@mui/material/Typography";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Box from "@mui/material/Box";
+import { useMemo, useState } from "react"
+import { useTheme } from "@mui/material/styles"
+import useMediaQuery from "@mui/material/useMediaQuery"
+import Typography from "@mui/material/Typography"
+import ToggleButton from "@mui/material/ToggleButton"
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
+import type { SalesLayoutProps } from "./types"
+import styles from "./Layout.module.scss"
 
-import type { SalesLayoutProps } from "./types";
-import {
-  Root,
-  HeaderArea,
-  Main,
-  Panel,
-  PanelHeader,
-  PanelBody,
-  MobileSwitchBar,
-} from "./styles";
-
-type MobileView = "products" | "cart";
+type MobileView = "products" | "cart"
 
 const SalesLayout = ({ slots, className }: SalesLayoutProps) => {
-  const theme = useTheme();
-  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+  const theme = useTheme()
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"))
 
-  const [mobileView, setMobileView] = useState<MobileView>("products");
+  const [mobileView, setMobileView] = useState<MobileView>("products")
 
   const productNode = useMemo(
-    () =>
-      slots?.product ?? (
-        <Typography variant="body2" color="text.secondary">
-          Product browser slot
-        </Typography>
-      ),
+    () => slots?.product ?? (
+      <Typography variant="body2" color="text.secondary">
+        Product browser slot
+      </Typography>
+    ),
     [slots?.product]
-  );
+  )
 
   const cartNode = useMemo(
-    () =>
-      slots?.cart ?? (
-        <Typography variant="body2" color="text.secondary">
-          Cart slot
-        </Typography>
-      ),
+    () => slots?.cart ?? (
+      <Typography variant="body2" color="text.secondary">
+        Cart slot
+      </Typography>
+    ),
     [slots?.cart]
-  );
+  )
 
   const handleMobileViewChange = (_: unknown, next: MobileView | null) => {
-    if (!next) return;
-    setMobileView(next);
-  };
+    if (!next) return
+    setMobileView(next)
+  }
 
   return (
-    <Root className={className}>
-      <Main>
+    <div className={`${styles.root}${className ? ` ${className}` : ""}`}>
+      <main className={styles.main}>
+
+        {/* Mobile — toggle view */}
         {!isMdUp && (
-          <Panel>
-            <MobileSwitchBar>
+          <div className={styles.panel}>
+            <div className={styles.mobileSwitchBar}>
               <ToggleButtonGroup
                 value={mobileView}
                 exclusive
@@ -66,32 +56,39 @@ const SalesLayout = ({ slots, className }: SalesLayoutProps) => {
                 <ToggleButton value="products">Products</ToggleButton>
                 <ToggleButton value="cart">Cart</ToggleButton>
               </ToggleButtonGroup>
-            </MobileSwitchBar>
-
-            <PanelBody>{mobileView === "products" ? productNode : cartNode}</PanelBody>
-          </Panel>
+            </div>
+            <div className={styles.panelBody}>
+              {mobileView === "products" ? productNode : cartNode}
+            </div>
+          </div>
         )}
 
+        {/* Desktop — side by side */}
         {isMdUp && (
           <>
-            <Panel>
-              <PanelHeader>
+            <div className={styles.panel}>
+              <div className={styles.panelHeader}>
                 <Typography variant="subtitle1">Products</Typography>
-              </PanelHeader>
-              <PanelBody>{productNode}</PanelBody>
-            </Panel>
+              </div>
+              <div className={styles.panelBody}>
+                {productNode}
+              </div>
+            </div>
 
-            <Panel>
-              <PanelHeader>
+            <div className={styles.panel}>
+              <div className={styles.panelHeader}>
                 <Typography variant="subtitle1">Cart</Typography>
-              </PanelHeader>
-              <PanelBody>{cartNode}</PanelBody>
-            </Panel>
+              </div>
+              <div className={styles.panelBody}>
+                {cartNode}
+              </div>
+            </div>
           </>
         )}
-      </Main>
-    </Root>
-  );
-};
 
-export default SalesLayout;
+      </main>
+    </div>
+  )
+}
+
+export default SalesLayout

@@ -1,0 +1,67 @@
+// SalesLayout styles
+// Replaces: styles.ts (MUI styled-components → SASS module)
+
+.root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mui-palette-background-default);
+}
+
+.headerArea {
+  position: sticky;
+  top: 0;
+  z-index: 1100; // MUI appBar zIndex default
+  background-color: var(--mui-palette-background-paper);
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: 16px;        // theme.spacing(2)
+  padding: 16px;    // theme.spacing(2)
+  grid-template-columns: 1fr;
+
+  @media (min-width: 900px) {  // md
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+
+  @media (min-width: 1200px) { // lg
+    grid-template-columns: minmax(0, 1fr) 420px;
+  }
+}
+
+.panel {
+  min-height: 0;
+  border-radius: 4px; // theme.shape.borderRadius default
+  border: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelHeader {
+  padding: 12px 16px; // theme.spacing(1.5, 2)
+  border-bottom: 1px solid var(--mui-palette-divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px; // theme.spacing(1)
+}
+
+.panelBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px; // theme.spacing(2)
+}
+
+.mobileSwitchBar {
+  display: flex;
+  gap: 8px;           // theme.spacing(1)
+  padding: 12px 16px; // theme.spacing(1.5, 2)
+  border-bottom: 1px solid var(--mui-palette-divider);
+}

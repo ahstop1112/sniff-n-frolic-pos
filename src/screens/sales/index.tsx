@@ -3,7 +3,7 @@ import { useAuthStore } from "@/domains/auth/store";
 import OrdersProvider from "@/domains/orders/provider";
 import SalesLayout from "./components/Layout";
 // import SalesHeadr from "./components/Header";
-// import ProductBrowser from "./components/ProductBrowser";
+import ProductPanel from "./ProductPanel";
 import CartPanel from "./CartPanel";
 
 const SalesScreen = () => {
@@ -15,7 +15,10 @@ const SalesScreen = () => {
       <SalesLayout
         slots={{
           // header: <SalesHeader />,
-          // product: <ProductBrowser />,
+          product: <ProductPanel 
+            currency="CAD"
+            flags={{ gridColumns: 3, showStockBadge: true }}
+          />,
           cart: <CartPanel />,
         }}
       />

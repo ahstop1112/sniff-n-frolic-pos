@@ -1,0 +1,99 @@
+// ShiftStart styles
+// Replaces: styles.ts
+
+.shiftCard {
+  border-radius: 4px;
+  padding: 24px; // theme.spacing(3)
+  width: 100%;
+  max-width: 480px;
+}
+
+.title {
+  font-weight: 800;
+}
+
+.sub {
+  color: var(--mui-palette-text-secondary);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;        // theme.spacing(2)
+  margin-top: 16px; // theme.spacing(2)
+
+  @media (min-width: 600px) { // sm
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fullRow {
+  margin-top: 16px; // theme.spacing(2)
+}
+
+.actions {
+  display: flex;
+  gap: 16px;        // theme.spacing(2)
+  margin-top: 24px; // theme.spacing(3)
+}
+
+.primaryButton {
+  flex: 1;
+  text-transform: none;
+}
+
+.secondaryButton {
+  text-transform: none;
+}
+
+.field {
+  margin-top: 6px; // theme.spacing(0.75)
+  width: 100%;
+}
+
+.fieldLabel {
+  color: var(--mui-palette-text-secondary);
+}
+
+.branchControl {
+  width: 100%;
+  min-width: 220px;
+}
+
+// Shell (Home screen related)
+.topBar {
+  background-color: var(--mui-palette-common-white);
+  color: var(--mui-palette-text-primary);
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mainContainer {
+  padding-top: 32px;    // theme.spacing(4)
+  padding-bottom: 32px; // theme.spacing(4)
+}
+
+.logoutButton {
+  text-transform: none;
+}
+
+.modeCard {
+  flex: 1;
+  max-width: 400px;
+  border-radius: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.cardInner {
+  height: 100%;
+  padding: 32px; // theme.spacing(4)
+}

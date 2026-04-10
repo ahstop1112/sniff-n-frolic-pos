@@ -1,0 +1,67 @@
+.root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabsRow {
+  padding: 8px 12px; // theme.spacing(1, 1.5)
+  border-bottom: 1px solid var(--mui-palette-divider);
+  display: flex;
+  align-items: center;
+  gap: 8px; // theme.spacing(1)
+}
+
+.linesArea {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px; // theme.spacing(1.5)
+  display: flex;
+  flex-direction: column;
+  gap: 8px; // theme.spacing(1)
+}
+
+.lineRow {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 4px;
+  padding: 10px; // theme.spacing(1.25)
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px; // theme.spacing(1)
+}
+
+.lineLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px; // theme.spacing(0.25)
+  min-width: 0;
+}
+
+.lineRight {
+  display: flex;
+  align-items: center;
+  gap: 8px; // theme.spacing(1)
+}
+
+.summaryBar {
+  border-top: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  padding: 12px; // theme.spacing(1.5)
+  display: flex;
+  flex-direction: column;
+  gap: 8px; // theme.spacing(1)
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px; // theme.spacing(1)
+}
+
+.actionsRow {
+  display: flex;
+  gap: 8px; // theme.spacing(1)
+}
