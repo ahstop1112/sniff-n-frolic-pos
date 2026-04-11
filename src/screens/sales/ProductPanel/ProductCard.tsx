@@ -51,10 +51,15 @@ const ProductCard = ({
         {flags.showProductImage && (
           <CardMedia
             component="img"
-            height={100}
+            sx={{ 
+                width: "100%",
+                aspectRatio: "1 / 1",
+                objectFit: "contain",
+                p: 1,
+                bgcolor: "grey.50"
+              }}
             image={product.imageUrl ?? "/placeholder-product.png"}
             alt={product.name}
-            sx={{ objectFit: "contain", p: 1, bgcolor: "grey.50" }}
           />
         )}
 

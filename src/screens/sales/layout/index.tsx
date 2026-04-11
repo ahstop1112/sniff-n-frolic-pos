@@ -4,6 +4,7 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import Typography from "@mui/material/Typography"
 import ToggleButton from "@mui/material/ToggleButton"
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
+import SalesSummaryBar from "../Summary/SummaryBar"
 import type { SalesLayoutProps } from "./types"
 import styles from "./Layout.module.scss"
 
@@ -40,6 +41,13 @@ const SalesLayout = ({ slots, className }: SalesLayoutProps) => {
 
   return (
     <div className={`${styles.root}${className ? ` ${className}` : ""}`}>
+      {/* Header */}
+      {slots?.header && (
+        <div className={styles.headerArea}>
+          {slots.header}
+        </div>
+      )}
+      <SalesSummaryBar />
       <main className={styles.main}>
 
         {/* Mobile — toggle view */}
@@ -67,18 +75,12 @@ const SalesLayout = ({ slots, className }: SalesLayoutProps) => {
         {isMdUp && (
           <>
             <div className={styles.panel}>
-              <div className={styles.panelHeader}>
-                <Typography variant="subtitle1">Products</Typography>
-              </div>
               <div className={styles.panelBody}>
                 {productNode}
               </div>
             </div>
 
             <div className={styles.panel}>
-              <div className={styles.panelHeader}>
-                <Typography variant="subtitle1">Cart</Typography>
-              </div>
               <div className={styles.panelBody}>
                 {cartNode}
               </div>

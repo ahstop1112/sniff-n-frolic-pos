@@ -2,12 +2,12 @@ import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress"
 import type { Product } from "@/domains/product/types/product.types"
 import { useOrdersStore } from "@/domains/orders/store"
-import { useProductPanel } from "./hooks/useProductPanel"
-import { useProductPanelFlags, ProductPanelFlags } from "./hooks/useProductPanelFlags"
+import { useProductPanel } from "../hooks/useProductPanel"
+import { useProductPanelFlags, ProductPanelFlags } from "../hooks/useProductPanelFlags"
 
-import ProductSearchBar from "./components/ProductSearchBar"
-import CategoryTabs from "./components/CategoryTabs"
-import ProductGrid from "./components/ProductGrid"
+import ProductSearchBar from "./ProductSearchBar"
+import CategoryTabs from "./CategoryTabs"
+import ProductGrid from "./ProductGrid"
 
 interface ProductPanelProps {
   currency?: string

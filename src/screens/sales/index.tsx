@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/domains/auth/store";
 import OrdersProvider from "@/domains/orders/provider";
-import SalesLayout from "./components/Layout";
-// import SalesHeadr from "./components/Header";
+import SalesLayout from "./layout";
+import SalesHeader from "../layout/Header";
 import ProductPanel from "./ProductPanel";
 import CartPanel from "./CartPanel";
 
@@ -14,10 +14,10 @@ const SalesScreen = () => {
     <OrdersProvider>
       <SalesLayout
         slots={{
-          // header: <SalesHeader />,
+          header: <SalesHeader />,
           product: <ProductPanel 
             currency="CAD"
-            flags={{ gridColumns: 3, showStockBadge: true }}
+            flags={{ gridColumns: 4, showStockBadge: true }}
           />,
           cart: <CartPanel />,
         }}

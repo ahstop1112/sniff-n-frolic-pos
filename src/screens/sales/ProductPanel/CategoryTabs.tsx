@@ -21,7 +21,6 @@ const CategoryTabs = ({
   onChange,
   isLoading,
 }: CategoryTabsProps) => {
-  console.log(categories);
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", gap: 1, px: 1.5, py: 1 }}>

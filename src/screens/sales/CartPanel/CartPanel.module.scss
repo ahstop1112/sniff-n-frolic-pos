@@ -65,3 +65,84 @@
   display: flex;
   gap: 8px; // theme.spacing(1)
 }
+
+.orderTabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  overflow-x: auto;
+  flex-shrink: 0;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.orderTab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mui-palette-divider);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--mui-palette-text-secondary);
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--mui-palette-action-hover);
+  }
+
+  &.active {
+    background: var(--mui-palette-text-primary);
+    color: var(--mui-palette-background-paper);
+    border-color: transparent;
+
+    .orderTabClose {
+      color: var(--mui-palette-background-paper);
+      opacity: 0.7;
+
+      &:hover { opacity: 1; }
+    }
+  }
+}
+
+.orderTabClose {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin-left: 2px;
+  color: var(--mui-palette-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(0,0,0,0.08);
+  }
+}
+
+.addOrderBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px dashed var(--mui-palette-divider);
+  cursor: pointer;
+  background: none;
+  color: var(--mui-palette-text-secondary);
+  flex-shrink: 0;
+  margin-left: 2px;
+
+  &:hover {
+    background: var(--mui-palette-action-hover);
+    border-style: solid;
+  }
+}

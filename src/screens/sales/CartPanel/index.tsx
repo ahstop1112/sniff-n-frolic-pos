@@ -65,38 +65,35 @@ export const CartPanel = ({ currency = "CAD", onPay }: CartPanelProps) => {
     <div className={styles.root}>
 
       {/* Tabs */}
-      <div className={styles.tabsRow}>
-        <Tabs
-          value={activeOrderId}
-          onChange={(_, v) => setActiveOrder(v)}
-          variant="scrollable"
-          scrollButtons="auto"
+      <div className={styles.orderTabs}>
+        {orders.map((o) => (
+          <div
+            key={o.id}
+            className={`${styles.orderTab} ${o.id === activeOrderId ? styles.active : ""}`}
+            onClick={() => setActiveOrder(o.id)}
+          >
+            <span>{o.label}</span>
+            <button
+              className={styles.orderTabClose}
+              aria-label="close order"
+              onClick={(e) => {
+                e.stopPropagation()
+                closeOrderTab(o.id)
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 14 }} />
+            </button>
+          </div>
+        ))}
+
+        {/* Add order */}
+        <button
+          className={styles.addOrderBtn}
+          aria-label="new order"
+          onClick={createOrder}
         >
-          {orders.map((o) => (
-            <Tab
-              key={o.id}
-              value={o.id}
-              label={
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography variant="body2" noWrap>{o.label}</Typography>
-                  <IconButton
-                    size="small"
-                    aria-label="close order"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      closeOrderTab(o.id)
-                    }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </Stack>
-              }
-            />
-          ))}
-        </Tabs>
-        <IconButton aria-label="new order" onClick={createOrder}>
-          <AddIcon />
-        </IconButton>
+          <AddIcon sx={{ fontSize: 16 }} />
+        </button>
       </div>
 
       {/* Line items */}

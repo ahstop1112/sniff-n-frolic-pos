@@ -19,7 +19,7 @@ const fetchProducts = async (params: FetchProductsParams) => {
   const res = await fetch(url.toString())
   if (!res.ok) throw new Error("Failed to fetch products")
   const data = await res.json()
-  console.log("products response:", data)
+  // console.log("products response:", data)
   return data.map((p: any) => ({
     id: p.id,
     name: p.name,
@@ -37,7 +37,7 @@ const fetchCategories = async () => {
   const res = await fetch("/api/categories")
   if (!res.ok) throw new Error("Failed to fetch categories")
   const data = await res.json()
-  console.log("categories response:", data)
+  // console.log("categories response:", data)
   return data
 }
 
