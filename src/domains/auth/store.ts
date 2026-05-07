@@ -66,7 +66,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
   user: null,
   isLoading: false,
   error: null,
-
   requestCode: async (email: string) => {
     set({
       isLoading: true,
@@ -87,7 +86,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       throw error;
     }
   },
-
   verifyCode: async ({ email, code }) => {
     set({
       isLoading: true,
@@ -122,7 +120,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       throw error;
     }
   },
-
   restoreSession: async () => {
     const token = get().token;
 
@@ -169,7 +166,6 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       });
     }
   },
-
   logout: async () => {
     const token = get().token;
 

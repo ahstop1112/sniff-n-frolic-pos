@@ -8,12 +8,13 @@ type SessionStore = {
     shiftStatus: ShiftStatus;
     shiftReady: boolean;
     branchId: string | null;
+    branchUUID: string | null;
     deviceName: string;
     drawerId: string;
 
     branches: Branch[];
-
     setBranchId: (branchId: string) => void;
+    setBranchUUID: (id: string) => void;
     setDeviceName: (name: string) => void;
     setDrawerId: (drawerId: string) => void;
 
@@ -27,6 +28,7 @@ export const useSessionStore = create<SessionStore>()(
       shiftStatus: "idle",
       shiftReady: false,
       branchId: null,
+      branchUUID: null, 
       deviceName: "",
       drawerId: "",
       branches: [
@@ -35,6 +37,7 @@ export const useSessionStore = create<SessionStore>()(
         { id: "richmond", label: "Richmond" },
       ],
       setBranchId: (branchId) => set({ branchId }),
+      setBranchUUID: (branchUUID) => set({ branchUUID }),
       setDeviceName: (deviceName) => set({ deviceName }),
       setDrawerId: (drawerId) => set({ drawerId }),
       startShift: () => {
@@ -45,6 +48,7 @@ export const useSessionStore = create<SessionStore>()(
       endShift: () => set({
         shiftStatus: "idle",
         branchId: null,
+        branchUUID: null,
         deviceName: "",
         drawerId: "",
       }),
@@ -52,10 +56,10 @@ export const useSessionStore = create<SessionStore>()(
     {
       name: "pos-session",
       partialize: (state) => ({
-        // 只 persist 呢幾樣，branches 唔需要 persist
         shiftStatus: state.shiftStatus,
         shiftReady: state.shiftReady,
         branchId: state.branchId,
+        branchUUID:  state.branchUUID,
         deviceName: state.deviceName,
         drawerId: state.drawerId,
       }),

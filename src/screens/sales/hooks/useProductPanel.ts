@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue"
+
+const LIMIT = 20
 
 interface FetchProductsParams {
   page: number
@@ -24,10 +26,12 @@ const fetchProducts = async (params: FetchProductsParams) => {
     id: p.id,
     name: p.name,
     sku: p.slug,
-    unitPrice: p.regular_price / 100, // cents to dollars
+    unitPrice: (p.effective_price || p.regular_price || p.min_variation_price || 0) / 100,
+    salePrice: p.sale_price ? p.sale_price / 100 : null,
+    description: p.description ?? null,
     taxRate: 0,
     quantity: p.stock_status === "instock" ? 99 : 0,
-    category: p.category ?? "",
+    category: p.category_name ?? "",
     imageUrl: p.image_url ?? p.images?.[0]?.url,
     isActive: true,
   }))
@@ -44,7 +48,6 @@ const fetchCategories = async () => {
 export const useProductPanel = () => {
   const [searchText, setSearchText]     = useState("")
   const [activeCategorySlug, setCategory] = useState<string | null>(null)
-  const [page, setPage]                 = useState(1)
 
   // Debounce search — avoid hitting API on every keystroke
   const debouncedSearch = useDebouncedValue(searchText, 300)
@@ -52,24 +55,25 @@ export const useProductPanel = () => {
   // Reset page when search or category changes
   const handleSearch = useCallback((value: string) => {
     setSearchText(value)
-    setPage(1)
   }, [])
 
   const handleCategory = useCallback((id: string | null) => {
     setCategory(id)
-    setPage(1)
   }, [])
 
-  const productsQuery = useQuery({
-    queryKey: ["products", { page, category: activeCategorySlug, search: debouncedSearch }],
-    queryFn: () => fetchProducts({
-      page,
-      limit: 20,
-      category: activeCategorySlug ?? undefined,
-      search: debouncedSearch || undefined,
-    }),
+  const productsQuery = useInfiniteQuery({
+    queryKey: ["products", { category: activeCategorySlug, search: debouncedSearch }],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchProducts({
+        page: pageParam as number,
+        limit: LIMIT,
+        category: activeCategorySlug ?? undefined,
+        search: debouncedSearch || undefined,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === LIMIT ? allPages.length + 1 : undefined,
     staleTime: 30_000,
-    placeholderData: (prev) => prev, // keep previous data while fetching
   })
 
   const categoriesQuery = useQuery({
@@ -87,12 +91,11 @@ export const useProductPanel = () => {
     setCategory: handleCategory,
     categories: categoriesQuery.data?.filter((c: any) => c.parent_id === null) ?? [],
     // Products
-    products: productsQuery.data ?? [],
-    total: productsQuery.data?.length ?? 0,
+    products: productsQuery.data?.pages.flatMap((p) => Array.isArray(p) ? p : [p]) ?? [],
+    total: productsQuery.data,
     isLoading: productsQuery.isLoading,
     isFetching: productsQuery.isFetching,
-    // Pagination
-    page,
-    setPage,
+    hasNextPage: productsQuery.hasNextPage,
+    fetchNextPage: productsQuery.fetchNextPage,
   }
 }

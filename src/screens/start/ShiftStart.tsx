@@ -9,15 +9,18 @@ import styles from "./Start.module.scss"
 const ShiftStartScreen = () => {
   const navigate = useNavigate()
 
-  const staffName = useAuthStore((s) => s.user?.name ?? "Staff")
-  const staffRole = useAuthStore((s) => s.user?.role ?? "")
+  const staffName    = useAuthStore((s) => s.user?.name ?? "Staff")
+  const staffRole    = useAuthStore((s) => s.user?.role ?? "")
 
-  const branches    = useSessionStore((s) => s.branches)
-  const branchId    = useSessionStore((s) => s.branchId)
-  const setBranchId = useSessionStore((s) => s.setBranchId)
-  const startShift  = useSessionStore((s) => s.startShift)
+  const branches     = useSessionStore((s) => s.branches)
+  const branchId     = useSessionStore((s) => s.branchId)
+  const setBranchId  = useSessionStore((s) => s.setBranchId)
+  const setBranchUUID = useSessionStore((s) => s.setBranchUUID)  // ← store action
+  const startShift   = useSessionStore((s) => s.startShift)
 
-  const [touched, setTouched] = useState(false)
+  const [touched, setTouched]   = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState<string | null>(null)
 
   const branchLabel = useMemo(
     () => branches.find((b) => b.id === branchId)?.label ?? "",
@@ -26,18 +29,41 @@ const ShiftStartScreen = () => {
 
   const canStart = Boolean(branchId)
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setTouched(true)
     if (!canStart) return
-    startShift()
-    navigate("/pos/sales", { replace: true })
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const token = localStorage.getItem("snf_pos_access_token")
+      const res = await fetch("/api/orders/branches", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (!res.ok) throw new Error("Failed to fetch branches")
+
+      const data = await res.json()
+      const branch = data.find((b: any) => b.code === branchId)
+
+      if (branch) {
+        setBranchUUID(branch.id)  // ← 存入 store
+      }
+
+      startShift()
+      navigate("/pos/sales", { replace: true })
+    } catch (err) {
+      setError("Failed to start shift. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <FullPageContainer>
       <Card className={styles.shiftCard} elevation={6}>
 
-        {/* Header */}
         <Typography variant="h5" className={styles.title}>
           Start shift
         </Typography>
@@ -45,7 +71,6 @@ const ShiftStartScreen = () => {
           Hi <b>{staffName}</b>{staffRole ? ` (${staffRole})` : ""}, please choose your branch.
         </Typography>
 
-        {/* Branch select */}
         <div className={styles.fullRow}>
           <FormControl className={styles.branchControl} size="small">
             <Select
@@ -66,16 +91,21 @@ const ShiftStartScreen = () => {
           </FormControl>
         </div>
 
-        {/* Actions */}
+        {error && (
+          <Typography variant="caption" color="error" display="block" mt={1}>
+            {error}
+          </Typography>
+        )}
+
         <div className={styles.actions}>
           <Button
             variant="contained"
             size="large"
-            disabled={!canStart}
+            disabled={!canStart || loading}
             onClick={handleStart}
             className={styles.primaryButton}
           >
-            Start shift
+            {loading ? "Starting…" : "Start shift"}
           </Button>
           <Button
             variant="outlined"

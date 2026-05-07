@@ -3,24 +3,26 @@ import { persist } from "zustand/middleware"
 import type { CartLine, OrderScope, ProductLite, SalesOrder } from "./types";
 
 type OrdersState = {
-  orders: SalesOrder[];
-  activeOrderId: string;
+    orders: SalesOrder[];
+    activeOrderId: string;
 
-  createOrder: (ctx: { scope: OrderScope; staffId: string; shiftId: string }) => string;
-  setActiveOrder: (orderId: string) => void;
+    createOrder: (ctx: { scope: OrderScope; staffId: string; shiftId: string }) => string;
+    clearOrder: (orderId: string) => void;
 
-  holdOrder: (ctx: { orderId: string; staffId: string; reason?: string }) => void;
-  resumeOrder: (ctx: { orderId: string; staffId: string }) => void;
-  cancelOrder: (ctx: { orderId: string; staffId: string; reason?: string }) => void;
+    setActiveOrder: (orderId: string) => void;
 
-  closeOrderTab: (orderId: string) => void; // MVP: remove from list (void doesn't remove)
+    holdOrder: (ctx: { orderId: string; staffId: string; reason?: string }) => void;
+    resumeOrder: (ctx: { orderId: string; staffId: string }) => void;
+    cancelOrder: (ctx: { orderId: string; staffId: string; reason?: string }) => void;
 
-  addLineItem: (ctx: { orderId: string; product: ProductLite; qty?: number }) => void;
-  incLineQty: (ctx: { orderId: string; lineId: string }) => void;
-  decLineQty: (ctx: { orderId: string; lineId: string }) => void;
-  removeLine: (ctx: { orderId: string; lineId: string }) => void;
+    closeOrderTab: (orderId: string) => void; // MVP: remove from list (void doesn't remove)
 
-  getSubtotal: (orderId: string) => number;
+    addLineItem: (ctx: { orderId: string; product: ProductLite; qty?: number }) => void;
+    incLineQty: (ctx: { orderId: string; lineId: string }) => void;
+    decLineQty: (ctx: { orderId: string; lineId: string }) => void;
+    removeLine: (ctx: { orderId: string; lineId: string }) => void;
+
+    getSubtotal: (orderId: string) => number;
 };
 
 const createId = () => `${Date.now()}_${Math.random().toString(16).slice(2)}`;
@@ -68,6 +70,13 @@ export const useOrdersStore = create<OrdersState>()(
 
             return next.id;
         },
+        clearOrder: (orderId: string) => {
+            set((s) => ({
+              orders: s.orders.map((o) =>
+                o.id === orderId ? { ...o, lines: [], updatedAt: Date.now() } : o
+              ),
+            }))
+          },
         setActiveOrder: (orderId) => set({ activeOrderId: orderId }),
         holdOrder: ({ orderId, staffId, reason }) => {
             set((s) => ({
@@ -96,7 +105,7 @@ export const useOrdersStore = create<OrdersState>()(
             activeOrderId: orderId,
             }));
         },
-            cancelOrder: ({ orderId, staffId, reason }) => {
+        cancelOrder: ({ orderId, staffId, reason }) => {
             set((s) => {
             const nextOrders = s.orders.map((o) =>
                 o.id === orderId && o.status !== "void"

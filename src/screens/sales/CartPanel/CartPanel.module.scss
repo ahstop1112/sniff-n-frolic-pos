@@ -63,6 +63,7 @@
 
 .actionsRow {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px; // theme.spacing(1)
 }
 

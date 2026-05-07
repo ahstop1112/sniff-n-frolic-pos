@@ -7,6 +7,8 @@ export interface Product {
   sku: string
   barcode?: string
   unitPrice: number
+  salePrice?: number | null
+  description?: string | null
   taxRate: number
   quantity: number       // current stock
   category: string

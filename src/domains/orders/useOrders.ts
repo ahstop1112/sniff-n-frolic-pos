@@ -10,6 +10,7 @@ export const useOrders = () => {
   const activeOrderId = useOrdersStore((s) => s.activeOrderId);
 
   const createOrderRaw = useOrdersStore((s) => s.createOrder);
+  const clearOrder = useOrdersStore((s) => s.clearOrder);
   const setActiveOrder = useOrdersStore((s) => s.setActiveOrder);
 
   const holdOrderRaw = useOrdersStore((s) => s.holdOrder);
@@ -80,6 +81,7 @@ export const useOrders = () => {
 
     // actions
     createOrder,
+    clearOrder,
     setActiveOrder,
     closeOrderTab,
 

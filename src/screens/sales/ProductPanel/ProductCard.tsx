@@ -4,6 +4,8 @@ import CardActionArea from "@mui/material/CardActionArea"
 import CardContent from "@mui/material/CardContent"
 import CardMedia from "@mui/material/CardMedia"
 import Typography from "@mui/material/Typography"
+import IconButton from "@mui/material/IconButton"
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import type { Product } from "@/domains/product/types/product.types"
 import StockBadge from "./StockBadge"
 import type { ProductPanelFlags } from "../hooks/useProductPanelFlags"
@@ -12,6 +14,7 @@ interface ProductCardProps {
   product: Product
   flags: ProductPanelFlags
   onAdd: (product: Product) => void
+  onSelect: (product: Product) => void
   currency?: string
 }
 
@@ -19,11 +22,17 @@ const ProductCard = ({
   product,
   flags,
   onAdd,
+  onSelect,
   currency = "CAD",
 }: ProductCardProps) => {
   const isOutOfStock = product.quantity === 0
 
-  const price = new Intl.NumberFormat(undefined, {
+  const displayPrice = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+  }).format(product.salePrice ?? product.unitPrice)
+
+  const regularPrice = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency,
   }).format(product.unitPrice)
@@ -35,8 +44,31 @@ const ProductCard = ({
         height: "100%",
         opacity: isOutOfStock ? 0.5 : 1,
         transition: "opacity 0.2s",
+        position: "relative"
       }}
     >
+      {/* Info button — right top corner */}
+      <IconButton
+        size="small"
+        onClick={(e) => {
+          e.stopPropagation()
+          onSelect(product)
+        }}
+        sx={{
+          position: "absolute",
+          top: 6,
+          right: 6,
+          zIndex: 1,
+          bgcolor: "background.paper",
+          border: 1,
+          borderColor: "divider",
+          width: 28,
+          height: 28,
+          "&:hover": { bgcolor: "grey.100" },
+        }}
+      >
+        <InfoOutlinedIcon sx={{ fontSize: 16 }} />
+      </IconButton>
       <CardActionArea
         onClick={() => onAdd(product)}
         disabled={isOutOfStock}
@@ -69,11 +101,6 @@ const ProductCard = ({
             {product.name}
           </Typography>
 
-          {/* SKU */}
-          <Typography variant="caption" color="text.secondary" display="block">
-            {product.sku}
-          </Typography>
-
           {/* Price + stock */}
           <Box
             sx={{
@@ -84,9 +111,20 @@ const ProductCard = ({
               gap: 0.5,
             }}
           >
-            <Typography variant="subtitle2" color="primary" noWrap>
-              {price}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Typography variant="subtitle2" color="primary" noWrap>
+                {displayPrice}
+              </Typography>
+              {product.salePrice && (
+                <Typography
+                  variant="caption"
+                  color="text.disabled"
+                  sx={{ textDecoration: "line-through" }}
+                >
+                  {regularPrice}
+                </Typography>
+              )}
+            </Box>
             {flags.showStockBadge && (
               <StockBadge quantity={product.quantity} />
             )}

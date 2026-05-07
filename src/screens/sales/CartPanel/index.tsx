@@ -1,6 +1,5 @@
+import { useState } from "react"
 import Typography from "@mui/material/Typography"
-import Tabs from "@mui/material/Tabs"
-import Tab from "@mui/material/Tab"
 import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 import Divider from "@mui/material/Divider"
@@ -11,6 +10,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import RemoveIcon from "@mui/icons-material/Remove"
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import { useOrders } from "@/domains/orders/useOrders"
+import { useQueryClient } from "@tanstack/react-query"
+import { PaymentModal } from "../Payment"
 import type { CartPanelProps } from "./types"
 import styles from "./CartPanel.module.scss"
 
@@ -28,6 +29,7 @@ export const CartPanel = ({ currency = "CAD", onPay }: CartPanelProps) => {
     activeOrder,
     activeSubtotal,
     createOrder,
+    clearOrder,
     setActiveOrder,
     closeOrderTab,
     incLineQty,
@@ -35,10 +37,10 @@ export const CartPanel = ({ currency = "CAD", onPay }: CartPanelProps) => {
     removeLine,
   } = useOrders()
 
-  const handlePay = () => {
-    if (!activeOrder) return
-    onPay?.(activeOrder.id)
-  }
+  const [paymentOpen, setPaymentOpen] = useState(false);
+
+  const queryClient = useQueryClient()
+
 
   // Empty state
   if (!activeOrder) {
@@ -147,16 +149,28 @@ export const CartPanel = ({ currency = "CAD", onPay }: CartPanelProps) => {
         </div>
 
         <div className={styles.actionsRow}>
+          <Button variant="contained" fullWidth
+            onClick={() => setPaymentOpen(true)} disabled={!hasLines}>
+            Pay
+          </Button>
           <Button variant="outlined" fullWidth
-            onClick={() => removeLine({ orderId: activeOrder.id, lineId: "" })}
+            onClick={() => clearOrder(activeOrder.id)}
             disabled={!hasLines}>
             Clear
           </Button>
-          <Button variant="contained" fullWidth
-            onClick={handlePay} disabled={!hasLines}>
-            Pay
-          </Button>
         </div>
+        <PaymentModal
+          orderId={activeOrder.id}
+          open={paymentOpen}
+          total={activeSubtotal * 100}  // convert to cents
+          lines={activeOrder.lines}
+          onClose={() => setPaymentOpen(false)}
+          onComplete={() => {
+            setPaymentOpen(false)
+            clearOrder(activeOrder.id)
+            queryClient.invalidateQueries({ queryKey: ["daily-summary"] })
+          }}
+        />
       </div>
 
     </div>

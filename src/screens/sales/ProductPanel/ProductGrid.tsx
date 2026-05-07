@@ -11,6 +11,7 @@ interface ProductGridProps {
   flags: ProductPanelFlags
   isLoading?: boolean
   onAdd: (product: Product) => void
+  onSelect: (product: Product) => void
   currency?: string
 }
 
@@ -21,8 +22,11 @@ const ProductGrid = ({
   flags,
   isLoading,
   onAdd,
+  onSelect,
   currency,
 }: ProductGridProps) => {
+  const safeProducts = Array.isArray(products) ? products : []
+
   // gridColumns flag → MUI v6 size prop
   const colSize = { 2: 6, 3: 4, 4: 3 }[flags.gridColumns] as 3 | 4 | 6
 
@@ -30,7 +34,7 @@ const ProductGrid = ({
     return (
       <Grid container spacing={1.5} sx={{ p: 1.5 }}>
         {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-          <Grid key={i} size={{ xs: 6, sm: colSize }}>
+          <Grid key={i} size={{ xs: 6, sm: 4, lg: 3 }}>
             <Skeleton variant="rounded" height={flags.showProductImage ? 180 : 90} />
           </Grid>
         ))}
@@ -38,7 +42,7 @@ const ProductGrid = ({
     )
   }
 
-  if (products.length === 0) {
+  if (safeProducts.length === 0) {
     return (
       <Box sx={{ p: 4, textAlign: "center" }}>
         <Typography variant="body2" color="text.secondary">
@@ -50,12 +54,13 @@ const ProductGrid = ({
 
   return (
     <Grid container spacing={1.5} sx={{ p: 1.5 }}>
-      {products.map((p) => (
+      {safeProducts.map((p) => (
         <Grid size={{ xs: 6, sm: colSize }} key={p.id}>
           <ProductCard
             product={p}
             flags={flags}
             onAdd={onAdd}
+            onSelect={onSelect}
             currency={currency}
           />
         </Grid>

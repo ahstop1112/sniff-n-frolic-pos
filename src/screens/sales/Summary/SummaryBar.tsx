@@ -5,6 +5,10 @@ import DialogTitle from "@mui/material/DialogTitle"
 import Typography from "@mui/material/Typography"
 import Skeleton from "@mui/material/Skeleton"
 import Box from "@mui/material/Box"
+import Accordion from "@mui/material/Accordion"
+import AccordionSummary from "@mui/material/AccordionSummary"
+import AccordionDetails from "@mui/material/AccordionDetails"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import TrendingUpIcon from "@mui/icons-material/TrendingUp"
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined"
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined"
@@ -87,24 +91,57 @@ const SalesSummaryBar = () => {
           </Typography>
         </DialogTitle>
 
+        {/* Orders breakdown */}
         <div className={styles.popupBody}>
-          {(data?.topItems ?? []).map((item) => (
-            <div key={item.name} className={styles.popupRow}>
-              <div>
-                <Typography variant="body2" fontWeight={500}>
-                  {item.name}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  × {item.qty}
-                </Typography>
-              </div>
-              <Typography variant="body2" fontWeight={700}>
-                {formatMoney(item.total)}
-              </Typography>
-            </div>
+          {(data?.orders ?? [])
+            .slice()
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .map((order) => (
+            <Accordion key={order.id} disableGutters elevation={0}
+              sx={{ border: 1, borderColor: "divider", mb: 1, borderRadius: "8px !important",
+                "&:before": { display: "none" } }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", pr: 1 }}>
+                <Box>
+                    <Typography variant="body2" fontWeight={700}>{order.label}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(order.createdAt).toLocaleTimeString("en-US", { 
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true 
+                      })}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    <Typography variant="caption" color="text.secondary">
+                      {order.itemCount} items
+                    </Typography>
+                    <Typography variant="body2" fontWeight={700} color="primary">
+                      {formatMoney(order.total)}
+                    </Typography>
+                  </Box>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails sx={{ pt: 0 }}>
+                {order.items.map((item, i) => (
+                  <div key={i} className={styles.popupRow}>
+                    <div>
+                      <Typography variant="body2">{item.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">× {item.qty}</Typography>
+                    </div>
+                    <Typography variant="body2" fontWeight={600}>
+                      {formatMoney(item.total)}
+                    </Typography>
+                  </div>
+                ))}
+              </AccordionDetails>
+            </Accordion>
           ))}
         </div>
 
+        {/* Grand total */}
         <div className={styles.popupTotal}>
           <Typography variant="subtitle2" fontWeight={700}>Total</Typography>
           <Typography variant="subtitle1" fontWeight={800} color="primary">
