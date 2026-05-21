@@ -18,7 +18,7 @@ npm run dev            # Start frontend + backend (assumes DB already running)
 ```bash
 npm run db:up          # Start PostgreSQL via Docker
 npm run db:down        # Stop PostgreSQL
-npm run dev:app        # Vite dev server → localhost:5173
+npm run dev:app        # Vite dev server → localhost:51731
 npm run dev:services   # NestJS API → localhost:4000
 ```
 

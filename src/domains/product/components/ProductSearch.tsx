@@ -1,1 +1,0 @@
-export const ProductSearch = () => null

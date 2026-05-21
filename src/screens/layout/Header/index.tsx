@@ -94,8 +94,8 @@ const Header = ({
             },
           }}
         >
-          <ToggleButton value="sales">Sales</ToggleButton>
-          <ToggleButton value="manage">Manage</ToggleButton>
+          <ToggleButton value="sales" onClick={() => navigate("/pos/sales", { replace: true })}>Sales</ToggleButton>
+          <ToggleButton value="manage" onClick={() => navigate("/pos/manage", { replace: true })}>Manage</ToggleButton>
         </ToggleButtonGroup>
 
         {/* Staff menu */}
