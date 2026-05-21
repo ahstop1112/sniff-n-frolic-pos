@@ -15,6 +15,11 @@ const MOCK_CATEGORIES = [
   { id: "cat-2", name: "Treats", slug: "treats" },
 ]
 
+const MOCK_BRANDS = [
+  { id: "brand-1", name: "Hugsmart", slug: "hugsmart" },
+  { id: "brand-2", name: "Sodapup", slug: "sodapup" },
+]
+
 const MOCK_PRODUCTS = [
   {
     id: "prod-1",
@@ -29,8 +34,8 @@ const MOCK_PRODUCTS = [
     stock_quantity: 10,
     stock_status: "instock",
     featured_image_url: null,
-    category_name: "Toys",
-    category_id: "cat-1",
+    category_names: ["Toys"],
+    brand_names: ["Hugsmart"],
   },
   {
     id: "prod-2",
@@ -45,8 +50,8 @@ const MOCK_PRODUCTS = [
     stock_quantity: 2,
     stock_status: "instock",
     featured_image_url: null,
-    category_name: "Treats",
-    category_id: "cat-2",
+    category_names: ["Treats"],
+    brand_names: [],
   },
 ]
 
@@ -57,17 +62,17 @@ const MOCK_PRODUCT_DETAIL = {
   meta_title: "",
   meta_description: "",
   images: [],
+  categories: [{ id: "cat-1", name: "Toys", slug: "toys" }],
+  brands: [{ id: "brand-1", name: "Hugsmart", slug: "hugsmart" }],
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 async function mockAuth(page: Page) {
-  // Set token in localStorage before page scripts run
   await page.addInitScript((token) => {
     localStorage.setItem("snf_pos_access_token", token)
   }, MOCK_TOKEN)
 
-  // Mock the session-restore call (uses absolute URL, not proxied)
   await page.route("http://localhost:4000/auth/me", (route: Route) =>
     route.fulfill({
       status: 200,
@@ -83,6 +88,16 @@ async function mockCategories(page: Page) {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(MOCK_CATEGORIES),
+    })
+  )
+}
+
+async function mockBrands(page: Page) {
+  await page.route("**/api/brands", (route: Route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(MOCK_BRANDS),
     })
   )
 }
@@ -104,6 +119,7 @@ test.describe("Products — listing", () => {
     await mockAuth(page)
     await mockProductsList(page)
     await mockCategories(page)
+    await mockBrands(page)
   })
 
   test("renders product table with rows", async ({ page }) => {
@@ -126,7 +142,7 @@ test.describe("Products — listing", () => {
 
     await page.goto("/pos/manage/products")
     await page.getByPlaceholder("Search by name or SKU…").fill("Squeaky")
-    await page.waitForTimeout(400) // debounce is 300 ms
+    await page.waitForTimeout(400)
 
     expect(capturedUrl).toContain("search=Squeaky")
   })
@@ -144,6 +160,7 @@ test.describe("Products — create", () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page)
     await mockCategories(page)
+    await mockBrands(page)
   })
 
   test("submits POST /api/products with correct payload", async ({ page }) => {
@@ -161,7 +178,6 @@ test.describe("Products — create", () => {
       return route.continue()
     })
 
-    // The redirect after create hits the edit page — mock it
     await page.route("**/api/products/tennis-ball", (route: Route) =>
       route.fulfill({
         status: 200,
@@ -180,6 +196,8 @@ test.describe("Products — create", () => {
 
     expect(capturedBody.name).toBe("Tennis Ball")
     expect(capturedBody.regular_price).toBe(1299)
+    expect(Array.isArray(capturedBody.category_ids)).toBe(true)
+    expect(Array.isArray(capturedBody.brand_ids)).toBe(true)
   })
 
   test("auto-generates slug from name", async ({ page }) => {
@@ -196,6 +214,7 @@ test.describe("Products — edit", () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page)
     await mockCategories(page)
+    await mockBrands(page)
 
     await page.route("**/api/products/squeaky-ball", (route: Route) =>
       route.fulfill({
@@ -262,7 +281,6 @@ test.describe("Products — edit", () => {
 
     await page.goto("/pos/manage/products/squeaky-ball")
 
-    // Autocomplete: type into the input to filter, then pick the option
     await page.getByPlaceholder("Add category…").click()
     await page.getByRole("option", { name: "Treats" }).click()
     await page.getByRole("button", { name: "Save" }).click()
@@ -270,12 +288,42 @@ test.describe("Products — edit", () => {
     await expect(page.getByText("Saved ✓")).toBeVisible()
     expect(capturedBody.category_ids).toContain("cat-2")
   })
+
+  test("brand picker shows brands and sets brand_ids", async ({ page }) => {
+    let capturedBody: Record<string, unknown> = {}
+
+    await page.route("**/api/products/prod-1", async (route: Route) => {
+      if (route.request().method() === "PUT") {
+        capturedBody = JSON.parse(route.request().postData() ?? "{}") as Record<string, unknown>
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(MOCK_PRODUCT_DETAIL),
+        })
+      }
+      return route.continue()
+    })
+
+    await page.route("**/api/products/prod-1/images", (route: Route) =>
+      route.fulfill({ status: 200, body: "[]" })
+    )
+
+    await page.goto("/pos/manage/products/squeaky-ball")
+
+    await page.getByPlaceholder("Add brand…").click()
+    await page.getByRole("option", { name: "Sodapup" }).click()
+    await page.getByRole("button", { name: "Save" }).click()
+
+    await expect(page.getByText("Saved ✓")).toBeVisible()
+    expect(capturedBody.brand_ids).toContain("brand-2")
+  })
 })
 
 test.describe("Products — delete", () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page)
     await mockCategories(page)
+    await mockBrands(page)
 
     await page.route("**/api/products/squeaky-ball", (route: Route) =>
       route.fulfill({
@@ -318,7 +366,11 @@ test.describe("Products — delete", () => {
     await page.route("**/api/products/prod-1", async (route: Route) => {
       if (route.request().method() === "PUT") {
         capturedBody = JSON.parse(route.request().postData() ?? "{}") as Record<string, unknown>
-        return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...MOCK_PRODUCT_DETAIL, status: "archived" }) })
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ...MOCK_PRODUCT_DETAIL, status: "archived" }),
+        })
       }
       return route.continue()
     })
@@ -333,7 +385,7 @@ test.describe("Products — delete", () => {
 
     await page.goto("/pos/manage/products/squeaky-ball")
     await page.getByRole("button", { name: "Delete" }).click()
-    await page.getByRole("button", { name: "Delete" }).last().click() // confirm button in dialog
+    await page.getByRole("button", { name: "Delete" }).last().click()
 
     await expect(page).toHaveURL(/\/pos\/manage\/products$/)
     expect(capturedBody.status).toBe("archived")
