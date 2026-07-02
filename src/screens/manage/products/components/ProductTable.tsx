@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
@@ -6,7 +6,9 @@ import Chip from "@mui/material/Chip"
 import Skeleton from "@mui/material/Skeleton"
 import CircularProgress from "@mui/material/CircularProgress"
 import EditIcon from "@mui/icons-material/Edit"
+import InventoryIcon from "@mui/icons-material/Inventory"
 import IconButton from "@mui/material/IconButton"
+import StockAdjustDialog from "./StockAdjustDialog"
 
 interface Product {
   id: string
@@ -40,10 +42,17 @@ const formatMoney = (cents: number) =>
     maximumFractionDigits: 2,
   }).format(cents / 100)
 
-const statusColor = (status: string) => {
+const statusColor = (status: string): "success" | "warning" | "default" => {
   if (status === "published") return "success"
   if (status === "draft")     return "warning"
   return "default"
+}
+
+interface StockTarget {
+  id: string
+  name: string
+  stock_quantity: number
+  stock_status: string
 }
 
 const ProductTable = ({
@@ -55,6 +64,7 @@ const ProductTable = ({
 }: ProductTableProps) => {
   const navigate = useNavigate()
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const [stockTarget, setStockTarget] = useState<StockTarget | null>(null)
 
   useEffect(() => {
     const el = sentinelRef.current
@@ -93,10 +103,21 @@ const ProductTable = ({
     )
   }
 
-  const columnsWidth = "84px 1fr 100px 120px 120px 80px 100px 80px 40px";
+  const columnsWidth = "84px 1fr 100px 120px 120px 80px 100px 80px 40px 40px";
 
   return (
     <Box>
+      {stockTarget && (
+        <StockAdjustDialog
+          open={!!stockTarget}
+          onClose={() => setStockTarget(null)}
+          productId={stockTarget.id}
+          productName={stockTarget.name}
+          currentQty={stockTarget.stock_quantity}
+          currentStatus={stockTarget.stock_status}
+        />
+      )}
+
       {/* Table header */}
       <Box sx={{
         display: "grid",
@@ -105,8 +126,8 @@ const ProductTable = ({
         borderBottom: 1, borderColor: "divider",
         bgcolor: "grey.50",
       }}>
-        {["", "Name", "Category", "Price", "Stock", "Status", "Type", ""].map((h) => (
-          <Typography key={h} variant="caption" color="text.secondary" fontWeight={700}
+        {["", "Name", "Category", "Price", "Stock", "Status", "Type", "", ""].map((h, i) => (
+          <Typography key={`${h}-${i}`} variant="caption" color="text.secondary" fontWeight={700}
             sx={{ letterSpacing: "0.06em" }}>
             {h}
           </Typography>
@@ -185,13 +206,24 @@ const ProductTable = ({
           <Chip
             label={p.status}
             size="small"
-            color={statusColor(p.status) as any}
+            color={statusColor(p.status)}
           />
 
           {/* Type */}
           <Typography variant="caption" color="text.secondary">
             {p.product_type}
           </Typography>
+
+          <IconButton
+            size="small"
+            title="Adjust stock"
+            onClick={(e) => {
+              e.stopPropagation()
+              setStockTarget({ id: p.id, name: p.name, stock_quantity: p.stock_quantity, stock_status: p.stock_status })
+            }}
+          >
+            <InventoryIcon fontSize="small" />
+          </IconButton>
 
           <IconButton
             size="small"
