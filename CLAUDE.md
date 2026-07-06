@@ -156,3 +156,24 @@ Products, categories, and brands are the source of truth in a shared Postgres DB
 
 ### Perry's role
 Perry doesn't review line-by-line. He reviews: commit history, test/lint output, and step summaries. Deployment is done by him, separately.
+
+---
+ 
+## Git Rules — hard requirements
+ 
+**Perry reviews everything before it reaches main. No exceptions.**
+ 
+- **Never commit directly to `main`.** At the start of each task, create a feature branch named `feature/<short-description>` and do all work there.
+- Commit freely and frequently on the feature branch — small, descriptive commits are encouraged.
+- **Never merge to `main`, never push to `main`.** When the task is complete, summarize what's on the branch (commits, files touched, test/lint results) and stop. Perry reviews the branch and performs the merge himself.
+- If you discover you are on `main` at any point, stop immediately, create a branch, and tell Perry before doing anything else.
+- **`CLAUDE.md` is a governance document.** Fixing factual errors within an approved task scope is fine, but restructuring it, or adding/removing/altering any rules section (Autonomy Rules, Deployment, Git Rules, API Change Boundary), requires stopping and asking Perry first.
+## API Change Boundary — clarification
+ 
+"Extending an existing endpoint" **counts as an API change**. Any modification under `sniff-n-frolic-api/src` — including additive, backward-compatible changes like new optional query params or new optional fields — requires **stopping and summarizing the proposed change before implementing it**. Backward compatibility is Perry's call to confirm, not the agent's to assume: both `sniff-n-frolic-store` and `sniff-n-frolic-pos` consume this API.
+ 
+## Code Style — hard rule
+ 
+- Match the surrounding code's existing style exactly (quotes, semicolons, indentation).
+- **Never run a formatter over an entire file.** Never reformat lines you are not functionally changing — formatting noise buries the real diff and breaks review.
+- If the repo needs consistent formatting, propose adding a Prettier/ESLint config as its own separate task — do not impose formatting silently.
