@@ -33,20 +33,20 @@ const groupItems = (items: StockItem[]): { simples: StockItem[]; groups: Group[]
   const groupMap = new Map<string, Group>()
 
   for (const item of items) {
-    if (!item.parentId) {
+    if (!item.parent_id) {
       simples.push(item)
       continue
     }
-    const existing = groupMap.get(item.parentId)
+    const existing = groupMap.get(item.parent_id)
     if (existing) {
       existing.children.push(item)
-      existing.parent.totalStock += item.manageStock ? item.stockQuantity : 0
+      existing.parent.totalStock += item.manage_stock ? item.stock_quantity : 0
     } else {
-      groupMap.set(item.parentId, {
+      groupMap.set(item.parent_id, {
         parent: {
-          id: item.parentId,
-          name: item.parentName ?? "Unnamed parent",
-          totalStock: item.manageStock ? item.stockQuantity : 0,
+          id: item.parent_id,
+          name: item.parent_name ?? "Unnamed parent",
+          totalStock: item.manage_stock ? item.stock_quantity : 0,
         },
         children: [item],
       })
@@ -88,11 +88,11 @@ const StockRow = ({ item, indent = false }: { item: StockItem; indent?: boolean 
       {item.sku ?? "—"}
     </Typography>
     <StockBadge
-      quantity={item.stockQuantity}
-      manageStock={item.manageStock}
-      isLowStock={item.isLowStock}
+      quantity={item.stock_quantity}
+      manageStock={item.manage_stock}
+      isLowStock={item.is_low_stock}
     />
-    {item.manageStock ? <AdjustButton productId={item.id} /> : <Box />}
+    {item.manage_stock ? <AdjustButton productId={item.id} /> : <Box />}
   </Box>
 )
 

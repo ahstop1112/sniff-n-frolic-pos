@@ -52,9 +52,9 @@ export const getStock = (params: GetStockParams = {}): Promise<StockListResponse
   request(
     buildUrl("/stock", {
       search: params.search,
-      lowStockOnly: params.lowStockOnly,
-      lowStockThreshold: params.lowStockThreshold,
-      branchId: params.branchId,
+      low_stock_only: params.low_stock_only,
+      low_stock_threshold: params.low_stock_threshold,
+      branch_id: params.branch_id,
       limit: params.limit,
       offset: params.offset,
     }),
@@ -68,11 +68,11 @@ export const getStockByProduct = (productId: string): Promise<StockItem> =>
 export const getMovements = (params: GetMovementsParams = {}): Promise<MovementListResponse> =>
   request(
     buildUrl("/movements", {
-      productId: params.productId,
-      branchId: params.branchId,
+      product_id: params.product_id,
+      branch_id: params.branch_id,
       reason: params.reason,
-      dateFrom: params.dateFrom,
-      dateTo: params.dateTo,
+      date_from: params.date_from,
+      date_to: params.date_to,
       limit: params.limit,
       offset: params.offset,
     }),
