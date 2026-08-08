@@ -48,6 +48,8 @@ const statusColor = (status: string): "success" | "warning" | "default" => {
   return "default"
 }
 
+const productColumns = ["", "Name", "Category", "Brand", "Price", "Stock", "Status", "Type", "", ""];
+
 interface StockTarget {
   id: string
   name: string
@@ -126,7 +128,7 @@ const ProductTable = ({
         borderBottom: 1, borderColor: "divider",
         bgcolor: "grey.50",
       }}>
-        {["", "Name", "Category", "Price", "Stock", "Status", "Type", "", ""].map((h, i) => (
+        {productColumns.map((h, i) => (
           <Typography key={`${h}-${i}`} variant="caption" color="text.secondary" fontWeight={700}
             sx={{ letterSpacing: "0.06em" }}>
             {h}
