@@ -16,6 +16,9 @@ const ManageScreen = () => {
           <Button variant="contained" onClick={() => nav("/pos/manage/products")}>
             Products
           </Button>
+          <Button variant="contained" onClick={() => nav("/pos/manage/inventory")}>
+            Inventory
+          </Button>
         </Stack>
         <Box p={2}>
           <Outlet />

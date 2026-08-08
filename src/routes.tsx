@@ -8,6 +8,9 @@ import HomeScreen from  "@/screens/start/Home"
 import ShiftStartScreen from "@/screens/start/ShiftStart"
 import ManageProductsScreen from "./screens/manage/products"
 import ProductEditScreen from "./screens/manage/products/ProductEditScreen"
+import StockOverviewScreen from "./screens/manage/inventory"
+import AdjustStockScreen from "./screens/manage/inventory/AdjustStockScreen"
+import MovementsScreen from "./screens/manage/inventory/MovementsScreen"
 
 const AppRoutes = () => {
   return (
@@ -26,6 +29,9 @@ const AppRoutes = () => {
           <Route path="manage/" element={<ManageScreen />}>
             <Route path="products"      element={<ManageProductsScreen />} />
             <Route path="products/:slug" element={<ProductEditScreen />} />
+            <Route path="inventory"            element={<StockOverviewScreen />} />
+            <Route path="inventory/movements"  element={<MovementsScreen />} />
+            <Route path="inventory/adjust"     element={<AdjustStockScreen />} />
           </Route>
         
           {/* ✅ Sales requires shift */}
