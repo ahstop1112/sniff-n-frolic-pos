@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from "react"
 import {
   Alert, Box, Button, CircularProgress,
-  Paper, Stack, TextField, Typography,
+  Stack, TextField, Typography,
 } from "@mui/material";
+import PetsIcon from "@mui/icons-material/Pets";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/domains/auth/store";
-import { FullPageContainer } from "@/screens/layout/PageContainer";
 import styles from "./LoginScreen.module.scss";
 
 type LocationState = {
@@ -79,93 +80,141 @@ const LoginScreen = () => {
   }
 
   return (
-    <FullPageContainer>
-      <Paper className={styles.card} elevation={6}>
-      <Stack spacing={2}>
+    <div className={styles.page}>
 
-        {/* Header */}
-        <Box>
-          <Typography variant="h5" fontWeight={800}>POS Login</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Sign in to access Manage / Sales.
+      {/* ── Left brand panel ─────────────────────── */}
+      <aside className={styles.brandPanel}>
+        <div className={styles.brandMark}>
+          <div className={styles.brandChip}>
+            <PetsIcon fontSize="small" />
+          </div>
+          <div>
+            <div className={styles.brandName}>Sniff &amp; Frolic</div>
+            <div className={styles.brandSub}>POS · Yaletown YVR</div>
+          </div>
+        </div>
+
+        <div className={styles.brandHero}>
+          <Typography variant="h1" component="h1">
+            Open the drawer,<br />start the day.
           </Typography>
-        </Box>
+          <p>
+            Sales, inventory and the Frolic AI watch — all behind one sign-in.
+          </p>
+        </div>
 
-        {/* Error */}
-        {error && <Alert severity="error">{error}</Alert>}
+        <div className={styles.brandFooter}>
+          <span>v3.4.1</span>
+          <span className={styles.footerDot}>Terminal LANE-A · registered</span>
+          <span className={styles.footerDot}>Need help? 604 ⋯ 2210</span>
+        </div>
+      </aside>
 
-        {/* Step 1 — email */}
-        {step === "email" ? (
-          <Box component="form" onSubmit={onRequestCode}>
-            <Stack spacing={1.5}>
-              <TextField
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
-                fullWidth
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                fullWidth
-                disabled={isLoading}
-                startIcon={isLoading ? <CircularProgress size={18} /> : undefined}
-              >
-                {isLoading ? "Sending code…" : "Send verification code"}
-              </Button>
-            </Stack>
-          </Box>
+      {/* ── Right stage with card ────────────────── */}
+      <main className={styles.stage}>
+        <div className={styles.card}>
+          <div className={styles.cardChip}>
+            <PetsIcon fontSize="small" />
+          </div>
 
-        ) : (
-        /* Step 2 — OTP */
-          <Box component="form" onSubmit={onVerifyCode}>
-            <Stack spacing={1.5}>
-              <TextField label="Email" value={email} fullWidth disabled />
+          <Stack spacing={0.5} sx={{ mb: 3 }}>
+            <Typography variant="h3" component="h2">POS Login</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Sign in to access Manage / Sales.
+            </Typography>
+          </Stack>
 
-              <TextField
-                label="6-digit code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                autoComplete="one-time-code"
-                fullWidth
-                disabled={isLoading}
-                inputProps={{ maxLength: 6 }}
-              />
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                fullWidth
-                disabled={isLoading}
-                startIcon={isLoading ? <CircularProgress size={18} /> : undefined}
-              >
-                {isLoading ? "Verifying…" : "Verify and sign in"}
-              </Button>
+          {step === "email" ? (
+            <Box component="form" onSubmit={onRequestCode}>
+              <Stack spacing={1}>
+                <Typography variant="overline">Email</Typography>
+                <TextField
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="username"
+                  fullWidth
+                  disabled={isLoading}
+                  placeholder="you@sniffandfrolic.ca"
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  disabled={isLoading}
+                  startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
+                  sx={{ mt: 1.5 }}
+                >
+                  {isLoading ? "Sending code…" : "Send verification code"}
+                </Button>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+                  We&apos;ll send a one-time login code to your email.
+                </Typography>
+              </Stack>
+            </Box>
+          ) : (
+            <Box component="form" onSubmit={onVerifyCode}>
+              <Stack spacing={1}>
+                <Typography variant="overline">Email</Typography>
+                <TextField value={email} fullWidth disabled />
 
-              <Button type="button" variant="text" fullWidth
-                onClick={onResendCode} disabled={isLoading}>
-                Resend code
-              </Button>
+                <Typography variant="overline" sx={{ mt: 1 }}>Verification code</Typography>
+                <TextField
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  autoComplete="one-time-code"
+                  fullWidth
+                  disabled={isLoading}
+                  inputProps={{ maxLength: 6 }}
+                  placeholder="6-digit code"
+                />
 
-              <Button type="button" variant="text" fullWidth
-                onClick={onBackToEmail} disabled={isLoading}>
-                Use another email
-              </Button>
-            </Stack>
-          </Box>
-        )}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  disabled={isLoading}
+                  startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
+                  sx={{ mt: 1.5 }}
+                >
+                  {isLoading ? "Verifying…" : "Verify and sign in"}
+                </Button>
 
-        <Typography variant="caption" color="text.secondary">
-          We'll send a one-time login code to your email.
-        </Typography>
+                <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
+                  <Button type="button" variant="text" fullWidth
+                    onClick={onResendCode} disabled={isLoading}>
+                    Resend code
+                  </Button>
+                  <Button type="button" variant="text" fullWidth
+                    onClick={onBackToEmail} disabled={isLoading}>
+                    Use another email
+                  </Button>
+                </Stack>
+              </Stack>
+            </Box>
+          )}
 
-      </Stack>
-      </Paper>
-    </FullPageContainer>
+          <hr className={styles.divider} />
+
+          <div className={styles.cardFooter}>
+            <Typography variant="body2" color="text.secondary">
+              Shared terminal?
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<PersonOutlineIcon />}
+              disabled
+            >
+              Use staff PIN
+            </Button>
+          </div>
+        </div>
+      </main>
+    </div>
   )
 }
 

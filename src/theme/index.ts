@@ -1,14 +1,23 @@
 import { createTheme } from "@mui/material/styles";
+import { brand, radii, shadows } from "./tokens";
+
+export { brand, radii, shadows } from "./tokens";
 
 export const theme = createTheme({
     cssVariables: true,
     palette: {
         mode: "light",
         primary: {
-            main: "#111827",   //dark
+            main: brand.coral,
+            dark: brand.coralDark,
+            light: brand.coralSoft,
+            contrastText: "#FFFFFF",
         },
         secondary: {
-            main: "#6b7280",   // medium gray
+            main: brand.navy,
+            dark: brand.navyDark,
+            light: brand.navySoft,
+            contrastText: "#FFFFFF",
         },
         success: {
             main: "#16a34a",
@@ -20,12 +29,17 @@ export const theme = createTheme({
             main: "#ef4444",
         },
         background: {
-            default: "#f9fafb", // 整體背景
-            paper: "#ffffff",   // 卡片 / header
+            default: brand.cream,
+            paper: brand.paper,
         },
-        divider: "#e5e7eb",
+        text: {
+            primary: brand.ink,
+            secondary: brand.inkMuted,
+            disabled: brand.inkFaint,
+        },
+        divider: brand.border,
     },
-    shape: { borderRadius: 12 },
+    shape: { borderRadius: radii.md },
     spacing: 8,
     typography: {
         htmlFontSize: 16,
@@ -49,13 +63,22 @@ export const theme = createTheme({
         },
         button: { fontSize: "1rem", textTransform: "none", fontWeight: 700 },
         subtitle1: { fontSize: "1rem", fontWeight: 700 },
+        caption: { fontSize: "0.8125rem", color: brand.inkMuted },
+        overline: {
+            fontSize: "0.6875rem",
+            fontWeight: 700,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: brand.inkMuted,
+            lineHeight: 1.4,
+        },
         h6: { fontSize: "1.125rem", fontWeight: 800 },
         h5: { fontSize: "1.25rem", fontWeight: 800 },
-        h4: { fontSize: "1.5rem", fontWeight: 800 },
-        h3: { fontSize: "1.875rem", fontWeight: 800 },
-        h2: { fontSize: "2.25rem", fontWeight: 800 },
-        h1: { fontSize: "3rem", fontWeight: 800 },
-    
+        h4: { fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.01em" },
+        h3: { fontSize: "1.875rem", fontWeight: 800, letterSpacing: "-0.015em" },
+        h2: { fontSize: "2.25rem", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.15 },
+        h1: { fontSize: "3.25rem", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.08 },
+
     },
     components: {
       MuiCssBaseline: {
@@ -81,7 +104,15 @@ export const theme = createTheme({
         root: ({ theme }) => ({
           minHeight: 44,              // touch friendly
           borderRadius: theme.shape.borderRadius,
-          fontWeight: 800,
+          fontWeight: 700,
+        }),
+        outlined: ({ theme }) => ({
+          borderColor: theme.palette.divider,
+          color: theme.palette.text.primary,
+          "&:hover": {
+            borderColor: theme.palette.text.secondary,
+            backgroundColor: "transparent",
+          },
         }),
       },
         },
@@ -112,10 +143,10 @@ export const theme = createTheme({
           fontWeight: 800,
           textTransform: "none",
           "&.Mui-selected": {
-            backgroundColor: theme.palette.grey[900],
+            backgroundColor: theme.palette.secondary.main,
             color: theme.palette.common.white,
             "&:hover": {
-              backgroundColor: theme.palette.grey[900],
+              backgroundColor: theme.palette.secondary.dark,
             },
           },
         }),
@@ -136,8 +167,43 @@ export const theme = createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           border: `1px solid ${theme.palette.divider}`,
+          backgroundImage: "none",
         }),
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderRadius: radii.sm,
+          backgroundColor: theme.palette.background.paper,
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.divider,
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: brand.inkFaint,
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: theme.palette.primary.main,
+            borderWidth: 1,
+          },
+        }),
+        input: {
+          padding: "14px 14px",
+        },
       },
     },
   },
 });
+
+// Shadow tokens are not on the MUI shadows scale — surface them alongside
+// the theme so callers can reach for them without a separate import.
+declare module "@mui/material/styles" {
+  interface Theme {
+    brandShadows: typeof shadows
+  }
+  interface ThemeOptions {
+    brandShadows?: typeof shadows
+  }
+}
+
+theme.brandShadows = shadows
