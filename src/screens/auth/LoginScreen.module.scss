@@ -158,3 +158,39 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+// Locked email on the OTP step — filled navy background, white text.
+// Signals "already entered, not editable" more clearly than a greyed-out disabled input.
+.lockedField {
+  :global(.MuiOutlinedInput-root.Mui-disabled) {
+    background-color: var(--mui-palette-secondary-main);
+    color: #ffffff;
+    border-radius: 8px;
+
+    :global(.MuiOutlinedInput-notchedOutline) {
+      border-color: transparent;
+    }
+
+    :global(.MuiOutlinedInput-input) {
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+      font-weight: 500;
+    }
+  }
+}
+
+// Prominent secondary actions on the OTP step ("Resend code" / "Use another email").
+// The wireframe treats these as peers to the primary CTA, not muted afterthoughts.
+.otpActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+
+  :global(.MuiButton-root) {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    padding: 8px 12px;
+    min-height: 44px;
+  }
+}

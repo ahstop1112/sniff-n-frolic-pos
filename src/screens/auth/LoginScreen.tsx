@@ -158,7 +158,12 @@ const LoginScreen = () => {
             <Box component="form" onSubmit={onVerifyCode}>
               <Stack spacing={1}>
                 <Typography variant="overline">Email</Typography>
-                <TextField value={email} fullWidth disabled />
+                <TextField
+                  value={email}
+                  fullWidth
+                  disabled
+                  className={styles.lockedField}
+                />
 
                 <Typography variant="overline" sx={{ mt: 1 }}>Verification code</Typography>
                 <TextField
@@ -183,16 +188,16 @@ const LoginScreen = () => {
                   {isLoading ? "Verifying…" : "Verify and sign in"}
                 </Button>
 
-                <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
-                  <Button type="button" variant="text" fullWidth
+                <div className={styles.otpActions}>
+                  <Button type="button" variant="text"
                     onClick={onResendCode} disabled={isLoading}>
                     Resend code
                   </Button>
-                  <Button type="button" variant="text" fullWidth
+                  <Button type="button" variant="text"
                     onClick={onBackToEmail} disabled={isLoading}>
                     Use another email
                   </Button>
-                </Stack>
+                </div>
               </Stack>
             </Box>
           )}
