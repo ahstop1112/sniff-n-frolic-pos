@@ -2,7 +2,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware"
 
 export type ShiftStatus = "idle" | "active";
-type Branch = { id: string; label: string };
+export type DrawerStatus = "open" | "unclosed";
+export type Branch = {
+    id: string;
+    label: string;
+    address?: string;
+    drawerStatus?: DrawerStatus;
+    activeStaff?: number;
+};
 
 type SessionStore = {
     shiftStatus: ShiftStatus;
@@ -31,10 +38,29 @@ export const useSessionStore = create<SessionStore>()(
       branchUUID: null, 
       deviceName: "",
       drawerId: "",
+      // TODO: source these from the API. Address/drawerStatus/activeStaff are
+      // hard-coded to match the design wireframe and let the UI render fully.
       branches: [
-        { id: "vancouver", label: "Vancouver" },
-        { id: "burnaby", label: "Burnaby" },
-        { id: "richmond", label: "Richmond" },
+        {
+          id: "van-yaletown",
+          label: "Vancouver · Yaletown",
+          address: "1188 Mainland St · Lane A, Lane B",
+          drawerStatus: "open",
+          activeStaff: 3,
+        },
+        {
+          id: "van-kitsilano",
+          label: "Vancouver · Kitsilano",
+          address: "2240 W 4th Ave · Lane A",
+          drawerStatus: "open",
+          activeStaff: 2,
+        },
+        {
+          id: "rich-aberdeen",
+          label: "Richmond · Aberdeen",
+          address: "4151 Hazelbridge Way · Lane A",
+          drawerStatus: "unclosed",
+        },
       ],
       setBranchId: (branchId) => set({ branchId }),
       setBranchUUID: (branchUUID) => set({ branchUUID }),

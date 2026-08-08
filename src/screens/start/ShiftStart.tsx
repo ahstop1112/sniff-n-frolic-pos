@@ -1,109 +1,197 @@
 import { useMemo, useState } from "react"
-import { MenuItem, Typography, Card, FormControl, Select, Button } from "@mui/material"
+import {
+  Alert, Box, Button, CircularProgress, InputAdornment, MenuItem,
+  Radio, Stack, TextField, Typography,
+} from "@mui/material"
+import PetsIcon from "@mui/icons-material/Pets"
+import CheckIcon from "@mui/icons-material/Check"
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "@/domains/auth/store"
-import { useSessionStore } from "@/domains/session/store"
-import { FullPageContainer } from "@/screens/layout/PageContainer"
-import styles from "./Start.module.scss"
+import { useSessionStore, type Branch } from "@/domains/session/store"
+import BrandShell from "@/screens/layout/BrandShell"
+import styles from "./ShiftStart.module.scss"
+
+// Wireframe placeholder — real register options should come from the API
+// once branches expose their drawer/lane configuration.
+const REGISTERS = [
+  "Drawer #1 · Lane A",
+  "Drawer #2 · Lane A",
+  "Drawer #3 · Lane A",
+  "Drawer #4 · Lane B",
+]
+
+const DEFAULT_OPENING_FLOAT = "200.00"
+
+const formatOperatingTime = (d: Date) => {
+  const hh = d.getHours().toString().padStart(2, "0")
+  const mm = d.getMinutes().toString().padStart(2, "0")
+  const weekday = d.toLocaleDateString(undefined, { weekday: "short" })
+  const day = d.getDate()
+  const month = d.toLocaleDateString(undefined, { month: "short" })
+  return `${hh}:${mm}, ${weekday} ${day} ${month}`
+}
+
+interface BranchOptionRowProps {
+  branch: Branch
+  selected: boolean
+  onSelect: () => void
+}
+
+const BranchOptionRow = ({ branch, selected, onSelect }: BranchOptionRowProps) => {
+  const meta = (() => {
+    if (branch.drawerStatus === "unclosed") {
+      return <span className={`${styles.branchMeta} ${styles.warn}`}>
+        <span className={styles.dot} />
+        Drawer unclosed
+      </span>
+    }
+    const staffLabel = branch.activeStaff != null ? ` · ${branch.activeStaff} staff` : ""
+    return <span className={`${styles.branchMeta} ${styles.ok}`}>
+      <span className={styles.dot} />
+      Open{staffLabel}
+    </span>
+  })()
+
+  return (
+    <label
+      className={`${styles.branchOption} ${selected ? styles.selected : ""}`}
+      onClick={onSelect}
+    >
+      <Radio
+        checked={selected}
+        onChange={onSelect}
+        value={branch.id}
+        color="primary"
+        sx={{ p: 0 }}
+      />
+      <div>
+        <div className={styles.branchName}>{branch.label}</div>
+        {branch.address && <div className={styles.branchAddress}>{branch.address}</div>}
+      </div>
+      {meta}
+    </label>
+  )
+}
 
 const ShiftStartScreen = () => {
   const navigate = useNavigate()
 
-  const staffName    = useAuthStore((s) => s.user?.name ?? "Staff")
-  const staffRole    = useAuthStore((s) => s.user?.role ?? "")
+  const staffName = useAuthStore((s) => s.user?.name ?? "Staff")
+  const staffRole = useAuthStore((s) => s.user?.role ?? "")
 
-  const branches     = useSessionStore((s) => s.branches)
-  const branchId     = useSessionStore((s) => s.branchId)
-  const setBranchId  = useSessionStore((s) => s.setBranchId)
-  const setBranchUUID = useSessionStore((s) => s.setBranchUUID)  // ← store action
-  const startShift   = useSessionStore((s) => s.startShift)
+  const branches = useSessionStore((s) => s.branches)
+  const branchId = useSessionStore((s) => s.branchId)
+  const setBranchId = useSessionStore((s) => s.setBranchId)
+  const setBranchUUID = useSessionStore((s) => s.setBranchUUID)
+  const startShift = useSessionStore((s) => s.startShift)
 
-  const [touched, setTouched]   = useState(false)
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState<string | null>(null)
+  const [openingFloat, setOpeningFloat] = useState(DEFAULT_OPENING_FLOAT)
+  const [register, setRegister] = useState(REGISTERS[2])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const branchLabel = useMemo(
-    () => branches.find((b) => b.id === branchId)?.label ?? "",
-    [branchId, branches]
+  const selectedBranch = useMemo(
+    () => branches.find((b) => b.id === branchId),
+    [branchId, branches],
   )
 
-  const canStart = Boolean(branchId)
+  const canStart = Boolean(branchId) && !loading
 
   const handleStart = async () => {
-    setTouched(true)
-    if (!canStart) return
-
+    if (!branchId) return
     setLoading(true)
     setError(null)
 
     try {
       const token = localStorage.getItem("snf_pos_access_token")
       const res = await fetch("/api/orders/branches", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
-
       if (!res.ok) throw new Error("Failed to fetch branches")
 
       const data = await res.json()
-      const branch = data.find((b: any) => b.code === branchId)
-
-      if (branch) {
-        setBranchUUID(branch.id)  // ← 存入 store
-      }
+      const branch = data.find((b: { code?: string; id: string }) => b.code === branchId)
+      if (branch) setBranchUUID(branch.id)
 
       startShift()
       navigate("/pos/sales", { replace: true })
-    } catch (err) {
+    } catch {
       setError("Failed to start shift. Please try again.")
     } finally {
       setLoading(false)
     }
   }
 
+  const operatingLabel = selectedBranch?.label ?? "—"
+  const operatingTime = useMemo(() => formatOperatingTime(new Date()), [])
+
   return (
-    <FullPageContainer>
-      <Card className={styles.shiftCard} elevation={6}>
+    <BrandShell>
+      <div className={styles.card}>
+        <div className={styles.cardChip}>
+          <PetsIcon fontSize="small" />
+        </div>
 
-        <Typography variant="h5" className={styles.title}>
-          Start shift
-        </Typography>
-        <Typography variant="body2" className={styles.sub}>
-          Hi <b>{staffName}</b>{staffRole ? ` (${staffRole})` : ""}, please choose your branch.
-        </Typography>
+        <Stack spacing={0.5} sx={{ mb: 3 }}>
+          <Typography variant="h3" component="h2">Start shift</Typography>
+          <Typography variant="body2" color="text.secondary">
+            Hi <b>{staffName}</b>{staffRole ? ` (${staffRole})` : ""}, please choose your branch.
+          </Typography>
+        </Stack>
 
-        <div className={styles.fullRow}>
-          <FormControl className={styles.branchControl} size="small">
-            <Select
-              value={branchId ?? ""}
-              displayEmpty
-              onChange={(e) => setBranchId(String(e.target.value))}
+        <Typography variant="overline">Branch</Typography>
+        <div className={styles.branchList}>
+          {branches.map((b) => (
+            <BranchOptionRow
+              key={b.id}
+              branch={b}
+              selected={branchId === b.id}
+              onSelect={() => setBranchId(b.id)}
+            />
+          ))}
+        </div>
+
+        <div className={styles.twoCol}>
+          <Box>
+            <Typography variant="overline">Opening float</Typography>
+            <TextField
+              fullWidth
+              value={openingFloat}
+              onChange={(e) => setOpeningFloat(e.target.value)}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              }}
+              sx={{ mt: 1 }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="overline">Register</Typography>
+            <TextField
+              fullWidth
+              select
+              value={register}
+              onChange={(e) => setRegister(e.target.value)}
+              sx={{ mt: 1 }}
             >
-              <MenuItem value="" disabled>Select branch…</MenuItem>
-              {branches.map((b) => (
-                <MenuItem key={b.id} value={b.id}>{b.label}</MenuItem>
+              {REGISTERS.map((r) => (
+                <MenuItem key={r} value={r}>{r}</MenuItem>
               ))}
-            </Select>
-            {touched && !branchId && (
-              <Typography variant="caption" color="error">
-                Please select a branch.
-              </Typography>
-            )}
-          </FormControl>
+            </TextField>
+          </Box>
         </div>
 
         {error && (
-          <Typography variant="caption" color="error" display="block" mt={1}>
-            {error}
-          </Typography>
+          <Alert severity="error" className={styles.error}>{error}</Alert>
         )}
 
         <div className={styles.actions}>
           <Button
             variant="contained"
             size="large"
-            disabled={!canStart || loading}
+            disabled={!canStart}
             onClick={handleStart}
-            className={styles.primaryButton}
+            startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <CheckIcon />}
           >
             {loading ? "Starting…" : "Start shift"}
           </Button>
@@ -111,20 +199,20 @@ const ShiftStartScreen = () => {
             variant="outlined"
             size="large"
             onClick={() => navigate("/login", { replace: true })}
-            className={styles.secondaryButton}
+            disabled={loading}
           >
             Cancel
           </Button>
         </div>
 
-        {branchLabel && (
-          <Typography variant="caption" color="text.secondary" display="block" mt={2}>
-            You'll be operating under: {branchLabel}
-          </Typography>
-        )}
-
-      </Card>
-    </FullPageContainer>
+        <div className={styles.contextStrip}>
+          <LocalOfferOutlinedIcon />
+          <span>
+            You&apos;ll be operating under: <b>{operatingLabel}</b> · {operatingTime}
+          </span>
+        </div>
+      </div>
+    </BrandShell>
   )
 }
 
