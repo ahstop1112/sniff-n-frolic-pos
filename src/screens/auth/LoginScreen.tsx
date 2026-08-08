@@ -7,6 +7,7 @@ import PetsIcon from "@mui/icons-material/Pets";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/domains/auth/store";
+import BrandShell from "@/screens/layout/BrandShell";
 import styles from "./LoginScreen.module.scss";
 
 type LocationState = {
@@ -80,39 +81,8 @@ const LoginScreen = () => {
   }
 
   return (
-    <div className={styles.page}>
-
-      {/* ── Left brand panel ─────────────────────── */}
-      <aside className={styles.brandPanel}>
-        <div className={styles.brandMark}>
-          <div className={styles.brandChip}>
-            <PetsIcon fontSize="small" />
-          </div>
-          <div>
-            <div className={styles.brandName}>Sniff &amp; Frolic</div>
-            <div className={styles.brandSub}>POS · Yaletown YVR</div>
-          </div>
-        </div>
-
-        <div className={styles.brandHero}>
-          <Typography variant="h1" component="h1">
-            Open the drawer,<br />start the day.
-          </Typography>
-          <p>
-            Sales, inventory and the Frolic AI watch — all behind one sign-in.
-          </p>
-        </div>
-
-        <div className={styles.brandFooter}>
-          <span>v3.4.1</span>
-          <span className={styles.footerDot}>Terminal LANE-A · registered</span>
-          <span className={styles.footerDot}>Need help? 604 ⋯ 2210</span>
-        </div>
-      </aside>
-
-      {/* ── Right stage with card ────────────────── */}
-      <main className={styles.stage}>
-        <div className={styles.card}>
+    <BrandShell>
+      <div className={styles.card}>
           <div className={styles.cardChip}>
             <PetsIcon fontSize="small" />
           </div>
@@ -218,8 +188,7 @@ const LoginScreen = () => {
             </Button>
           </div>
         </div>
-      </main>
-    </div>
+    </BrandShell>
   )
 }
 
