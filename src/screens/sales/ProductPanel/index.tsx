@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Chip from "@mui/material/Chip"
 import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import FormControl from "@mui/material/FormControl"
 import SaleIcon from "@mui/icons-material/LocalOffer"
+import HistoryIcon from "@mui/icons-material/History"
+import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline"
+import TuneIcon from "@mui/icons-material/Tune"
 import type { Product } from "@/domains/product/types/product.types"
 
 interface Brand {
@@ -129,9 +133,27 @@ const ProductPanel = ({
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
 
+      {/* Toolbar — title + secondary actions */}
+      <Box sx={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        px: 2.5, py: 2, borderBottom: 1, borderColor: "divider", gap: 2,
+      }}>
+        <Typography variant="h5" fontWeight={800}>New order</Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<HistoryIcon />}
+            sx={{ textTransform: "none", fontWeight: 600 }}>
+            Recent orders
+          </Button>
+          <Button variant="outlined" size="small" startIcon={<PauseCircleOutlineIcon />}
+            sx={{ textTransform: "none", fontWeight: 600 }}>
+            Hold order
+          </Button>
+        </Box>
+      </Box>
+
       {/* Search + sort row */}
       {flags.showSearch && (
-        <Box sx={{ p: 1.5, pb: 0, display: "flex", gap: 1, alignItems: "center" }}>
+        <Box sx={{ px: 2.5, pt: 2, pb: 0, display: "flex", gap: 1, alignItems: "center" }}>
           <Box sx={{ flex: 1 }}>
             <ProductSearchBar value={searchText} onChange={setSearchText} />
           </Box>
@@ -152,20 +174,26 @@ const ProductPanel = ({
         </Box>
       )}
 
-      {/* Category tabs */}
+      {/* Category pills + Filter action on the right */}
       {flags.showCategoryTabs && (
-        <Box sx={{ px: 1.5 }}>
-          <CategoryTabs
-            categories={categories}
-            activeId={activeCategorySlug}
-            onChange={setCategory}
-          />
+        <Box sx={{ px: 1, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <CategoryTabs
+              categories={categories}
+              activeId={activeCategorySlug}
+              onChange={setCategory}
+            />
+          </Box>
+          <Button variant="outlined" size="small" startIcon={<TuneIcon />}
+            sx={{ textTransform: "none", fontWeight: 600, mr: 1.5 }}>
+            Filter
+          </Button>
         </Box>
       )}
 
       {/* Brand filter chips + on-sale toggle */}
       {brands.length > 0 && (
-        <Box sx={{ px: 1.5, py: 0.75, display: "flex", gap: 0.75, flexWrap: "wrap", alignItems: "center" }}>
+        <Box sx={{ px: 2.5, py: 0.75, display: "flex", gap: 0.75, flexWrap: "wrap", alignItems: "center" }}>
           <Chip
             icon={<SaleIcon sx={{ fontSize: 14 }} />}
             label="On Sale"

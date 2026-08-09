@@ -6,7 +6,7 @@ export interface ProductPanelFlags {
   showCategoryTabs: boolean
   showStockBadge: boolean
   showProductImage: boolean
-  gridColumns: 2 | 3 | 4
+  gridColumns: 2 | 3 | 4 | 5
 }
 
 // Default flags — override via props or remote config later
@@ -15,7 +15,7 @@ export const DEFAULT_FLAGS: ProductPanelFlags = {
   showCategoryTabs: true,
   showStockBadge: true,
   showProductImage: true,
-  gridColumns: 3,
+  gridColumns: 5,
 }
 
 export const useProductPanelFlags = (

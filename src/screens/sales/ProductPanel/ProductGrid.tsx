@@ -27,8 +27,8 @@ const ProductGrid = ({
 }: ProductGridProps) => {
   const safeProducts = Array.isArray(products) ? products : []
 
-  // gridColumns flag → MUI v6 size prop
-  const colSize = { 2: 6, 3: 4, 4: 3 }[flags.gridColumns] as 3 | 4 | 6
+  // gridColumns flag → MUI v6 size prop (12-col system)
+  const colSize = ({ 2: 6, 3: 4, 4: 3, 5: 2.4 } as const)[flags.gridColumns]
 
   if (isLoading) {
     return (
@@ -53,9 +53,9 @@ const ProductGrid = ({
   }
 
   return (
-    <Grid container spacing={1.5} sx={{ p: 1.5 }}>
+    <Grid container spacing={1.25} sx={{ p: 1.5 }}>
       {safeProducts.map((p) => (
-        <Grid size={{ xs: 6, sm: colSize }} key={p.id}>
+        <Grid size={{ xs: 6, sm: 4, md: colSize }} key={p.id}>
           <ProductCard
             product={p}
             flags={flags}
