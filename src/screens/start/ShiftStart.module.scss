@@ -133,3 +133,22 @@
 .error {
   margin-top: 12px;
 }
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.fieldGroup {
+  :global(.MuiTextField-root) {
+    margin-top: 8px;
+  }
+}
+
+.radioReset {
+  :global(.MuiRadio-root) {
+    padding: 0;
+  }
+}

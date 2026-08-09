@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import {
-  Alert, Box, Button, CircularProgress, InputAdornment, MenuItem,
-  Radio, Stack, TextField, Typography,
+  Alert, Button, CircularProgress, InputAdornment, MenuItem,
+  Radio, TextField, Typography,
 } from "@mui/material"
 import PetsIcon from "@mui/icons-material/Pets"
 import CheckIcon from "@mui/icons-material/Check"
@@ -55,7 +55,7 @@ const BranchOptionRow = ({ branch, selected, onSelect }: BranchOptionRowProps) =
 
   return (
     <label
-      className={`${styles.branchOption} ${selected ? styles.selected : ""}`}
+      className={`${styles.branchOption} ${selected ? styles.selected : ""} ${styles.radioReset}`}
       onClick={onSelect}
     >
       <Radio
@@ -63,7 +63,6 @@ const BranchOptionRow = ({ branch, selected, onSelect }: BranchOptionRowProps) =
         onChange={onSelect}
         value={branch.id}
         color="primary"
-        sx={{ p: 0 }}
       />
       <div>
         <div className={styles.branchName}>{branch.label}</div>
@@ -133,12 +132,12 @@ const ShiftStartScreen = () => {
           <PetsIcon fontSize="small" />
         </div>
 
-        <Stack spacing={0.5} sx={{ mb: 3 }}>
+        <div className={styles.cardHeader}>
           <Typography variant="h3" component="h2">Start shift</Typography>
           <Typography variant="body2" color="text.secondary">
             Hi <b>{staffName}</b>{staffRole ? ` (${staffRole})` : ""}, please choose your branch.
           </Typography>
-        </Stack>
+        </div>
 
         <Typography variant="overline">Branch</Typography>
         <div className={styles.branchList}>
@@ -153,7 +152,7 @@ const ShiftStartScreen = () => {
         </div>
 
         <div className={styles.twoCol}>
-          <Box>
+          <div className={styles.fieldGroup}>
             <Typography variant="overline">Opening float</Typography>
             <TextField
               fullWidth
@@ -162,23 +161,21 @@ const ShiftStartScreen = () => {
               InputProps={{
                 startAdornment: <InputAdornment position="start">$</InputAdornment>,
               }}
-              sx={{ mt: 1 }}
             />
-          </Box>
-          <Box>
+          </div>
+          <div className={styles.fieldGroup}>
             <Typography variant="overline">Register</Typography>
             <TextField
               fullWidth
               select
               value={register}
               onChange={(e) => setRegister(e.target.value)}
-              sx={{ mt: 1 }}
             >
               {REGISTERS.map((r) => (
                 <MenuItem key={r} value={r}>{r}</MenuItem>
               ))}
             </TextField>
-          </Box>
+          </div>
         </div>
 
         {error && (
