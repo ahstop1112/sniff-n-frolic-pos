@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import {
-  Alert, Box, Button, CircularProgress,
-  Stack, TextField, Typography,
+  Alert, Button, CircularProgress,
+  TextField, Typography,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -119,18 +119,20 @@ const LoginScreen = () => {
             <PetsIcon fontSize="small" />
           </div>
 
-          <Stack spacing={0.5} sx={{ mb: 3 }}>
-            <Typography variant="h3" component="h2">POS Login</Typography>
-            <Typography variant="body2" color="text.secondary">
-              Sign in to access Manage / Sales.
-            </Typography>
-          </Stack>
+          {step === "email" && (
+            <div className={styles.cardHead}>
+              <Typography variant="h3" component="h2">POS Login</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Sign in to access Manage / Sales.
+              </Typography>
+            </div>
+          )}
 
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {error && <Alert severity="error" className={styles.errorAlert}>{error}</Alert>}
 
           {step === "email" ? (
-            <Box component="form" onSubmit={onRequestCode}>
-              <Stack spacing={1}>
+            <form onSubmit={onRequestCode}>
+              <div className={styles.formStack}>
                 <Typography variant="overline">Email</Typography>
                 <TextField
                   value={email}
@@ -147,23 +149,23 @@ const LoginScreen = () => {
                   fullWidth
                   disabled={isLoading}
                   startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
-                  sx={{ mt: 1.5 }}
+                  className={styles.primaryButton}
                 >
                   {isLoading ? "Sending code…" : "Send verification code"}
                 </Button>
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+                <p className={styles.emailHint}>
                   We&apos;ll send a one-time login code to your email.
-                </Typography>
-              </Stack>
-            </Box>
+                </p>
+              </div>
+            </form>
           ) : (
-            <Box component="form" onSubmit={onVerifyCode}>
-              <Stack spacing={0.5} sx={{ mb: 3, mt: -2 }}>
+            <form onSubmit={onVerifyCode}>
+              <div className={`${styles.cardHead} ${styles.tight}`}>
                 <Typography variant="h3" component="h2">Enter your code</Typography>
                 <Typography variant="body2" color="text.secondary">
                   Sent to <b>{email}</b> · expires in <b>{formatCountdown(secondsRemaining)}</b>.
                 </Typography>
-              </Stack>
+              </div>
 
               <OtpCodeInput
                 value={code}
@@ -184,28 +186,28 @@ const LoginScreen = () => {
                 fullWidth
                 disabled={isLoading || code.length < 6}
                 startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
-                sx={{ mt: 2 }}
+                className={styles["primaryButton--otp"]}
               >
                 {isLoading ? "Signing in…" : "Sign in"}
               </Button>
 
               <div className={styles.otpFooter}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 700 }}>
+                <Typography variant="body2" color="text.secondary" className={styles.otpFooterLabel}>
                   Didn&apos;t get it?
                 </Typography>
-                <Stack direction="row" spacing={1}>
+                <div className={styles.otpFooterActions}>
                   <Button type="button" variant="outlined" size="small"
                     onClick={onResendCode} disabled={isLoading}>
                     Resend code
                   </Button>
                   <Button type="button" variant="outlined" size="small"
                     onClick={onBackToEmail} disabled={isLoading}
-                    startIcon={<ChevronLeftIcon sx={{ ml: -0.5 }} />}>
+                    startIcon={<ChevronLeftIcon className={styles.chevronNudge} />}>
                     Change email
                   </Button>
-                </Stack>
+                </div>
               </div>
-            </Box>
+            </form>
           )}
 
           <hr className={styles.divider} />

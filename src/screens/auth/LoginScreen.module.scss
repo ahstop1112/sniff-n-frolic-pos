@@ -58,3 +58,52 @@
     min-height: 32px;
   }
 }
+
+.otpFooterLabel {
+  font-weight: 700;
+}
+
+.otpFooterActions {
+  display: flex;
+  gap: 8px;
+}
+
+.chevronNudge {
+  margin-left: -4px;
+}
+
+// Card header block ("POS Login" / "Enter your code" + subtitle)
+.cardHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.cardHead.tight {
+  margin-top: -16px;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.primaryButton {
+  margin-top: 12px;
+}
+
+.primaryButton--otp {
+  margin-top: 16px;
+}
+
+.emailHint {
+  color: var(--mui-palette-text-secondary);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.errorAlert {
+  margin-bottom: 16px;
+}
