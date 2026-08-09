@@ -1,14 +1,27 @@
-import React, { useState, useMemo } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import {
   Alert, Box, Button, CircularProgress,
   Stack, TextField, Typography,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/domains/auth/store";
 import BrandShell from "@/screens/layout/BrandShell";
+import OtpCodeInput from "./OtpCodeInput";
 import styles from "./LoginScreen.module.scss";
+
+// OTP TTL is 5 minutes server-side (see services/.env OTP_TTL_MINUTES).
+// The countdown is a visual approximation — the server enforces expiry.
+const OTP_TTL_SECONDS = 5 * 60
+
+const formatCountdown = (secs: number) => {
+  const s = Math.max(0, Math.floor(secs))
+  const mm = Math.floor(s / 60)
+  const ss = (s % 60).toString().padStart(2, "0")
+  return `${mm}:${ss}`
+}
 
 type LocationState = {
   from?: { pathname?: string }
@@ -29,6 +42,22 @@ const LoginScreen = () => {
   const [step, setStep]             = useState<"email" | "code">("email")
   const [localError, setLocalError] = useState<string | null>(null)
 
+  // Countdown timer for the OTP step. The start time is refreshed when the
+  // user first arrives on this step and again after each Resend.
+  const [codeSentAt, setCodeSentAt] = useState<number | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (step !== "code") return
+    tickRef.current = setInterval(() => setNow(Date.now()), 1000)
+    return () => { if (tickRef.current) clearInterval(tickRef.current) }
+  }, [step])
+
+  const secondsRemaining = codeSentAt
+    ? Math.max(0, OTP_TTL_SECONDS - Math.floor((now - codeSentAt) / 1000))
+    : OTP_TTL_SECONDS
+
   const error = localError ?? storeError
 
   const isEmailValid = useMemo(
@@ -45,6 +74,7 @@ const LoginScreen = () => {
 
     try {
       await requestCode(email.trim())
+      setCodeSentAt(Date.now())
       setStep("code")
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Failed to send verification code.")
@@ -75,6 +105,8 @@ const LoginScreen = () => {
     setLocalError(null)
     try {
       await requestCode(email.trim())
+      setCodeSentAt(Date.now())
+      setCode("")
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Failed to resend verification code.")
     }
@@ -126,49 +158,53 @@ const LoginScreen = () => {
             </Box>
           ) : (
             <Box component="form" onSubmit={onVerifyCode}>
-              <Stack spacing={1}>
-                <Typography variant="overline">Email</Typography>
-                <TextField
-                  value={email}
-                  fullWidth
-                  disabled
-                  className={styles.lockedField}
-                />
+              <Stack spacing={0.5} sx={{ mb: 3, mt: -2 }}>
+                <Typography variant="h3" component="h2">Enter your code</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Sent to <b>{email}</b> · expires in <b>{formatCountdown(secondsRemaining)}</b>.
+                </Typography>
+              </Stack>
 
-                <Typography variant="overline" sx={{ mt: 1 }}>Verification code</Typography>
-                <TextField
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  autoComplete="one-time-code"
-                  fullWidth
-                  disabled={isLoading}
-                  inputProps={{ maxLength: 6 }}
-                  placeholder="6-digit code"
-                />
+              <OtpCodeInput
+                value={code}
+                onChange={setCode}
+                onComplete={() => {
+                  // Auto-submit when all six digits land.
+                  const form = document.activeElement?.closest("form")
+                  form?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+                }}
+                disabled={isLoading}
+                autoFocus
+              />
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  disabled={isLoading}
-                  startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
-                  sx={{ mt: 1.5 }}
-                >
-                  {isLoading ? "Verifying…" : "Verify and sign in"}
-                </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={isLoading || code.length < 6}
+                startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : undefined}
+                sx={{ mt: 2 }}
+              >
+                {isLoading ? "Signing in…" : "Sign in"}
+              </Button>
 
-                <div className={styles.otpActions}>
-                  <Button type="button" variant="text"
+              <div className={styles.otpFooter}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 700 }}>
+                  Didn&apos;t get it?
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <Button type="button" variant="outlined" size="small"
                     onClick={onResendCode} disabled={isLoading}>
                     Resend code
                   </Button>
-                  <Button type="button" variant="text"
-                    onClick={onBackToEmail} disabled={isLoading}>
-                    Use another email
+                  <Button type="button" variant="outlined" size="small"
+                    onClick={onBackToEmail} disabled={isLoading}
+                    startIcon={<ChevronLeftIcon sx={{ ml: -0.5 }} />}>
+                    Change email
                   </Button>
-                </div>
-              </Stack>
+                </Stack>
+              </div>
             </Box>
           )}
 
