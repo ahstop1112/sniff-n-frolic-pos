@@ -28,7 +28,7 @@ const ProductGrid = ({
   const safeProducts = Array.isArray(products) ? products : []
 
   // gridColumns flag → MUI v6 size prop (12-col system)
-  const colSize = ({ 2: 6, 3: 4, 4: 3, 5: 2.4 } as const)[flags.gridColumns]
+  const colSize = ({ 2: 6, 3: 4, 4: 3, 4: 3 } as const)[flags.gridColumns]
 
   if (isLoading) {
     return (

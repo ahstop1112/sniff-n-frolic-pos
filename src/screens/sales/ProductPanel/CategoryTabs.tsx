@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box"
 import Skeleton from "@mui/material/Skeleton"
+import styles from "./CategoryTabs.module.scss"
 
 interface Category {
   slug: string
@@ -13,24 +13,6 @@ interface CategoryTabsProps {
   isLoading?: boolean
 }
 
-const chipSx = (active: boolean) => ({
-  px: 1.5, py: 0.75,
-  minHeight: 32,
-  borderRadius: 999,
-  fontSize: 13,
-  fontWeight: 700,
-  cursor: "pointer",
-  whiteSpace: "nowrap" as const,
-  border: 1,
-  borderColor: active ? "primary.main" : "divider",
-  bgcolor: active ? "primary.main" : "background.paper",
-  color: active ? "primary.contrastText" : "text.primary",
-  transition: "background-color 0.12s, border-color 0.12s, color 0.12s",
-  "&:hover": {
-    borderColor: active ? "primary.main" : "text.disabled",
-  },
-})
-
 const CategoryTabs = ({
   categories,
   activeId,
@@ -39,45 +21,39 @@ const CategoryTabs = ({
 }: CategoryTabsProps) => {
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", gap: 1, px: 1.5, py: 1 }}>
+      <div className={styles.skeletonRow}>
         {Array.from({ length: 5 }).map((_, i) => (
           <Skeleton key={i} variant="rounded" width={72} height={32} />
         ))}
-      </Box>
+      </div>
     )
   }
 
   if (categories.length === 0) return null
 
   return (
-    <Box sx={{
-      display: "flex", gap: 0.75,
-      px: 1.5, py: 1,
-      overflowX: "auto",
-      "&::-webkit-scrollbar": { display: "none" },
-      scrollbarWidth: "none",
-    }}>
-      <Box
-        component="button"
-        sx={chipSx(activeId === null)}
+    <div className={styles.strip}>
+      <button
+        type="button"
+        className={`${styles.chip} ${activeId === null ? styles.active : ""}`}
         onClick={() => onChange(null)}
       >
         All
-      </Box>
+      </button>
       {categories.map((c) => {
         const active = activeId === c.slug
         return (
-          <Box
+          <button
             key={c.slug}
-            component="button"
-            sx={chipSx(active)}
+            type="button"
+            className={`${styles.chip} ${active ? styles.active : ""}`}
             onClick={() => onChange(c.slug)}
           >
             {c.name}
-          </Box>
+          </button>
         )
       })}
-    </Box>
+    </div>
   )
 }
 

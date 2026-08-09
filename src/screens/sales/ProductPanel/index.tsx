@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -26,6 +25,7 @@ import { ProductDetailDrawer } from "./ProductDetailDrawer"
 import ProductSearchBar from "./ProductSearchBar"
 import CategoryTabs from "./CategoryTabs"
 import ProductGrid from "./ProductGrid"
+import styles from "./ProductPanel.module.scss"
 
 interface ProductPanelProps {
   currency?: string
@@ -124,84 +124,78 @@ const ProductPanel = ({
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 6 }}>
+      <div className={styles.loadingWrap}>
         <CircularProgress />
-      </Box>
+      </div>
     )
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+    <div className={styles.root}>
 
       {/* Toolbar — title + secondary actions */}
-      <Box sx={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        px: 2.5, py: 2, borderBottom: 1, borderColor: "divider", gap: 2,
-      }}>
-        <Typography variant="h5" fontWeight={800}>New order</Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="outlined" size="small" startIcon={<HistoryIcon />}
-            sx={{ textTransform: "none", fontWeight: 600 }}>
+      <div className={styles.toolbar}>
+        <span className={styles.toolbarTitle}>New order</span>
+        <div className={styles.toolbarActions}>
+          <Button variant="outlined" size="small" startIcon={<HistoryIcon />}>
             Recent orders
           </Button>
-          <Button variant="outlined" size="small" startIcon={<PauseCircleOutlineIcon />}
-            sx={{ textTransform: "none", fontWeight: 600 }}>
+          <Button variant="outlined" size="small" startIcon={<PauseCircleOutlineIcon />}>
             Hold order
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Search + sort row */}
       {flags.showSearch && (
-        <Box sx={{ px: 2.5, pt: 2, pb: 0, display: "flex", gap: 1, alignItems: "center" }}>
-          <Box sx={{ flex: 1 }}>
+        <div className={styles.searchRow}>
+          <div className={styles.searchWrap}>
             <ProductSearchBar value={searchText} onChange={setSearchText} />
-          </Box>
-          <FormControl size="small" sx={{ minWidth: 160 }}>
+          </div>
+          <FormControl size="small" className={styles.sortControl}>
             <Select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortOption)}
               displayEmpty
-              sx={{ fontSize: 13 }}
             >
               {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
-                <MenuItem key={key} value={key} sx={{ fontSize: 13 }}>
+                <MenuItem key={key} value={key}>
                   {SORT_LABELS[key]}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-        </Box>
+        </div>
       )}
 
       {/* Category pills + Filter action on the right */}
       {flags.showCategoryTabs && (
-        <Box sx={{ px: 1, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+        <div className={styles.categoryRow}>
+          <div className={styles.categoryWrap}>
             <CategoryTabs
               categories={categories}
               activeId={activeCategorySlug}
               onChange={setCategory}
             />
-          </Box>
-          <Button variant="outlined" size="small" startIcon={<TuneIcon />}
-            sx={{ textTransform: "none", fontWeight: 600, mr: 1.5 }}>
-            Filter
-          </Button>
-        </Box>
+          </div>
+          <div className={styles.filterButton}>
+            <Button variant="outlined" size="small" startIcon={<TuneIcon />}>
+              Filter
+            </Button>
+          </div>
+        </div>
       )}
 
       {/* Brand filter chips + on-sale toggle */}
       {brands.length > 0 && (
-        <Box sx={{ px: 2.5, py: 0.75, display: "flex", gap: 0.75, flexWrap: "wrap", alignItems: "center" }}>
+        <div className={styles.brandRow}>
           <Chip
-            icon={<SaleIcon sx={{ fontSize: 14 }} />}
+            icon={<SaleIcon />}
             label="On Sale"
             size="small"
             color={onSale ? "primary" : "default"}
             variant={onSale ? "filled" : "outlined"}
             onClick={() => setOnSale(!onSale)}
-            sx={{ fontSize: 12 }}
           />
           {(brands as Brand[]).map((b) => (
             <Chip
@@ -211,14 +205,13 @@ const ProductPanel = ({
               color={activeBrandSlug === b.slug ? "primary" : "default"}
               variant={activeBrandSlug === b.slug ? "filled" : "outlined"}
               onClick={() => setBrand(b.slug)}
-              sx={{ fontSize: 12 }}
             />
           ))}
-        </Box>
+        </div>
       )}
 
       {/* Product grid — scrollable */}
-      <Box sx={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+      <div className={styles.gridArea}>
         <ProductGrid
           products={products}
           flags={flags}
@@ -234,7 +227,7 @@ const ProductPanel = ({
         />
 
         {/* Scroll sentinel */}
-        <div ref={sentinelRef} style={{ height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div ref={sentinelRef} className={styles.sentinel}>
           {isFetching && !isLoading && (
             <>
               <CircularProgress size={20} />
@@ -242,9 +235,9 @@ const ProductPanel = ({
             </>
           )}
         </div>
-      </Box>
+      </div>
 
-    </Box>
+    </div>
   )
 }
 
