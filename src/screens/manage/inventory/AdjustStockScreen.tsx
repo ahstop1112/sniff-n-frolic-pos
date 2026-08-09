@@ -74,7 +74,7 @@ const AdjustStockScreen = () => {
     () => (product ? signedQuantity(reason, quantity, direction) : 0),
     [product, reason, quantity, direction],
   )
-  const projected = product ? product.stockQuantity + signed : 0
+  const projected = product ? product.stock_quantity + signed : 0
   const wouldGoNegative = product ? projected < 0 : false
 
   const canSubmit =
@@ -96,17 +96,17 @@ const AdjustStockScreen = () => {
     setErrorMessage(null)
     mutation.mutate(
       {
-        productId: product.id,
-        quantityChange: signed,
+        product_id: product.id,
+        quantity_change: signed,
         reason,
         note: note.trim() || undefined,
       },
       {
         onSuccess: (result) => {
-          const before = product.stockQuantity
-          const after = result.stockQuantity
+          const before = product.stock_quantity
+          const after = result.stock_quantity
           // Use the server-returned total (see spec §Core Principles).
-          setOverride({ ...product, stockQuantity: after })
+          setOverride({ ...product, stock_quantity: after })
           setSuccess({ productName: product.name, before, after })
           resetFormButKeepProduct()
         },
@@ -156,11 +156,11 @@ const AdjustStockScreen = () => {
             {product && (
               <Box sx={{ mt: 1.5, p: 1.5, border: 1, borderColor: "divider", borderRadius: 1 }}>
                 <Typography variant="body2" fontWeight={600}>
-                  {product.parentName ? `${product.parentName} — ${product.name}` : product.name}
+                  {product.parent_name ? `${product.parent_name} — ${product.name}` : product.name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {product.sku ? `${product.sku} · ` : ""}
-                  {product.stockQuantity} in stock
+                  {product.stock_quantity} in stock
                 </Typography>
               </Box>
             )}
@@ -254,11 +254,11 @@ const AdjustStockScreen = () => {
             }}>
               <Typography variant="body2" fontWeight={600}
                 color={wouldGoNegative ? "error.main" : "text.primary"}>
-                {product.stockQuantity} → {projected}
+                {product.stock_quantity} → {projected}
               </Typography>
               {wouldGoNegative && (
                 <Typography variant="caption" color="error.main">
-                  Insufficient stock — you can deduct at most {product.stockQuantity}
+                  Insufficient stock — you can deduct at most {product.stock_quantity}
                 </Typography>
               )}
             </Box>

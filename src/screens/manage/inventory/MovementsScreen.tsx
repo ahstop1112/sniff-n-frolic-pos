@@ -44,15 +44,15 @@ const MovementRow = ({ m }: { m: Movement }) => (
     borderBottom: 1, borderColor: "divider",
     alignItems: "center",
   }}>
-    <Typography variant="body2" color="text.secondary">{formatTime(m.createdAt)}</Typography>
+    <Typography variant="body2" color="text.secondary">{formatTime(m.created_at)}</Typography>
     <Box sx={{ minWidth: 0 }}>
-      <Typography variant="body2" fontWeight={500} noWrap>{m.productName}</Typography>
-      {m.sku && (
-        <Typography variant="caption" color="text.secondary" noWrap>{m.sku}</Typography>
+      <Typography variant="body2" fontWeight={500} noWrap>{m.product_name}</Typography>
+      {m.product_sku && (
+        <Typography variant="caption" color="text.secondary" noWrap>{m.product_sku}</Typography>
       )}
     </Box>
     <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-      {m.quantityChange >= 0 ? (
+      {m.quantity_change >= 0 ? (
         <ArrowUpwardIcon sx={{ fontSize: 14, color: "success.main" }} />
       ) : (
         <ArrowDownwardIcon sx={{ fontSize: 14, color: "error.main" }} />
@@ -60,14 +60,14 @@ const MovementRow = ({ m }: { m: Movement }) => (
       <Typography
         variant="body2"
         fontWeight={700}
-        color={m.quantityChange >= 0 ? "success.main" : "error.main"}
+        color={m.quantity_change >= 0 ? "success.main" : "error.main"}
       >
-        {m.quantityChange >= 0 ? `+${m.quantityChange}` : m.quantityChange}
+        {m.quantity_change >= 0 ? `+${m.quantity_change}` : m.quantity_change}
       </Typography>
     </Box>
     <Typography variant="body2"><ReasonLabel reason={m.reason} /></Typography>
-    <Typography variant="body2" color={m.createdByName ? "text.primary" : "text.disabled"}>
-      {m.createdByName ?? "System"}
+    <Typography variant="body2" color={m.created_by_name ? "text.primary" : "text.disabled"}>
+      {m.created_by_name ?? "System"}
     </Typography>
     {m.note ? (
       <Tooltip title={m.note} enterDelay={300}>
@@ -116,10 +116,10 @@ const MovementsScreen = () => {
   const invalidRange = !!(dateFrom && dateTo && dateTo < dateFrom)
 
   const { data, isLoading, error } = useMovements({
-    productId: productId || undefined,
+    product_id: productId || undefined,
     reason: reason || undefined,
-    dateFrom: dateFrom || undefined,
-    dateTo: invalidRange ? undefined : dateTo || undefined,
+    date_from: dateFrom || undefined,
+    date_to: invalidRange ? undefined : dateTo || undefined,
     limit: LIMIT,
     offset,
   })

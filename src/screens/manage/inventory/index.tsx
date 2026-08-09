@@ -30,7 +30,7 @@ const StockOverviewScreen = () => {
 
   const { data, isLoading, isFetching, error } = useStock({
     search: debouncedSearch || undefined,
-    lowStockOnly: lowStockOnly || undefined,
+    low_stock_only: lowStockOnly || undefined,
     limit: LIMIT,
     offset,
   })
@@ -43,7 +43,7 @@ const StockOverviewScreen = () => {
     if (!debouncedSearch) return undefined
     const ids = new Set<string>()
     for (const item of items) {
-      if (item.parentId) ids.add(item.parentId)
+      if (item.parent_id) ids.add(item.parent_id)
     }
     return ids
   }, [items, debouncedSearch])

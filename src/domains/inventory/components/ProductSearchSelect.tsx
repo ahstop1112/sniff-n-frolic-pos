@@ -18,7 +18,7 @@ interface ProductSearchSelectProps {
 }
 
 const displayName = (item: StockItem) =>
-  item.parentName ? `${item.parentName} — ${item.name}` : item.name
+  item.parent_name ? `${item.parent_name} — ${item.name}` : item.name
 
 const ProductSearchSelect = ({
   value,
@@ -43,7 +43,7 @@ const ProductSearchSelect = ({
       options={options}
       getOptionLabel={displayName}
       isOptionEqualToValue={(a, b) => a.id === b.id}
-      getOptionDisabled={(opt) => disableUnmanaged && !opt.manageStock}
+      getOptionDisabled={(opt) => disableUnmanaged && !opt.manage_stock}
       filterOptions={(x) => x}
       size={size}
       loading={isFetching}
@@ -56,7 +56,7 @@ const ProductSearchSelect = ({
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {opt.sku ? `${opt.sku} · ` : ""}
-              {opt.manageStock ? `${opt.stockQuantity} in stock` : "Stock management not enabled"}
+              {opt.manage_stock ? `${opt.stock_quantity} in stock` : "Stock management not enabled"}
             </Typography>
           </Box>
         </Box>
