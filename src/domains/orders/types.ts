@@ -10,6 +10,7 @@ export type ProductLite = {
   id: string;
   name: string;
   price: number;
+  image?: string | null;
 };
 
 export type CartLine = {
@@ -18,6 +19,7 @@ export type CartLine = {
   name: string;
   unitPrice: number;
   qty: number;
+  image?: string | null;
 };
 
 export type SalesOrder = OrderScope & {

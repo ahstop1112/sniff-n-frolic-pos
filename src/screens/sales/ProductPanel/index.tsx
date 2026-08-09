@@ -93,8 +93,16 @@ const ProductPanel = ({
   }, [hasNextPage, isFetching, fetchNextPage])
 
   const handleAdd = useCallback(
-    (product: Product | { id: string; name: string; price: number }) => {
+    (product: Product | { id: string; name: string; price: number; image?: string | null }) => {
       if (!activeOrderId) return
+      // The domain Product uses `imageUrl`; some raw API rows expose
+      // `featured_image_url`; the light shape uses `image`. Coalesce all three.
+      const raw = product as unknown as {
+        imageUrl?: string | null
+        featured_image_url?: string | null
+        image?: string | null
+      }
+      const image = raw.imageUrl ?? raw.featured_image_url ?? raw.image ?? null
       addLineItem({
         orderId: activeOrderId,
         product: {
@@ -103,6 +111,7 @@ const ProductPanel = ({
           price: "unitPrice" in product
             ? (product.salePrice ?? product.unitPrice)
             : product.price,
+          image,
         },
       })
     },

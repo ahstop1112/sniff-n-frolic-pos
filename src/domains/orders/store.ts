@@ -159,6 +159,7 @@ export const useOrdersStore = create<OrdersState>()(
                 name: product.name,
                 unitPrice: product.price,
                 qty,
+                image: product.image ?? null,
                 };
 
                 return { ...o, updatedAt: now, lines: [newLine, ...o.lines] };

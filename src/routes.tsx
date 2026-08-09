@@ -11,6 +11,7 @@ import ProductEditScreen from "./screens/manage/products/ProductEditScreen"
 import StockOverviewScreen from "./screens/manage/inventory"
 import AdjustStockScreen from "./screens/manage/inventory/AdjustStockScreen"
 import MovementsScreen from "./screens/manage/inventory/MovementsScreen"
+import AppShell from "./screens/layout/AppShell"
 
 const AppRoutes = () => {
   return (
@@ -25,18 +26,21 @@ const AppRoutes = () => {
           <Route path="start" element={<ShiftStartScreen />} />
           <Route path="home/*" element={<HomeScreen />} />
 
-          {/* Other protected areas */}
-          <Route path="manage/" element={<ManageScreen />}>
-            <Route path="products"      element={<ManageProductsScreen />} />
-            <Route path="products/:slug" element={<ProductEditScreen />} />
-            <Route path="inventory"            element={<StockOverviewScreen />} />
-            <Route path="inventory/movements"  element={<MovementsScreen />} />
-            <Route path="inventory/adjust"     element={<AdjustStockScreen />} />
-          </Route>
-        
-          {/* ✅ Sales requires shift */}
-          <Route element={<RequireShift />}>
-            <Route path="sales/*" element={<SalesScreen />} />
+          {/* AppShell wraps the app-proper routes with the left nav rail.
+              ShiftStart deliberately sits outside so it can use its own BrandShell. */}
+          <Route element={<AppShell />}>
+            <Route path="manage/" element={<ManageScreen />}>
+              <Route path="products"      element={<ManageProductsScreen />} />
+              <Route path="products/:slug" element={<ProductEditScreen />} />
+              <Route path="inventory"            element={<StockOverviewScreen />} />
+              <Route path="inventory/movements"  element={<MovementsScreen />} />
+              <Route path="inventory/adjust"     element={<AdjustStockScreen />} />
+            </Route>
+
+            {/* Sales requires an active shift */}
+            <Route element={<RequireShift />}>
+              <Route path="sales/*" element={<SalesScreen />} />
+            </Route>
           </Route>
         </Route>
 
