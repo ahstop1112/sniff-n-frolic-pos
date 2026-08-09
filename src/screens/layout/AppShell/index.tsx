@@ -6,6 +6,7 @@ import PetsIcon from "@mui/icons-material/Pets"
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale"
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong"
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined"
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined"
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined"
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined"
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined"
@@ -27,8 +28,10 @@ const NAV: NavEntry[] = [
   { to: "/pos/sales",              label: "Sales",     icon: PointOfSaleIcon,
     pathMatch: (p) => p.startsWith("/pos/sales") },
   { to: "/pos/manage/orders",      label: "Orders",    icon: ReceiptLongIcon },
+  { to: "/pos/manage/products",    label: "Products",  icon: CategoryOutlinedIcon,
+    pathMatch: (p) => p.startsWith("/pos/manage/products") },
   { to: "/pos/manage/inventory",   label: "Inventory", icon: Inventory2OutlinedIcon,
-    pathMatch: (p) => p.startsWith("/pos/manage/inventory") || p.startsWith("/pos/manage/products") },
+    pathMatch: (p) => p.startsWith("/pos/manage/inventory") },
   { to: "/pos/manage/members",     label: "Members",   icon: PeopleAltOutlinedIcon },
   { to: "/pos/manage/dashboard",   label: "Dashboard", icon: DashboardOutlinedIcon },
   { to: "/pos/manage/reports",     label: "Reports",   icon: AssessmentOutlinedIcon },
