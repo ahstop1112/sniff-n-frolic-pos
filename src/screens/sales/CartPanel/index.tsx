@@ -89,12 +89,12 @@ export const CartPanel = ({ currency = "CAD" }: CartPanelProps) => {
               aria-label="close order"
               onClick={(e) => { e.stopPropagation(); closeOrderTab(o.id) }}
             >
-              <CloseIcon sx={{ fontSize: 12 }} />
+              <CloseIcon className={styles.iconXs} />
             </button>
           </div>
         ))}
         <button className={styles.addOrderBtn} aria-label="new order" onClick={createOrder}>
-          <AddIcon sx={{ fontSize: 14 }} />
+          <AddIcon className={styles.iconSm} />
         </button>
       </div>
 
@@ -106,7 +106,7 @@ export const CartPanel = ({ currency = "CAD" }: CartPanelProps) => {
         </div>
         <div className={styles.memberActions}>
           <span className={styles.pointsPill}>
-            <PetsIcon sx={{ fontSize: 12 }} />
+            <PetsIcon className={styles.iconXs} />
             $1.40
           </span>
           <Button
@@ -114,7 +114,7 @@ export const CartPanel = ({ currency = "CAD" }: CartPanelProps) => {
             size="small"
             onClick={() => clearOrder(activeOrder.id)}
             disabled={!hasLines}
-            sx={{ textTransform: "none", color: "text.secondary" }}
+            className={styles.cancelBtn}
           >
             Cancel
           </Button>
@@ -130,16 +130,14 @@ export const CartPanel = ({ currency = "CAD" }: CartPanelProps) => {
       {/* Line items */}
       <div className={styles.linesArea}>
         {!hasLines ? (
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
-            Cart is empty. Tap a product to add.
-          </Typography>
+          <p className={styles.linesEmpty}>Cart is empty. Tap a product to add.</p>
         ) : (
           activeOrder.lines.map((l) => (
             <div key={l.id} className={styles.lineRow}>
               <div className={styles.lineImage}>
                 {l.image
                   ? <img src={l.image} alt={l.name} />
-                  : <PetsIcon sx={{ fontSize: 20, color: "text.disabled" }} />}
+                  : <PetsIcon className={styles.iconMd} />}
               </div>
               <div className={styles.lineText}>
                 <div className={styles.lineName}>{l.name}</div>
@@ -150,12 +148,12 @@ export const CartPanel = ({ currency = "CAD" }: CartPanelProps) => {
               <div className={styles.lineQty}>
                 <IconButton size="small" aria-label="decrease qty"
                   onClick={() => decLineQty({ orderId: activeOrder.id, lineId: l.id })}>
-                  <RemoveIcon sx={{ fontSize: 14 }} />
+                  <RemoveIcon className={styles.iconSm} />
                 </IconButton>
                 <span className={styles.qtyNum}>{l.qty}</span>
                 <IconButton size="small" aria-label="increase qty"
                   onClick={() => incLineQty({ orderId: activeOrder.id, lineId: l.id })}>
-                  <AddCircleOutlineIcon sx={{ fontSize: 14 }} />
+                  <AddCircleOutlineIcon className={styles.iconSm} />
                 </IconButton>
               </div>
               <div className={styles.linePrice}>

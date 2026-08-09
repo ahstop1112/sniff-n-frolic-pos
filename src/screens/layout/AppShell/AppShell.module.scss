@@ -166,6 +166,12 @@
   flex-direction: column;
 }
 
+// Logout menu item — destructive styling
+.logoutItem {
+  color: var(--mui-palette-error-main) !important;
+  font-weight: 700 !important;
+}
+
 // Collapsed rail on narrow viewports — labels hide, only icons show
 @media (max-width: 900px) {
   .brandText,

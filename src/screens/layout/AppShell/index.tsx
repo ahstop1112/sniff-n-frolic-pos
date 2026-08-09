@@ -121,7 +121,7 @@ const AppShell = () => {
           <MenuItem onClick={() => { setAnchorEl(null); endShift(); navigate("/pos/start", { replace: true }) }}>
             End shift
           </MenuItem>
-          <MenuItem onClick={handleLogout} sx={{ color: "error.main", fontWeight: 700 }}>
+          <MenuItem onClick={handleLogout} className={styles.logoutItem}>
             Log out
           </MenuItem>
         </Menu>

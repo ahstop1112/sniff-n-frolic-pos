@@ -161,6 +161,23 @@
   align-items: center;
 }
 
+.linesEmpty {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--mui-palette-text-secondary);
+  font-size: 14px;
+}
+
+// Icon-size overrides pulled out of inline sx.
+.iconXs { font-size: 12px !important; }
+.iconSm { font-size: 14px !important; }
+.iconMd { font-size: 20px !important; color: var(--mui-palette-text-disabled) !important; }
+
+.cancelBtn {
+  text-transform: none !important;
+  color: var(--mui-palette-text-secondary) !important;
+}
+
 .lineRow {
   display: grid;
   grid-template-columns: 44px 1fr auto auto;
