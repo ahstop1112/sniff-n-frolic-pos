@@ -4,6 +4,7 @@ export type SalesLayoutSlots = {
   header?: ReactNode;
   product?: ReactNode;
   cart?: ReactNode;
+  footer?: ReactNode;
 };
 
 export type SalesLayoutProps = {

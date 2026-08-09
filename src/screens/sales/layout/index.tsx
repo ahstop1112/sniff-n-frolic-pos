@@ -89,6 +89,11 @@ const SalesLayout = ({ slots, className }: SalesLayoutProps) => {
         )}
 
       </main>
+      {slots?.footer && (
+        <div className={styles.footerArea}>
+          {slots.footer}
+        </div>
+      )}
     </div>
   )
 }
