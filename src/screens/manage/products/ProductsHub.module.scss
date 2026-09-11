@@ -3,14 +3,21 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background-color: var(--mui-palette-background-default);
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(217, 119, 87, 0.055) 0px,
+    rgba(217, 119, 87, 0.055) 1px,
+    transparent 1px,
+    transparent 10px
+  );
 }
 
 // ── Hero ─────────────────────────────────────────────────────
 .hero {
   padding: 20px 24px;
   border-bottom: 1px solid var(--mui-palette-divider);
-  background-color: var(--mui-palette-background-default);
+  background-color: #ffffff;
   flex-shrink: 0;
 }
 
@@ -197,20 +204,22 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .searchField {
-  width: 260px;
+  width: 240px;
   flex-shrink: 0;
 
   :global(.MuiOutlinedInput-root) {
     border-radius: 12px;
-    background-color: var(--mui-palette-background-paper);
+    background-color: #ffffff;
   }
 }
 
 .categoryChips {
+  flex: 1;
+  min-width: 0;
   display: flex;
   gap: 6px;
   overflow-x: auto;

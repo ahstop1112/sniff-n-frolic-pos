@@ -59,7 +59,14 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
-  background-color: var(--mui-palette-grey-50, #f9fafb);
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(217, 119, 87, 0.08) 0px,
+    rgba(217, 119, 87, 0.08) 1px,
+    transparent 1px,
+    transparent 10px
+  );
   overflow: hidden;
   display: grid;
   place-items: center;
