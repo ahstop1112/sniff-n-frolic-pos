@@ -113,6 +113,10 @@ export const useProductsHub = () => {
     () => allProducts.reduce((sum, p) => sum + p.stock_quantity, 0),
     [allProducts],
   )
+  const supplierCount = useMemo(
+    () => new Set(allProducts.flatMap((p) => p.brand_names)).size,
+    [allProducts],
+  )
 
   return {
     searchText,
@@ -123,6 +127,7 @@ export const useProductsHub = () => {
     totalProducts: allProducts.length,
     categories: topCategories,
     categoryCount: topCategories.length,
+    supplierCount,
     liveCount,
     draftCount,
     archivedCount,

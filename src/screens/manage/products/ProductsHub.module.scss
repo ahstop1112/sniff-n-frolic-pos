@@ -1,52 +1,68 @@
+// SVG price-tag outline used as hero watermark
+$tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231A2332' stroke-width='1.2'%3E%3Cpath d='M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.37.86.58 1.41.58.55 0 1.05-.21 1.41-.58l7-7c.37-.36.59-.86.59-1.42 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z'/%3E%3C%2Fsvg%3E");
+
+// ── Root ─────────────────────────────────────────────────────
 .root {
   height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  background-image: repeating-linear-gradient(
-    -45deg,
-    rgba(217, 119, 87, 0.055) 0px,
-    rgba(217, 119, 87, 0.055) 1px,
-    transparent 1px,
-    transparent 10px
-  );
+  background-color: var(--mui-palette-background-default);
 }
 
 // ── Hero ─────────────────────────────────────────────────────
 .hero {
-  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  padding: 24px 28px 28px;
   border-bottom: 1px solid var(--mui-palette-divider);
-  background-color: #ffffff;
+  background-color: var(--mui-palette-background-default);
   flex-shrink: 0;
+
+  // Price-tag watermark on the right
+  &::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    width: 52%;
+    background-image: $tag-icon;
+    background-size: 88px 88px;
+    background-repeat: repeat;
+    opacity: 0.065;
+    pointer-events: none;
+  }
 }
 
 .heroTop {
+  position: relative;
+  z-index: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+  gap: 32px;
 }
 
 .heroBrand {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 16px;
   min-width: 0;
 }
 
 .heroIcon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background-color: rgba(15, 34, 45, 0.06);
-  color: var(--mui-palette-text-primary);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: #1A2332;
+  color: #ffffff;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  margin-top: 2px;
 
-  svg { font-size: 20px; }
+  svg { font-size: 24px; }
 }
 
 .heroMeta {
@@ -57,97 +73,166 @@
 }
 
 .heroEyebrow {
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--mui-palette-text-secondary);
+  margin-bottom: 2px;
 }
 
 .heroTitle {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 800;
   color: var(--mui-palette-text-primary);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
-.heroStats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  font-size: 12px;
+.heroTitleMuted {
+  font-weight: 400;
   color: var(--mui-palette-text-secondary);
-  margin-top: 4px;
+}
+
+.heroSubStats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--mui-palette-text-secondary);
+  margin-top: 8px;
 
   strong {
     color: var(--mui-palette-text-primary);
     font-weight: 700;
-    margin-right: 2px;
   }
 }
 
-.heroDivider {
-  color: var(--mui-palette-divider);
-}
+.heroSubDot { color: var(--mui-palette-divider); }
 
+// ── Hero actions (right column, 2 rows) ───────────────────────
 .heroActions {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
   flex-shrink: 0;
 }
 
+.heroActionsTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heroActionsBottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  :global(.MuiButton-root) {
+    text-transform: none;
+    font-weight: 700;
+    border-radius: 10px;
+  }
+
+  :global(.MuiButton-contained) {
+    font-weight: 800;
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+
+  :global(.MuiButton-outlined) {
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--mui-palette-text-secondary);
+    border-color: var(--mui-palette-divider);
+
+    &:hover {
+      border-color: var(--mui-palette-text-disabled);
+      color: var(--mui-palette-text-primary);
+      background-color: transparent;
+    }
+  }
+}
+
+// Grid / List toggle
 .viewToggle {
   display: inline-flex;
-  padding: 3px;
-  border-radius: 999px;
-  background-color: rgba(15, 34, 45, 0.05);
-  border: 1px solid var(--mui-palette-divider);
+  gap: 4px;
 }
 
 .viewBtn {
-  padding: 5px 12px;
-  border: none;
-  background: transparent;
-  color: var(--mui-palette-text-secondary);
-  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 700;
-  border-radius: 999px;
-  cursor: pointer;
   font-family: inherit;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: background-color 0.12s, color 0.12s;
+  gap: 6px;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
 
-  svg { font-size: 14px; }
-
-  &:hover { color: var(--mui-palette-text-primary); }
+  svg { font-size: 15px; }
 
   &.viewBtnActive {
-    background-color: #20404E;
+    background-color: #1A2332;
     color: #ffffff;
+    border: 1px solid #1A2332;
+  }
+
+  &:not(.viewBtnActive) {
+    background-color: var(--mui-palette-background-paper);
+    color: var(--mui-palette-text-secondary);
+    border: 1px solid var(--mui-palette-divider);
+
+    &:hover {
+      color: var(--mui-palette-text-primary);
+      border-color: var(--mui-palette-text-disabled);
+    }
   }
 }
 
-.heroValuePill {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--mui-palette-text-secondary);
-  background-color: rgba(15, 34, 45, 0.05);
-  padding: 5px 12px;
-  border-radius: 999px;
+// Value pill (retail value + units)
+.heroValueGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
   border: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mui-palette-text-primary);
 }
 
-.heroCta {
-  :global(.MuiButton-root) {
-    text-transform: none;
-    font-weight: 800;
-    border-radius: 12px;
-    padding: 6px 16px;
-  }
+.heroValueItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  svg { font-size: 14px; color: var(--mui-palette-text-secondary); }
+}
+
+.heroValueSep {
+  width: 1px;
+  height: 14px;
+  background-color: var(--mui-palette-divider);
+}
+
+.heroNotifBadge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background-color: #E53935;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
 }
 
 // ── Body ─────────────────────────────────────────────────────
@@ -163,20 +248,19 @@
 
 // ── Stats strip ───────────────────────────────────────────────
 .statsStrip {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .statCard {
-  padding: 12px 18px;
+  padding: 14px 18px 16px;
   border-radius: 12px;
   border: 1px solid var(--mui-palette-divider);
   background-color: var(--mui-palette-background-paper);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 96px;
 }
 
 .statLabel {
@@ -185,19 +269,27 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--mui-palette-text-secondary);
+  margin-bottom: 4px;
 }
 
 .statValue {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.05;
   color: var(--mui-palette-text-primary);
+}
+
+.statDescription {
+  font-size: 11.5px;
+  color: var(--mui-palette-text-secondary);
+  margin-top: 4px;
+  line-height: 1.35;
 }
 
 .statLive    { .statValue { color: #1F7A46; } }
 .statDraft   { .statValue { color: #8A5A00; } }
 .statArchived { .statValue { color: var(--mui-palette-text-secondary); } }
-.statSale    { .statValue { color: #1A6FAF; } }
+.statSale    { .statValue { color: #C0392B; } }
 
 // ── Toolbar ──────────────────────────────────────────────────
 .toolbar {
@@ -213,7 +305,7 @@
 
   :global(.MuiOutlinedInput-root) {
     border-radius: 12px;
-    background-color: #ffffff;
+    background-color: var(--mui-palette-background-paper);
   }
 }
 
