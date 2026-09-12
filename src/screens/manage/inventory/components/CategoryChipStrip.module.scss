@@ -1,0 +1,34 @@
+.strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 4px;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.chip {
+  padding: 6px 12px;
+  min-height: 32px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
+  transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+
+  &:hover {
+    border-color: var(--mui-palette-text-disabled);
+  }
+}
+
+.chipActive {
+  border-color: var(--mui-palette-primary-main);
+  background-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText);
+}

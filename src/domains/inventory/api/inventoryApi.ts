@@ -55,7 +55,7 @@ export const getStock = (params: GetStockParams = {}): Promise<StockListResponse
       low_stock_only: params.low_stock_only,
       low_stock_threshold: params.low_stock_threshold,
       branch_id: params.branch_id,
-      limit: params.limit,
+      limit:  params.limit && params.limit > 200 ? 200 : params.limit,
       offset: params.offset,
     }),
     { method: "GET" },

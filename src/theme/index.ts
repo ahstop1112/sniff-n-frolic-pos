@@ -29,7 +29,7 @@ export const theme = createTheme({
             main: "#ef4444",
         },
         background: {
-            default: brand.cream,
+            default: brand.lightBlue,
             paper: brand.paper,
         },
         text: {

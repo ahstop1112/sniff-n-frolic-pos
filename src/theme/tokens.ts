@@ -16,6 +16,7 @@ export const brand = {
 
   // Neutrals
   cream: "#F5F1EB",     // warm off-white background
+  lightBlue: "#f5f9fb",
   paper: "#FFFFFF",
   ink: "#1A2332",       // near-black text
   inkMuted: "#6B7280",

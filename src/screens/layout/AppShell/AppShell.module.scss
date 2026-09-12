@@ -1,3 +1,5 @@
+@use "../../../styles/tokens" as t;
+
 // App-wide chrome for authenticated routes.
 // Dark navy left rail with nav + user chip; content fills the rest.
 
@@ -5,7 +7,7 @@
   min-height: 100vh;
   display: grid;
   grid-template-columns: 232px 1fr;
-  background-color: var(--mui-palette-background-default);
+  background-color: t.$c-bg;
 
   @media (max-width: 900px) {
     grid-template-columns: 72px 1fr;
@@ -13,8 +15,8 @@
 }
 
 .rail {
-  background-color: var(--mui-palette-secondary-main);
-  color: rgba(255, 255, 255, 0.78);
+  background-color: t.$c-secondary;
+  color: t.$overlay-white-78;
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: 20px 14px;
@@ -36,10 +38,10 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: t.$overlay-white-08;
   display: grid;
   place-items: center;
-  color: #ffffff;
+  color: t.$white;
   flex-shrink: 0;
 }
 
@@ -49,13 +51,13 @@
   .brandName {
     font-size: 13.5px;
     font-weight: 700;
-    color: #ffffff;
+    color: t.$white;
     line-height: 1.2;
   }
 
   .brandSub {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.55);
+    color: t.$overlay-white-55;
     line-height: 1.3;
   }
 }
@@ -73,7 +75,7 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 10px;
-  color: rgba(255, 255, 255, 0.62);
+  color: t.$overlay-white-62;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
@@ -87,13 +89,13 @@
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background-color: t.$overlay-white-05;
+    color: t.$white;
   }
 
   &.active {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    background-color: t.$overlay-white-08;
+    color: t.$white;
     font-weight: 700;
   }
 }
@@ -112,13 +114,13 @@
   padding: 8px 10px;
   border-radius: 10px;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: t.$overlay-white-72;
+  border: 1px solid t.$overlay-white-06;
   min-width: 0;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background-color: t.$overlay-white-05;
+    color: t.$white;
   }
 }
 
@@ -126,8 +128,8 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background-color: var(--mui-palette-primary-main);
-  color: #ffffff;
+  background-color: t.$c-primary;
+  color: t.$white;
   display: grid;
   place-items: center;
   font-size: 12px;
@@ -141,7 +143,7 @@
   .userName {
     font-size: 13px;
     font-weight: 700;
-    color: #ffffff;
+    color: t.$white;
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -150,7 +152,7 @@
 
   .userSub {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
+    color: t.$overlay-white-50;
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -168,7 +170,7 @@
 
 // Logout menu item — destructive styling
 .logoutItem {
-  color: var(--mui-palette-error-main) !important;
+  color: t.$c-error !important;
   font-weight: 700 !important;
 }
 

@@ -1,0 +1,81 @@
+// ─────────────────────────────────────────────────────────────
+// Design tokens — shared source of truth for every SCSS module.
+//
+// Mirrors src/theme/tokens.ts on the TypeScript side. For colors that
+// ARE part of the MUI palette (primary, secondary, backgrounds, text,
+// divider, action-hover) we alias the theme's CSS custom properties so
+// light/dark theming stays automatic. For everything else (brand-base
+// hexes, alpha overlays, tints, shadows) we store the raw value here.
+//
+// Import from a module with:
+//   @use "../../styles/tokens" as t;   // adjust `../../` to your depth
+// and reference with e.g. t.$c-primary or t.$overlay-white-08.
+// ─────────────────────────────────────────────────────────────
+
+// ── Brand base hexes ─────────────────────────
+$navy:       #20404E;
+$navy-dark:  #152B36;
+$navy-soft:  #3A5966;
+
+$coral:      #D97757;
+$coral-dark: #B85E40;
+$coral-soft: #EEB39C;
+
+$cream:      #F5F1EB;
+$paper:      #FFFFFF;
+$white:      #FFFFFF;
+
+$ink:        #1A2332;
+$ink-muted:  #6B7280;
+$ink-faint:  #94A3B8;
+
+$border:      #E5E7EB;
+$border-soft: #EEF0F3;
+
+// ── Semantic palette (follows MUI theme via CSS custom props) ──
+$c-primary:          var(--mui-palette-primary-main);
+$c-primary-contrast: var(--mui-palette-primary-contrastText);
+$c-secondary:        var(--mui-palette-secondary-main);
+$c-bg:               var(--mui-palette-background-lightBlue);
+$c-paper:            var(--mui-palette-background-paper);
+$c-text:             var(--mui-palette-text-primary);
+$c-text-muted:       var(--mui-palette-text-secondary);
+$c-text-faint:       var(--mui-palette-text-disabled);
+$c-divider:          var(--mui-palette-divider);
+$c-hover:            var(--mui-palette-action-hover);
+$c-error:            var(--mui-palette-error-main);
+$c-warning:          var(--mui-palette-warning-main);
+$c-success:          var(--mui-palette-success-main);
+
+// ── White overlays (on dark navy panel / rail) ──
+$overlay-white-05: rgba(255, 255, 255, 0.05);
+$overlay-white-06: rgba(255, 255, 255, 0.06);
+$overlay-white-08: rgba(255, 255, 255, 0.08);
+$overlay-white-40: rgba(255, 255, 255, 0.40);
+$overlay-white-50: rgba(255, 255, 255, 0.50);
+$overlay-white-55: rgba(255, 255, 255, 0.55);
+$overlay-white-60: rgba(255, 255, 255, 0.60);
+$overlay-white-62: rgba(255, 255, 255, 0.62);
+$overlay-white-68: rgba(255, 255, 255, 0.68);
+$overlay-white-72: rgba(255, 255, 255, 0.72);
+$overlay-white-78: rgba(255, 255, 255, 0.78);
+
+// ── Ink overlays (on the cream stage) — grids, shadows, subtle strips ──
+$overlay-ink-035: rgba(15, 34, 45, 0.035);
+$overlay-ink-05:  rgba(15, 34, 45, 0.05);
+$overlay-ink-08:  rgba(15, 34, 45, 0.08);
+$overlay-ink-18:  rgba(15, 34, 45, 0.18);
+
+// ── Coral tints ──
+$tint-coral-04: rgba(217, 119, 87, 0.04);
+$tint-coral-05: rgba(217, 119, 87, 0.05);
+$tint-coral-10: rgba(217, 119, 87, 0.10);
+$tint-coral-12: rgba(217, 119, 87, 0.12);
+$tint-coral-35: rgba(217, 119, 87, 0.35);
+
+// ── Navy tints ──
+$tint-navy-10: rgba(32, 64, 78, 0.10);
+
+// ── Shadow presets ─────────────────────────
+$shadow-card: 0 12px 40px -12px $overlay-ink-18, 0 2px 6px -2px $overlay-ink-08;
+$shadow-chip-coral: 0 4px 12px -4px $tint-coral-35;

@@ -18,7 +18,7 @@ export interface Brand {
 const getToken = () => localStorage.getItem("snf_pos_access_token")
 
 const fetchProduct = async (slug: string) => {
-  const res = await fetch(`/api/products/${slug}`, {
+  const res = await fetch(`/api/products/${slug}?manage=true`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   })
   if (!res.ok) throw new Error("Failed to fetch product")

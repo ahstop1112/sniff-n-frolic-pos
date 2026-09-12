@@ -1,0 +1,448 @@
+.screen {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mui-palette-background-default);
+  overflow-y: auto;
+}
+
+// ── Top bar ───────────────────────────────────────────────────────────────────
+.topBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 28px 14px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.topBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.topBarTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--mui-palette-primary-main);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 520px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.breadcrumbBack {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mui-palette-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  line-height: 1;
+
+  &:hover {
+    color: var(--mui-palette-primary-main);
+    text-decoration: underline;
+  }
+}
+
+.breadcrumbSep {
+  font-size: 12px;
+  color: var(--mui-palette-text-disabled);
+  line-height: 1;
+}
+
+.breadcrumbCurrent {
+  font-size: 12px;
+  color: var(--mui-palette-text-disabled);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+  line-height: 1;
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 2px;
+
+  :global(.MuiButton-root) {
+    text-transform: none;
+    font-weight: 700;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+}
+
+.savedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: rgba(110, 231, 167, 0.18);
+  color: #1F7A46;
+}
+
+// ── Two-column body ───────────────────────────────────────────────────────────
+.body {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+  max-width: 1160px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.mainCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  position: sticky;
+  top: 24px;
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.card {
+  background-color: var(--mui-palette-background-paper);
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cardTitle {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mui-palette-text-secondary);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+// Strip borders from Autocomplete's clear + popup-indicator buttons
+.card {
+  :global(.MuiAutocomplete-clearIndicator),
+  :global(.MuiAutocomplete-popupIndicator) {
+    border: none;
+    box-shadow: none;
+  }
+}
+
+// ── Field row (label + action icons) ─────────────────────────────────────────
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fieldRowGrow {
+  flex: 1;
+  min-width: 0;
+}
+
+.fieldRowIcons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+// ── Status card ───────────────────────────────────────────────────────────────
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.statusDotPublished { background-color: #50C878; }
+.statusDotDraft     { background-color: #F5C36A; }
+.statusDotArchived  { background-color: var(--mui-palette-text-disabled); }
+
+.statusLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mui-palette-text-primary);
+}
+
+// ── Pricing card ──────────────────────────────────────────────────────────────
+.priceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.customerPays {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 13px;
+  background-color: rgba(15, 34, 45, 0.03);
+  border-radius: 10px;
+  border: 1px solid var(--mui-palette-divider);
+  margin-top: 2px;
+}
+
+.customerPaysLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mui-palette-text-secondary);
+}
+
+.customerPaysAmount {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--mui-palette-text-primary);
+}
+
+// ── Inventory card ────────────────────────────────────────────────────────────
+.inventoryQtyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stockPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stockIn  { background-color: rgba(110, 231, 167, 0.18); color: #1F7A46; }
+.stockOut { background-color: rgba(240, 125, 107, 0.20); color: #A63A29; }
+
+.inventoryMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--mui-palette-divider);
+}
+
+.trackInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trackLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mui-palette-text-primary);
+}
+
+.trackSub {
+  font-size: 11px;
+  color: var(--mui-palette-text-disabled);
+}
+
+// ── SEO ───────────────────────────────────────────────────────────────────────
+.seoCard {
+  background-color: var(--mui-palette-background-paper);
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.seoCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+// Google snippet preview
+.snippet {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.snippetSite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #202124;
+}
+
+.snippetFavicon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #e8f0fe;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #1a73e8;
+  flex-shrink: 0;
+}
+
+.snippetDomain {
+  font-size: 13px;
+  color: #202124;
+  font-weight: 400;
+}
+
+.snippetTitle {
+  font-size: 20px;
+  font-weight: 400;
+  color: #1a0dab;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.snippetTitle:empty::after {
+  content: "No meta title yet…";
+  color: #bbb;
+  font-size: 16px;
+}
+
+.snippetDesc {
+  font-size: 13.5px;
+  color: #4d5156;
+  line-height: 1.57;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.snippetDesc:empty::after {
+  content: "No meta description yet…";
+  color: #bbb;
+}
+
+// Character count + bar
+.seoField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.charRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.charBar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background-color: var(--mui-palette-grey-200, #e5e7eb);
+  overflow: hidden;
+}
+
+.charBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.15s, background-color 0.15s;
+}
+
+.charBarGreen  { background-color: #50C878; }
+.charBarYellow { background-color: #F5C36A; }
+.charBarRed    { background-color: #F07D6B; }
+
+.charCount {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.charGreen  { color: #1F7A46; }
+.charYellow { color: #8A5A00; }
+.charRed    { color: #A63A29; }
+
+// ── Danger zone ───────────────────────────────────────────────────────────────
+.dangerCard {
+  background-color: rgba(240, 125, 107, 0.05);
+  border: 1px solid rgba(240, 125, 107, 0.22);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dangerTitle {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #A63A29;
+}
+
+.dangerText {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--mui-palette-text-secondary);
+  margin: 0;
+}

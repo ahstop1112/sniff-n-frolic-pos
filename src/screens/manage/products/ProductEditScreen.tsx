@@ -30,12 +30,10 @@ const ProductEditScreen = () => {
     )
   }
 
-  // product_type = "variation" means this IS a variant (child), not a parent.
-  // Show variant management only for parent products (simple / variable) when editing.
   const isVariationChild = !isCreate && product?.product_type === "variation"
 
   return (
-    <Box>
+    <>
       <ProductEditForm
         isCreate={isCreate}
         form={form}
@@ -49,14 +47,14 @@ const ProductEditScreen = () => {
         isSuccess={isSuccess}
       />
       {!isCreate && !isVariationChild && product?.slug && (
-        <Box sx={{ px: 3, pb: 4 }}>
+        <Box sx={{ px: 3, pb: 4, maxWidth: 1200, mx: "auto" }}>
           <VariantList
             parentSlug={product.slug as string}
             parentName={product.name as string ?? form.name}
           />
         </Box>
       )}
-    </Box>
+    </>
   )
 }
 
