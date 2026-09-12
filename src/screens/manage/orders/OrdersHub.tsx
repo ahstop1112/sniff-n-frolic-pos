@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Skeleton from "@mui/material/Skeleton"
-import FormControlLabel from "@mui/material/FormControlLabel"
 import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import Alert from "@mui/material/Alert"
@@ -72,18 +71,22 @@ const OrdersHubScreen = () => {
       {/* ── Body ── */}
       <div className={styles.scrollBody}>
         <div className={styles.toolbar}>
-          <FormControlLabel
-            control={
-              <Select
-                value={statusFilter}
-                onChange={(e) => handleStatusChange(e.target.value)}
-                size="small"
-                sx={{ minWidth: 120 }}
-              />
-            }
-            label="Status"
-            labelPlacement="start"
-          />
+          <label htmlFor="status-filter" style={{ marginRight: 8, fontSize: "0.875rem" }}>
+            Status
+          </label>
+          <Select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            size="small"
+            sx={{ minWidth: 140 }}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="processing">Processing</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="cancelled">Cancelled</MenuItem>
+          </Select>
         </div>
 
         {error && <Alert severity="error">{error.message}</Alert>}
