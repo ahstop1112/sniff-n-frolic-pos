@@ -1,0 +1,116 @@
+.root {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f9fb;
+}
+
+.header {
+  flex-shrink: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.itemsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.itemsHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 60px 120px 120px;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--mui-palette-action-hover);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 60px 120px 120px;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  font-size: 0.875rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.muted {
+  color: var(--mui-palette-text-secondary);
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.totalsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  min-width: 200px;
+}
+
+.totalRow {
+  display: grid;
+  grid-template-columns: 120px 120px;
+  gap: 12px;
+  font-size: 0.875rem;
+
+  span:first-child {
+    text-align: right;
+    color: var(--mui-palette-text-secondary);
+  }
+
+  span:last-child {
+    text-align: right;
+  }
+}
+
+.totalRowFinal {
+  border-top: 1px solid var(--mui-palette-divider);
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+
+  span {
+    color: var(--mui-palette-text-primary);
+  }
+}

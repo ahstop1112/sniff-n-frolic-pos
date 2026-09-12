@@ -11,6 +11,9 @@ import ProductEditScreen from "./screens/manage/products/ProductEditScreen"
 import StockOverviewScreen from "./screens/manage/inventory"
 import AdjustStockScreen from "./screens/manage/inventory/AdjustStockScreen"
 import MovementsScreen from "./screens/manage/inventory/MovementsScreen"
+import OrdersScreen from "./screens/manage/orders"
+import OrdersHubScreen from "./screens/manage/orders/OrdersHub"
+import OrderDetailScreen from "./screens/manage/orders/OrderDetailScreen"
 import AppShell from "./screens/layout/AppShell"
 
 const AppRoutes = () => {
@@ -35,6 +38,10 @@ const AppRoutes = () => {
               <Route path="inventory"            element={<StockOverviewScreen />} />
               <Route path="inventory/movements"  element={<MovementsScreen />} />
               <Route path="inventory/adjust"     element={<AdjustStockScreen />} />
+              <Route path="orders" element={<OrdersScreen />}>
+                <Route index element={<OrdersHubScreen />} />
+                <Route path=":orderId" element={<OrderDetailScreen />} />
+              </Route>
             </Route>
 
             {/* Sales requires an active shift */}
