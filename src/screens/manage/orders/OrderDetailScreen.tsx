@@ -161,57 +161,68 @@ const OrderDetailScreen = () => {
     <div className={styles.screen}>
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
-        <div className={styles.topBarLeft}>
-          <button className={styles.backLink} onClick={() => navigate(-1)}>
-            ← Orders
-          </button>
-          <div className={styles.headerTitleRow}>
-            {order.items && order.items.length > 0 && (
-              <div className={styles.productThumbnail}>
-                {order.items[0].product_image_url ? (
-                  <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
-                ) : (
-                  <div className={styles.productThumbnailPlaceholder}>
-                    <ImageOutlinedIcon sx={{ fontSize: "1.5rem", opacity: 0.4 }} />
-                  </div>
-                )}
-              </div>
-            )}
-            <div className={styles.headerTitle}>
-              <span className={styles.orderNumber}>{order.order_number}</span>
-              <span
-                className={styles.statusPill}
-                style={{ background: getStatusPillColor(order.status) }}
-              >
-                {getStatusLabel(order.status)}
-              </span>
-              <span className={styles.timestamp}>{formatDate(order.created_at)}</span>
-            </div>
+        <div className={styles.topBarContent}>
+          <div className={styles.topBarLeft}>
+            <button className={styles.backLink} onClick={() => navigate(-1)}>
+              ← Orders
+            </button>
+            <h1 className={styles.pageTitle}>{order.order_number}</h1>
+            <span className={styles.pageSubtitle}>status & fulfillment</span>
           </div>
-        </div>
-        <div className={styles.topBarActions}>
-          <button className={styles.actionBtn} title="Packing slip">
-            <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-            <span>Packing slip</span>
-          </button>
-          <button className={styles.actionBtn} title="Duplicate">
-            <ContentCopyOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-            <span>Duplicate</span>
-          </button>
-          <button className={styles.actionBtn} title="Refund">
-            <MoneyOffOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-            <span>Refund</span>
-          </button>
-          <button className={styles.actionBtn} title="Notify customer">
-            <NotificationsOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-            <span>Notify customer</span>
-          </button>
+          <div className={styles.topBarRight}>
+            <button className={styles.actionBtn} title="Packing slip">
+              <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Packing slip</span>
+            </button>
+            <button className={styles.actionBtn} title="Duplicate">
+              <ContentCopyOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Duplicate</span>
+            </button>
+            <button className={styles.actionBtn} title="Refund">
+              <MoneyOffOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Refund</span>
+            </button>
+            <button className={styles.actionBtn} title="Notify customer">
+              <NotificationsOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Notify customer</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* ── Main + Sidebar ── */}
       <div className={styles.body}>
         <div className={styles.mainCol}>
+          {/* Product info header with thumbnail */}
+          {order.items && order.items.length > 0 && (
+            <div className={styles.productHeader}>
+              <div className={styles.productThumbnailLarge}>
+                {order.items[0].product_image_url ? (
+                  <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
+                ) : (
+                  <div className={styles.productThumbnailPlaceholder}>
+                    <ImageOutlinedIcon sx={{ fontSize: "2.5rem", opacity: 0.3 }} />
+                  </div>
+                )}
+              </div>
+              <div className={styles.productInfo}>
+                <h3 className={styles.productName}>{order.items[0].product_name}</h3>
+                <p className={styles.productMeta}>
+                  {order.items.length} {order.items.length === 1 ? "item" : "items"} · SKU: {order.items[0].sku || "—"}
+                </p>
+                <div className={styles.statusBadgeGroup}>
+                  <span
+                    className={styles.statusBadge}
+                    style={{ background: getStatusPillColor(order.status) }}
+                  >
+                    {getStatusLabel(order.status)}
+                  </span>
+                  <span className={styles.dateText}>{formatDate(order.created_at)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Status timeline */}
           <StatusTimeline orderStatus={order.status} />
 
