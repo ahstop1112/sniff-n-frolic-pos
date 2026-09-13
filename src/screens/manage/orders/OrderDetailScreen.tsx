@@ -8,6 +8,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined"
 import MoneyOffOutlinedIcon from "@mui/icons-material/MoneyOffOutlined"
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined"
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined"
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import { useQuery } from "@tanstack/react-query"
 import { getOrder } from "@/domains/orders/api/ordersApi"
 import styles from "./OrderDetailScreen.module.scss"
@@ -164,15 +165,28 @@ const OrderDetailScreen = () => {
           <button className={styles.backLink} onClick={() => navigate(-1)}>
             ← Orders
           </button>
-          <div className={styles.headerTitle}>
-            <span className={styles.orderNumber}>{order.order_number}</span>
-            <span
-              className={styles.statusPill}
-              style={{ background: getStatusPillColor(order.status) }}
-            >
-              {getStatusLabel(order.status)}
-            </span>
-            <span className={styles.timestamp}>{formatDate(order.created_at)}</span>
+          <div className={styles.headerWithThumbnail}>
+            {order.items && order.items.length > 0 && (
+              <div className={styles.productThumbnail}>
+                {order.items[0].product_image_url ? (
+                  <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
+                ) : (
+                  <div className={styles.productThumbnailPlaceholder}>
+                    <ImageOutlinedIcon sx={{ fontSize: "1.5rem", opacity: 0.4 }} />
+                  </div>
+                )}
+              </div>
+            )}
+            <div className={styles.headerTitle}>
+              <span className={styles.orderNumber}>{order.order_number}</span>
+              <span
+                className={styles.statusPill}
+                style={{ background: getStatusPillColor(order.status) }}
+              >
+                {getStatusLabel(order.status)}
+              </span>
+              <span className={styles.timestamp}>{formatDate(order.created_at)}</span>
+            </div>
           </div>
         </div>
         <div className={styles.topBarActions}>
