@@ -4,6 +4,9 @@ import { getOrders, type Order } from "../api/ordersApi"
 export const useOrdersList = (params: {
   branch_id?: string
   status?: string
+  sort_by?: string
+  sort_dir?: string
+  search?: string
   limit?: number
   offset?: number
 }) =>

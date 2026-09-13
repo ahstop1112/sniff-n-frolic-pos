@@ -1,5 +1,7 @@
 import Box from "@mui/material/Box"
 import Chip from "@mui/material/Chip"
+import ExpandLessIcon from "@mui/icons-material/ExpandLess"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import type { Order } from "@/domains/orders/api/ordersApi"
 
 const formatDate = (dateStr: string) => {
@@ -38,9 +40,51 @@ const statusColor = (status: string): "default" | "primary" | "success" | "warni
 interface OrdersTableProps {
   orders: Order[]
   onOrderClick: (id: string) => void
+  sortBy?: string
+  sortDir?: string
+  onSort?: (field: string) => void
 }
 
-const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps) => {
+const SortHeader = ({
+  label,
+  field,
+  sortBy,
+  sortDir,
+  onClick,
+}: {
+  label: string
+  field: string
+  sortBy?: string
+  sortDir?: string
+  onClick?: (field: string) => void
+}) => {
+  const isActive = sortBy === field
+  return (
+    <Box
+      onClick={() => onClick?.(field)}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 0.5,
+        cursor: onClick ? "pointer" : "default",
+        userSelect: "none",
+        "&:hover": onClick ? { color: "text.primary" } : {},
+        transition: "color 0.2s",
+      }}
+    >
+      <span>{label}</span>
+      {isActive && (
+        sortDir === "asc" ? (
+          <ExpandLessIcon sx={{ fontSize: "1rem" }} />
+        ) : (
+          <ExpandMoreIcon sx={{ fontSize: "1rem" }} />
+        )
+      )}
+    </Box>
+  )
+}
+
+const OrdersTable = ({ orders, onOrderClick, sortBy, sortDir, onSort }: OrdersTableProps) => {
   if (orders.length === 0) return null
 
   return (
@@ -60,12 +104,12 @@ const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps) => {
           color: "text.secondary",
         }}
       >
-        <span>Date</span>
+        <SortHeader label="Date" field="created_at" sortBy={sortBy} sortDir={sortDir} onClick={onSort} />
         <span>Customer</span>
         <span>Order #</span>
-        <span>Total</span>
+        <SortHeader label="Total" field="total" sortBy={sortBy} sortDir={sortDir} onClick={onSort} />
         <span>Source</span>
-        <span>Status</span>
+        <SortHeader label="Status" field="status" sortBy={sortBy} sortDir={sortDir} onClick={onSort} />
       </Box>
 
       {/* Rows */}

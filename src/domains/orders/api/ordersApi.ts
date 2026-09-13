@@ -87,6 +87,9 @@ export const getOrders = (params: {
   date_from?: string
   date_to?: string
   source?: "pos" | "online"
+  sort_by?: string
+  sort_dir?: string
+  search?: string
   limit?: number
   offset?: number
 } = {}): Promise<OrderListResponse> =>
@@ -97,6 +100,9 @@ export const getOrders = (params: {
       date_from: params.date_from,
       date_to: params.date_to,
       source: params.source,
+      sort_by: params.sort_by,
+      sort_dir: params.sort_dir,
+      search: params.search,
       limit: params.limit,
       offset: params.offset,
     }),
