@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom"
-import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
-import CardContent from "@mui/material/CardContent"
-import Typography from "@mui/material/Typography"
 import Skeleton from "@mui/material/Skeleton"
 import Alert from "@mui/material/Alert"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined"
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined"
+import MoneyOffOutlinedIcon from "@mui/icons-material/MoneyOffOutlined"
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined"
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined"
 import { useQuery } from "@tanstack/react-query"
 import { getOrder } from "@/domains/orders/api/ordersApi"
 import styles from "./OrderDetailScreen.module.scss"
@@ -29,6 +30,76 @@ const formatCurrency = (cents: number) =>
     maximumFractionDigits: 2,
   }).format(cents / 100)
 
+const getStatusPillColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "pending":
+      return "#F5C36A"
+    case "processing":
+      return "#8B9AC5"
+    case "completed":
+      return "#50C878"
+    case "cancelled":
+      return "#F07D6B"
+    default:
+      return "#999"
+  }
+}
+
+const getStatusLabel = (status: string) => {
+  return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
+const StatusTimeline = ({ orderStatus }: { orderStatus: string }) => {
+  const stages = [
+    { id: "placed", label: "Placed" },
+    { id: "paid", label: "Paid" },
+    { id: "processing", label: "Processing" },
+    { id: "ready", label: "Ready" },
+    { id: "picked_up", label: "Picked up" },
+  ]
+
+  const getStageStatus = (stageId: string) => {
+    const statusMap: Record<string, string[]> = {
+      placed: ["pending", "processing", "completed", "cancelled"],
+      paid: ["processing", "completed"],
+      processing: ["processing", "completed"],
+      ready: ["completed"],
+      picked_up: ["completed"],
+    }
+
+    if (statusMap[stageId]?.includes(orderStatus.toLowerCase())) {
+      return "completed"
+    }
+    if (stageId === orderStatus.toLowerCase()) {
+      return "current"
+    }
+    return "future"
+  }
+
+  return (
+    <div className={styles.timeline}>
+      {stages.map((stage, idx) => {
+        const stageStatus = getStageStatus(stage.id)
+        return (
+          <div key={stage.id} className={styles.timelineWrapper}>
+            <div className={`${styles.timelineNode} ${styles[`node_${stageStatus}`]}`}>
+              {stageStatus === "completed" ? (
+                <CheckCircleOutlinedIcon sx={{ fontSize: "1.5rem" }} />
+              ) : (
+                <div className={styles.timelineCircle} />
+              )}
+            </div>
+            <div className={styles.timelineLabel}>{stage.label}</div>
+            {idx < stages.length - 1 && (
+              <div className={`${styles.timelineConnector} ${styles[`connector_${stageStatus}`]}`} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 const OrderDetailScreen = () => {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
@@ -41,16 +112,16 @@ const OrderDetailScreen = () => {
 
   if (query.isLoading) {
     return (
-      <div className={styles.root}>
-        <div className={styles.header}>
+      <div className={styles.screen}>
+        <div className={styles.topBar}>
           <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} />
-          <div>
+          <div style={{ flex: 1 }}>
             <Skeleton width={200} height={32} />
           </div>
         </div>
-        <div className={styles.content}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} height={40} style={{ marginBottom: 16 }} />
+        <div className={styles.body} style={{ display: "block" }}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} height={60} style={{ marginBottom: 16 }} />
           ))}
         </div>
       </div>
@@ -59,11 +130,11 @@ const OrderDetailScreen = () => {
 
   if (query.error) {
     return (
-      <div className={styles.root}>
-        <div className={styles.header}>
+      <div className={styles.screen}>
+        <div className={styles.topBar}>
           <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} />
         </div>
-        <div className={styles.content}>
+        <div className={styles.body}>
           <Alert severity="error">{(query.error as Error).message}</Alert>
         </div>
       </div>
@@ -72,11 +143,11 @@ const OrderDetailScreen = () => {
 
   if (!query.data) {
     return (
-      <div className={styles.root}>
-        <div className={styles.header}>
+      <div className={styles.screen}>
+        <div className={styles.topBar}>
           <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} />
         </div>
-        <div className={styles.content}>
+        <div className={styles.body}>
           <Alert severity="warning">Order not found</Alert>
         </div>
       </div>
@@ -86,142 +157,170 @@ const OrderDetailScreen = () => {
   const order = query.data
 
   return (
-    <div className={styles.root}>
-      {/* ── Header ── */}
-      <div className={styles.header}>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>
-          Back
-        </Button>
+    <div className={styles.screen}>
+      {/* ── Top bar ── */}
+      <div className={styles.topBar}>
+        <div className={styles.topBarLeft}>
+          <button className={styles.backLink} onClick={() => navigate(-1)}>
+            ← Orders
+          </button>
+          <div className={styles.headerTitle}>
+            <span className={styles.orderNumber}>{order.order_number}</span>
+            <span
+              className={styles.statusPill}
+              style={{ background: getStatusPillColor(order.status) }}
+            >
+              {getStatusLabel(order.status)}
+            </span>
+            <span className={styles.timestamp}>{formatDate(order.created_at)}</span>
+          </div>
+        </div>
+        <div className={styles.topBarActions}>
+          <button className={styles.actionBtn} title="Packing slip">
+            <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+            <span>Packing slip</span>
+          </button>
+          <button className={styles.actionBtn} title="Duplicate">
+            <ContentCopyOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+            <span>Duplicate</span>
+          </button>
+          <button className={styles.actionBtn} title="Refund">
+            <MoneyOffOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+            <span>Refund</span>
+          </button>
+          <button className={styles.actionBtn} title="Notify customer">
+            <NotificationsOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+            <span>Notify customer</span>
+          </button>
+        </div>
       </div>
 
-      {/* ── Content ── */}
-      <div className={styles.content}>
-        {/* Order info card */}
-        <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              {order.order_number}
-            </Typography>
-            <div className={styles.infoGrid}>
-              <div>
-                <Typography variant="caption" display="block" color="textSecondary">
-                  Date
-                </Typography>
-                <Typography variant="body2">{formatDate(order.created_at)}</Typography>
-              </div>
-              <div>
-                <Typography variant="caption" display="block" color="textSecondary">
-                  Customer
-                </Typography>
-                <Typography variant="body2">{order.customer_name || "Guest"}</Typography>
-              </div>
-              <div>
-                <Typography variant="caption" display="block" color="textSecondary">
-                  Source
-                </Typography>
-                <Typography variant="body2" sx={{ textTransform: "uppercase" }}>
-                  {order.source}
-                </Typography>
-              </div>
-              <div>
-                <Typography variant="caption" display="block" color="textSecondary">
-                  Status
-                </Typography>
-                <Typography variant="body2" sx={{ textTransform: "capitalize" }}>
-                  {order.status}
-                </Typography>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* ── Main + Sidebar ── */}
+      <div className={styles.body}>
+        <div className={styles.mainCol}>
+          {/* Status timeline */}
+          <StatusTimeline orderStatus={order.status} />
 
-        {/* Line items */}
-        {order.items && order.items.length > 0 && (
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Items
-              </Typography>
+          {/* Attention banner (ready but not notified) */}
+          {order.status.toLowerCase() === "completed" && (
+            <div className={styles.attentionBanner}>
+              <div className={styles.attentionContent}>
+                <strong>Order is ready for pickup!</strong> Customer hasn't been notified yet.
+              </div>
+              <button className={styles.attentionBtn}>Send Ready for pickup</button>
+            </div>
+          )}
+
+          {/* Line items */}
+          {order.items && order.items.length > 0 && (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>Line Items</h3>
+                <span className={styles.itemCount}>
+                  {order.items.reduce((sum, item) => sum + item.quantity, 0)} items
+                </span>
+              </div>
               <div className={styles.itemsTable}>
                 <div className={styles.itemsHeader}>
-                  <span>Product</span>
-                  <span>SKU</span>
-                  <span>Qty</span>
-                  <span>Unit Price</span>
-                  <span>Subtotal</span>
+                  <span className={styles.colProduct}>Product</span>
+                  <span className={styles.colSku}>SKU</span>
+                  <span className={styles.colQty}>Qty</span>
+                  <span className={styles.colPrice}>Unit Price</span>
+                  <span className={styles.colTotal}>Line Total</span>
                 </div>
                 {order.items.map((item) => (
                   <div key={item.id} className={styles.itemRow}>
-                    <span>{item.product_name}</span>
-                    <span className={styles.muted}>{item.sku || "—"}</span>
-                    <span>{item.quantity}</span>
-                    <span>{formatCurrency(item.unit_price)}</span>
-                    <span className={styles.bold}>{formatCurrency(item.subtotal)}</span>
+                    <span className={styles.colProduct}>{item.product_name}</span>
+                    <span className={`${styles.colSku} ${styles.muted}`}>{item.sku || "—"}</span>
+                    <span className={styles.colQty}>{item.quantity}</span>
+                    <span className={styles.colPrice}>{formatCurrency(item.unit_price)}</span>
+                    <span className={`${styles.colTotal} ${styles.bold}`}>
+                      {formatCurrency(item.subtotal)}
+                    </span>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          )}
 
-        {/* Totals */}
-        <Card>
-          <CardContent>
-            <div className={styles.totalsGrid}>
+          {/* Totals */}
+          <div className={styles.card}>
+            <div className={styles.totalsBlock}>
               <div className={styles.totalRow}>
-                <span>Subtotal:</span>
+                <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
               {order.discount > 0 && (
                 <div className={styles.totalRow}>
-                  <span>Discount:</span>
+                  <span>Discount</span>
                   <span>-{formatCurrency(order.discount)}</span>
                 </div>
               )}
-              <div className={`${styles.totalRow} ${styles.totalRowFinal}`}>
-                <span>Total:</span>
+              <div className={styles.totalRow}>
+                <span>Tax</span>
+                <span>—</span>
+              </div>
+              <div className={styles.totalRowFinal}>
+                <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Shipping info */}
-        {order.shipping_address && (
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Shipping Address
-              </Typography>
-              <Typography variant="body2">
-                {order.shipping_address.line1}
-                {order.shipping_address.line2 && (
-                  <>
-                    <br />
-                    {order.shipping_address.line2}
-                  </>
-                )}
-                <br />
-                {order.shipping_address.city}, {order.shipping_address.province}{" "}
-                {order.shipping_address.postal_code}
-                <br />
-                {order.shipping_address.country}
-              </Typography>
-            </CardContent>
-          </Card>
-        )}
+        {/* ── Sidebar ── */}
+        <div className={styles.sideCol}>
+          {/* Customer card */}
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Customer</div>
+            <div className={styles.customerCard}>
+              <div className={styles.customerInitials}>
+                {order.customer_name
+                  ? order.customer_name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                  : "G"}
+              </div>
+              <div className={styles.customerInfo}>
+                <div className={styles.customerName}>{order.customer_name || "Guest"}</div>
+              </div>
+            </div>
+            {order.member_id && (
+              <div className={styles.memberBadge}>Member</div>
+            )}
+            {order.guest_email && (
+              <>
+                <div className={styles.contactRow}>
+                  <span className={styles.contactLabel}>Email</span>
+                  <span className={styles.contactValue}>{order.guest_email}</span>
+                </div>
+              </>
+            )}
+            <a href="#" className={styles.viewProfileLink}>
+              View full profile
+            </a>
+          </div>
 
-        {/* Notes */}
-        {order.notes && (
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Notes
-              </Typography>
-              <Typography variant="body2">{order.notes}</Typography>
-            </CardContent>
-          </Card>
-        )}
+          {/* Fulfillment card */}
+          <div className={styles.card}>
+            <div className={styles.cardTitle}>Fulfillment</div>
+            <div className={styles.fulfillmentContent}>
+              <div className={styles.fulfillmentStatus}>
+                Status: <strong>{getStatusLabel(order.status)}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Notes card */}
+          {order.notes && (
+            <div className={`${styles.card} ${styles.notesCard}`}>
+              <div className={styles.cardTitle}>Notes</div>
+              <div className={styles.notesContent}>{order.notes}</div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
