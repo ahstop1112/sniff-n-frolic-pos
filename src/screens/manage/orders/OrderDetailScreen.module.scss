@@ -21,6 +21,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .backLink {
@@ -65,6 +73,35 @@
   font-size: 12px;
   color: var(--mui-palette-text-secondary);
   margin-left: auto;
+}
+
+.productThumbnail {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--mui-palette-action-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.productThumbnailPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--mui-palette-action-disabled);
+  color: var(--mui-palette-text-disabled);
 }
 
 .topBarActions {
