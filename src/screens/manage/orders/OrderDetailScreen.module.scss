@@ -590,3 +590,65 @@
   font-weight: 500;
   margin-top: 4px;
 }
+
+// ── Activity Log ───────────────────────────────────────────────────────────
+
+.activityLog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.activityItem {
+  display: grid;
+  grid-template-columns: 60px 8px 1fr;
+  gap: 12px;
+  align-items: flex-start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.activityTime {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mui-palette-text-secondary);
+  line-height: 1.4;
+}
+
+.activityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mui-palette-primary-main);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.activityContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.activityDescription {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mui-palette-text-primary);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.activityActor {
+  font-size: 11px;
+  color: var(--mui-palette-text-secondary);
+  font-weight: 500;
+}

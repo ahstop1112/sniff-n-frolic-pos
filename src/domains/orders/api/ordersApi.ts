@@ -61,8 +61,18 @@ export interface OrderItem {
   created_at: string
 }
 
+export interface OrderEvent {
+  id: string
+  order_id: string
+  event_type: string
+  actor: string
+  detail: Record<string, unknown>
+  created_at: string
+}
+
 export interface OrderDetail extends Order {
   items: OrderItem[]
+  events?: OrderEvent[]
   shipping_address?: {
     line1: string
     line2?: string

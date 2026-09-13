@@ -10,7 +10,7 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined"
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import { useQuery } from "@tanstack/react-query"
-import { getOrder } from "@/domains/orders/api/ordersApi"
+import { getOrder, type OrderEvent } from "@/domains/orders/api/ordersApi"
 import styles from "./OrderDetailScreen.module.scss"
 
 const formatDate = (dateStr: string) => {
@@ -48,6 +48,21 @@ const getStatusPillColor = (status: string) => {
 
 const getStatusLabel = (status: string) => {
   return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
+const formatEventDescription = (event: OrderEvent): string => {
+  const descriptions: Record<string, string> = {
+    placed: `Order placed via ${event.detail.channel || 'unknown'}`,
+    payment_captured: `Payment captured (${event.detail.method || 'unknown'})`,
+    started_picking: `Started picking (${event.detail.item_count || 0} items)`,
+    marked_ready: `Order marked as ready`,
+    picked_up: `Order picked up from ${event.detail.location || 'store'}`,
+    shipped: `Order shipped via ${event.detail.carrier || 'carrier'} (${event.detail.tracking || 'tracking TBA'})`,
+    delivered: `Delivered${event.detail.signature_required ? ' (signature required)' : ''}`,
+    cancelled: `Order cancelled (${event.detail.reason || 'no reason provided'})`,
+  }
+
+  return descriptions[event.event_type] || event.event_type
 }
 
 const StatusTimeline = ({ orderStatus }: { orderStatus: string }) => {
@@ -343,6 +358,36 @@ const OrderDetailScreen = () => {
             <div className={`${styles.card} ${styles.notesCard}`}>
               <div className={styles.cardTitle}>Notes</div>
               <div className={styles.notesContent}>{order.notes}</div>
+            </div>
+          )}
+
+          {/* Activity log card */}
+          {order.events && order.events.length > 0 && (
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>Activity</div>
+              <div className={styles.activityLog}>
+                {[...order.events]
+                  .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                  .map((event) => (
+                    <div key={event.id} className={styles.activityItem}>
+                      <div className={styles.activityTime}>
+                        {new Date(event.created_at).toLocaleString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                      <div className={styles.activityDot} />
+                      <div className={styles.activityContent}>
+                        <div className={styles.activityDescription}>
+                          {formatEventDescription(event)}
+                        </div>
+                        <div className={styles.activityActor}>{event.actor}</div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           )}
         </div>
