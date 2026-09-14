@@ -205,52 +205,53 @@ const OrderDetailScreen = () => {
         </div>
       </div>
 
+      {/* ── Product Header (Full Width) ── */}
+      {order.items && order.items.length > 0 && (
+        <div className={styles.productHeader}>
+          <div className={styles.productThumbnailLarge}>
+            {order.items[0].product_image_url ? (
+              <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
+            ) : (
+              <div className={styles.productThumbnailPlaceholder}>
+                <ImageOutlinedIcon sx={{ fontSize: "2.5rem", opacity: 0.3 }} />
+              </div>
+            )}
+          </div>
+          <div className={styles.productInfo}>
+            <h3 className={styles.productName}>{order.items[0].product_name}</h3>
+            <p className={styles.productMeta}>
+              {order.items.length} {order.items.length === 1 ? "item" : "items"} · SKU: {order.items[0].sku || "—"}
+            </p>
+            <div className={styles.statusBadgeGroup}>
+              <span
+                className={styles.statusBadge}
+                style={{ background: getStatusPillColor(order.status) }}
+              >
+                {getStatusLabel(order.status)}
+              </span>
+              <span className={styles.dateText}>{formatDate(order.created_at)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Status Timeline (Full Width) ── */}
+      <StatusTimeline orderStatus={order.status} />
+
+      {/* ── Attention Banner (Full Width) ── */}
+      {order.status.toLowerCase() === "completed" && (
+        <div className={styles.attentionBanner}>
+          <div className={styles.attentionContent}>
+            <strong>Order is ready for pickup!</strong> Customer hasn't been notified yet.
+          </div>
+          <button className={styles.attentionBtn}>Send Ready for pickup</button>
+        </div>
+      )}
+
       {/* ── Main + Sidebar ── */}
       <div className={styles.body}>
+        {/* LEFT COLUMN */}
         <div className={styles.mainCol}>
-          {/* Product info header with thumbnail */}
-          {order.items && order.items.length > 0 && (
-            <div className={styles.productHeader}>
-              <div className={styles.productThumbnailLarge}>
-                {order.items[0].product_image_url ? (
-                  <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
-                ) : (
-                  <div className={styles.productThumbnailPlaceholder}>
-                    <ImageOutlinedIcon sx={{ fontSize: "2.5rem", opacity: 0.3 }} />
-                  </div>
-                )}
-              </div>
-              <div className={styles.productInfo}>
-                <h3 className={styles.productName}>{order.items[0].product_name}</h3>
-                <p className={styles.productMeta}>
-                  {order.items.length} {order.items.length === 1 ? "item" : "items"} · SKU: {order.items[0].sku || "—"}
-                </p>
-                <div className={styles.statusBadgeGroup}>
-                  <span
-                    className={styles.statusBadge}
-                    style={{ background: getStatusPillColor(order.status) }}
-                  >
-                    {getStatusLabel(order.status)}
-                  </span>
-                  <span className={styles.dateText}>{formatDate(order.created_at)}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Status timeline */}
-          <StatusTimeline orderStatus={order.status} />
-
-          {/* Attention banner (ready but not notified) */}
-          {order.status.toLowerCase() === "completed" && (
-            <div className={styles.attentionBanner}>
-              <div className={styles.attentionContent}>
-                <strong>Order is ready for pickup!</strong> Customer hasn't been notified yet.
-              </div>
-              <button className={styles.attentionBtn}>Send Ready for pickup</button>
-            </div>
-          )}
-
           {/* Line items */}
           {order.items && order.items.length > 0 && (
             <div className={styles.card}>
@@ -262,6 +263,7 @@ const OrderDetailScreen = () => {
               </div>
               <div className={styles.itemsTable}>
                 <div className={styles.itemsHeader}>
+                  <span className={styles.colImage}>Image</span>
                   <span className={styles.colProduct}>Product</span>
                   <span className={styles.colSku}>SKU</span>
                   <span className={styles.colQty}>Qty</span>
@@ -270,6 +272,15 @@ const OrderDetailScreen = () => {
                 </div>
                 {order.items.map((item) => (
                   <div key={item.id} className={styles.itemRow}>
+                    <div className={styles.colImage}>
+                      {item.product_image_url ? (
+                        <img src={item.product_image_url} alt={item.product_name} />
+                      ) : (
+                        <div className={styles.itemImagePlaceholder}>
+                          <ImageOutlinedIcon sx={{ fontSize: "1rem", opacity: 0.3 }} />
+                        </div>
+                      )}
+                    </div>
                     <span className={styles.colProduct}>{item.product_name}</span>
                     <span className={`${styles.colSku} ${styles.muted}`}>{item.sku || "—"}</span>
                     <span className={styles.colQty}>{item.quantity}</span>
@@ -283,7 +294,31 @@ const OrderDetailScreen = () => {
             </div>
           )}
 
-          {/* Activity log card */}
+          {/* Totals */}
+          <div className={styles.card}>
+            <div className={styles.totalsBlock}>
+              <div className={styles.totalRow}>
+                <span>Subtotal</span>
+                <span>{formatCurrency(order.subtotal)}</span>
+              </div>
+              {order.discount > 0 && (
+                <div className={styles.totalRow}>
+                  <span>Discount</span>
+                  <span>-{formatCurrency(order.discount)}</span>
+                </div>
+              )}
+              <div className={styles.totalRow}>
+                <span>Tax</span>
+                <span>—</span>
+              </div>
+              <div className={styles.totalRowFinal}>
+                <span>Total</span>
+                <span>{formatCurrency(order.total)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Activity log */}
           {order.events && order.events.length > 0 && (
             <div className={styles.card}>
               <div className={styles.cardTitle}>Activity</div>
@@ -314,34 +349,10 @@ const OrderDetailScreen = () => {
           )}
         </div>
 
-        {/* ── Sidebar ── */}
+        {/* RIGHT COLUMN */}
         <div className={styles.sideCol}>
-          {/* Totals */}
-          <div className={styles.card}>
-            <div className={styles.totalsBlock}>
-              <div className={styles.totalRow}>
-                <span>Subtotal</span>
-                <span>{formatCurrency(order.subtotal)}</span>
-              </div>
-              {order.discount > 0 && (
-                <div className={styles.totalRow}>
-                  <span>Discount</span>
-                  <span>-{formatCurrency(order.discount)}</span>
-                </div>
-              )}
-              <div className={styles.totalRow}>
-                <span>Tax</span>
-                <span>—</span>
-              </div>
-              <div className={styles.totalRowFinal}>
-                <span>Total</span>
-                <span>{formatCurrency(order.total)}</span>
-              </div>
-            </div>
-          </div>
-
           {/* Customer card */}
-          <div className={styles.card}>
+          <div className={`${styles.card} ${styles.customerCardWrapper}`}>
             <div className={styles.cardTitle}>Customer</div>
             <div className={styles.customerCard}>
               <div className={styles.customerInitials}>
@@ -361,12 +372,10 @@ const OrderDetailScreen = () => {
               <div className={styles.memberBadge}>Member</div>
             )}
             {order.guest_email && (
-              <>
-                <div className={styles.contactRow}>
-                  <span className={styles.contactLabel}>Email</span>
-                  <span className={styles.contactValue}>{order.guest_email}</span>
-                </div>
-              </>
+              <div className={styles.contactRow}>
+                <span className={styles.contactLabel}>Email</span>
+                <span className={styles.contactValue}>{order.guest_email}</span>
+              </div>
             )}
             <a href="#" className={styles.viewProfileLink}>
               View full profile
@@ -378,18 +387,24 @@ const OrderDetailScreen = () => {
             <div className={styles.cardTitle}>Fulfillment</div>
             <div className={styles.fulfillmentContent}>
               <div className={styles.fulfillmentStatus}>
-                Status: <strong>{getStatusLabel(order.status)}</strong>
+                <strong>{getStatusLabel(order.status)}</strong>
               </div>
             </div>
           </div>
 
-          {/* Notes card */}
+          {/* Customer Notes */}
           {order.notes && (
             <div className={`${styles.card} ${styles.notesCard}`}>
-              <div className={styles.cardTitle}>Notes</div>
+              <div className={styles.cardTitle}>Customer Notes</div>
               <div className={styles.notesContent}>{order.notes}</div>
             </div>
           )}
+
+          {/* Internal Notes (placeholder for future) */}
+          <div className={`${styles.card} ${styles.internalNotesCard}`}>
+            <div className={styles.cardTitle}>Internal Notes</div>
+            <div className={styles.notesContent}>No internal notes</div>
+          </div>
         </div>
       </div>
     </div>
