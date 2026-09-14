@@ -21,11 +21,15 @@ const MonthlySalesChart = ({ data }: Props) => {
       })),
       series: [
         {
-          type: "bar",
+          type: "line",
           xKey: "month",
           yKey: "revenue",
           yName: "Revenue (CAD)",
-          fill: "#667eea",
+          stroke: "#667eea",
+          marker: {
+            fill: "#667eea",
+            size: 5,
+          },
           label: {
             fontSize: 12,
           },
