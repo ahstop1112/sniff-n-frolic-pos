@@ -283,6 +283,39 @@ const OrderDetailScreen = () => {
             </div>
           )}
 
+          {/* Activity log card */}
+          {order.events && order.events.length > 0 && (
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>Activity</div>
+              <div className={styles.activityLog}>
+                {[...order.events]
+                  .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                  .map((event) => (
+                    <div key={event.id} className={styles.activityItem}>
+                      <div className={styles.activityTime}>
+                        {new Date(event.created_at).toLocaleString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                      <div className={styles.activityDot} />
+                      <div className={styles.activityContent}>
+                        <div className={styles.activityDescription}>
+                          {formatEventDescription(event)}
+                        </div>
+                        <div className={styles.activityActor}>{event.actor}</div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Sidebar ── */}
+        <div className={styles.sideCol}>
           {/* Totals */}
           <div className={styles.card}>
             <div className={styles.totalsBlock}>
@@ -306,10 +339,7 @@ const OrderDetailScreen = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Sidebar ── */}
-        <div className={styles.sideCol}>
           {/* Customer card */}
           <div className={styles.card}>
             <div className={styles.cardTitle}>Customer</div>
@@ -358,36 +388,6 @@ const OrderDetailScreen = () => {
             <div className={`${styles.card} ${styles.notesCard}`}>
               <div className={styles.cardTitle}>Notes</div>
               <div className={styles.notesContent}>{order.notes}</div>
-            </div>
-          )}
-
-          {/* Activity log card */}
-          {order.events && order.events.length > 0 && (
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>Activity</div>
-              <div className={styles.activityLog}>
-                {[...order.events]
-                  .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                  .map((event) => (
-                    <div key={event.id} className={styles.activityItem}>
-                      <div className={styles.activityTime}>
-                        {new Date(event.created_at).toLocaleString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </div>
-                      <div className={styles.activityDot} />
-                      <div className={styles.activityContent}>
-                        <div className={styles.activityDescription}>
-                          {formatEventDescription(event)}
-                        </div>
-                        <div className={styles.activityActor}>{event.actor}</div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
             </div>
           )}
         </div>
