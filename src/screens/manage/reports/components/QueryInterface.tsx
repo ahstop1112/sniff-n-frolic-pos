@@ -107,7 +107,7 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
               }
             }}
             disabled={isLoading}
-            sx={{ height: 56, "& .MuiInputBase-input": { padding: "16px 14px" } }}
+            sx={{ height: 56, "& .MuiInputBase-input": { padding: 0 } }}
           />
           <Button
             variant="contained"
