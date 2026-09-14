@@ -23,19 +23,25 @@ const SUPPORTED_INTENTS = [
   { id: "revenue_by_category", label: "Revenue by product category" },
   { id: "top_products", label: "Top-selling or highest-revenue products" },
   { id: "period_comparison", label: "Compare two time periods" },
+  { id: "explain_change", label: "Explain what changed between periods" },
   { id: "slow_movers", label: "Products with low sales" },
 ]
 
 interface QueryInterfaceProps {
   onResultsChange?: (result: ReportQueryResult | null) => void
+  context?: {
+    date_from?: string
+    date_to?: string
+    granularity?: "day" | "week" | "month"
+    current_intent?: string | null
+  }
 }
 
-const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
+const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
   const [question, setQuestion] = useState("")
   const [result, setResult] = useState<ReportQueryResult | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [editParams, setEditParams] = useState<ReportParams>({})
-  const [showUnsupportedInfo, setShowUnsupportedInfo] = useState(false)
 
   const mutation = useReportQuery()
   const isLoading = mutation.isPending
@@ -45,15 +51,16 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
     if (!question.trim()) return
 
     try {
-      const res = await mutation.mutateAsync(question.trim())
+      const res = await mutation.mutateAsync({
+        question: question.trim(),
+        context: context || {},
+      })
       setResult(res)
       setEditParams(res.params || {})
       setEditMode(false)
-      setShowUnsupportedInfo(res.intent === "unsupported")
       onResultsChange?.(res)
-    } catch (e) {
+    } catch {
       setResult(null)
-      setShowUnsupportedInfo(false)
     }
   }
 

@@ -147,7 +147,7 @@ const ReportScreen = () => {
         )}
 
         {/* ── Query Interface ── */}
-        <QueryInterface onResultsChange={setQueryResult} />
+        <QueryInterface onResultsChange={setQueryResult} context={{ date_from: dateFrom, date_to: dateTo, granularity: "month", current_intent: "reports" }} />
 
         {/* ── Range Selector (for manual reports) ── */}
         {!queryResult && (

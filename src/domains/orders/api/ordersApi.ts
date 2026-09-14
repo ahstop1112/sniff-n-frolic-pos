@@ -152,6 +152,7 @@ export type ReportIntent =
   | "revenue_by_category"
   | "top_products"
   | "period_comparison"
+  | "explain_change"
   | "slow_movers"
   | "unsupported"
 
@@ -175,12 +176,20 @@ export interface ReportQueryResult {
   data: Array<Record<string, unknown>>
 }
 
-export const queryReport = (question: string): Promise<ReportQueryResult> =>
+export const queryReport = (
+  question: string,
+  context?: {
+    date_from?: string
+    date_to?: string
+    granularity?: "day" | "week" | "month"
+    current_intent?: string | null
+  },
+): Promise<ReportQueryResult> =>
   request(
     buildUrl("/report/query"),
     {
       method: "POST",
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, context }),
     },
     "Failed to process report query",
   )
