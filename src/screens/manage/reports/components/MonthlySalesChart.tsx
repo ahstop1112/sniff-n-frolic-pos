@@ -1,4 +1,6 @@
 import { useMemo } from "react"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
 import { AgCharts } from "ag-charts-react"
 import type { MonthlyReportData } from "@/domains/orders/api/ordersApi"
 
@@ -23,7 +25,7 @@ const MonthlySalesChart = ({ data }: Props) => {
           xKey: "month",
           yKey: "revenue",
           yName: "Revenue (CAD)",
-          fill: "#1976d2",
+          fill: "#667eea",
           label: {
             fontSize: 12,
           },
@@ -72,9 +74,22 @@ const MonthlySalesChart = ({ data }: Props) => {
   )
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
-      <AgCharts options={chartOptions as any} />
-    </div>
+    <Box>
+      <Typography
+        variant="h6"
+        sx={{
+          fontSize: "1.1rem",
+          fontWeight: 700,
+          color: "#1a202c",
+          marginBottom: "20px",
+        }}
+      >
+        Sales by Day
+      </Typography>
+      <div style={{ height: "400px", width: "100%" }}>
+        <AgCharts options={chartOptions as any} />
+      </div>
+    </Box>
   )
 }
 

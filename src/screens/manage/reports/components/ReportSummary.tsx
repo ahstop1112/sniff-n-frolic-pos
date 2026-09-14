@@ -1,6 +1,4 @@
 import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
-import CardContent from "@mui/material/CardContent"
 import Typography from "@mui/material/Typography"
 
 interface SummaryData {
@@ -18,7 +16,7 @@ const formatCurrency = (cents: number) =>
   new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: "CAD",
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 0,
   }).format(cents / 100)
 
 const SummaryCard = ({
@@ -30,23 +28,45 @@ const SummaryCard = ({
   value: number | string
   isCurrency?: boolean
 }) => (
-  <Card>
-    <CardContent>
-      <Typography color="textSecondary" gutterBottom>
-        {label}
-      </Typography>
-      <Typography variant="h6">
-        {isCurrency ? formatCurrency(value as number) : value}
-      </Typography>
-    </CardContent>
-  </Card>
+  <Box
+    sx={{
+      background: "white",
+      border: "1px solid #e8eef5",
+      borderRadius: "12px",
+      padding: "24px",
+      transition: "all 0.2s ease",
+      "&:hover": {
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+        borderColor: "#d0d4dd",
+      },
+    }}
+  >
+    <Typography
+      sx={{
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        color: "#8b92a4",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        marginBottom: "12px",
+      }}
+    >
+      {label}
+    </Typography>
+    <Typography
+      sx={{
+        fontSize: "2rem",
+        fontWeight: 700,
+        color: "#1a202c",
+      }}
+    >
+      {isCurrency ? formatCurrency(value as number) : value}
+    </Typography>
+  </Box>
 )
 
 const ReportSummary = ({ summary }: Props) => (
-  <Box sx={{ p: 2 }}>
-    <Typography variant="h6" sx={{ mb: 2 }}>
-      Summary
-    </Typography>
+  <Box sx={{ mb: 2 }}>
     <Box
       sx={{
         display: "grid",
@@ -55,7 +75,7 @@ const ReportSummary = ({ summary }: Props) => (
           sm: "repeat(2, 1fr)",
           md: "repeat(4, 1fr)",
         },
-        gap: 2,
+        gap: 3,
       }}
     >
       <SummaryCard label="Total Revenue" value={summary.totalRevenue} isCurrency />
