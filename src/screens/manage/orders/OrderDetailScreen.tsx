@@ -176,13 +176,11 @@ const OrderDetailScreen = () => {
     <div className={styles.screen}>
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
+        <button className={styles.breadcrumb} onClick={() => navigate(-1)}>
+          ← Orders
+        </button>
         <div className={styles.topBarWrapper}>
-          <div className={styles.topBarLeft}>
-            <button className={styles.breadcrumb} onClick={() => navigate(-1)}>
-              ← Orders
-            </button>
-            <h1 className={styles.pageTitle}>{order.order_number}</h1>
-          </div>
+          <h1 className={styles.pageTitle}>{order.order_number}</h1>
           <div className={styles.actionButtonsRow}>
             <button className={styles.actionBtn} title="Packing slip">
               <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />

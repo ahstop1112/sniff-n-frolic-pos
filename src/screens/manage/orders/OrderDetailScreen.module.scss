@@ -11,21 +11,17 @@
   padding: 32px 32px;
   border-bottom: 1px solid var(--mui-palette-divider);
   background-color: var(--mui-palette-background-paper);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .topBarWrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 20px;
   width: 100%;
-}
-
-.topBarLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
 }
 
 .breadcrumb {
