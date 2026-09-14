@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
+import { getCategoryColor, REPORT_COLORS, REPORT_PALETTE } from "../constants/reportColors"
 
 interface RevenueData {
   category: string
@@ -11,21 +12,12 @@ interface Props {
   data: RevenueData[]
 }
 
-// Color palette matching the screenshot
-const CATEGORY_COLORS: Record<string, string> = {
-  treats: "#E07856",
-  food: "#1F3A5F",
-  walking: "#4A90A4",
-  grooming: "#D9A399",
-  uncategorized: "#9CA3AF",
-}
-
-const getCategoryColor = (category: string): string => {
-  return CATEGORY_COLORS[category.toLowerCase()] || CATEGORY_COLORS.uncategorized
-}
-
 const RevenueTable = ({ data }: Props) => {
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0)
+
+  // Sort data by revenue descending to assign ranks
+  const sortedData = [...data].sort((a, b) => b.revenue - a.revenue)
+  const rankMap = new Map(sortedData.map((item, idx) => [item.category, idx]))
 
   return (
     <Box>
@@ -38,7 +30,7 @@ const RevenueTable = ({ data }: Props) => {
           marginBottom: "20px",
         }}
       >
-        Product Breakdown
+        Revenue breakdown
       </Typography>
       <div style={{ overflowX: "auto" }}>
         <table
@@ -49,16 +41,16 @@ const RevenueTable = ({ data }: Props) => {
           }}
         >
           <thead>
-            <tr style={{ backgroundColor: "#f3f4f6", borderBottom: "1px solid #e5e7eb" }}>
+            <tr style={{ backgroundColor: REPORT_COLORS.headerBackground }}>
               <th
                 style={{
                   padding: "12px 16px",
                   textAlign: "left",
                   fontWeight: 600,
-                  color: "#6b7280",
+                  color: REPORT_COLORS.headerText,
                   textTransform: "uppercase",
                   fontSize: "0.7rem",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
                 Category
@@ -68,10 +60,10 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "12px 16px",
                   textAlign: "center",
                   fontWeight: 600,
-                  color: "#6b7280",
+                  color: REPORT_COLORS.headerText,
                   textTransform: "uppercase",
                   fontSize: "0.7rem",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
                 Units
@@ -81,10 +73,10 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "12px 16px",
                   textAlign: "center",
                   fontWeight: 600,
-                  color: "#6b7280",
+                  color: REPORT_COLORS.headerText,
                   textTransform: "uppercase",
                   fontSize: "0.7rem",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
                 Share
@@ -94,10 +86,10 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "12px 16px",
                   textAlign: "right",
                   fontWeight: 600,
-                  color: "#6b7280",
+                  color: REPORT_COLORS.headerText,
                   textTransform: "uppercase",
                   fontSize: "0.7rem",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
                 Revenue
@@ -107,27 +99,29 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "12px 16px",
                   textAlign: "right",
                   fontWeight: 600,
-                  color: "#6b7280",
+                  color: REPORT_COLORS.headerText,
                   textTransform: "uppercase",
                   fontSize: "0.7rem",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.8px",
                 }}
               >
-                % Of Total
+                % of total
               </th>
             </tr>
           </thead>
           <tbody>
-            {data.map((row, idx) => {
-              const revenuePercent = totalRevenue > 0 ? ((row.revenue / totalRevenue) * 100).toFixed(0) : "0"
-              const color = getCategoryColor(row.category)
+            {data.map((row) => {
+              const revenuePercent = totalRevenue > 0 ? (row.revenue / totalRevenue) * 100 : 0
+              const rank = rankMap.get(row.category) ?? REPORT_PALETTE.length - 1
+              const color = getCategoryColor(rank)
+
               return (
-                <tr key={idx} style={{ backgroundColor: "#ffffff", borderBottom: "1px solid #f3f4f6" }}>
+                <tr key={row.category} style={{ backgroundColor: REPORT_COLORS.rowBackground, borderBottom: `1px solid ${REPORT_COLORS.rowBorder}` }}>
                   <td
                     style={{
                       padding: "14px 16px",
                       textAlign: "left",
-                      color: "#1f2937",
+                      color: REPORT_COLORS.textPrimary,
                       fontWeight: 500,
                       display: "flex",
                       alignItems: "center",
@@ -136,10 +130,10 @@ const RevenueTable = ({ data }: Props) => {
                   >
                     <div
                       style={{
-                        width: "12px",
-                        height: "12px",
+                        width: "10px",
+                        height: "10px",
                         backgroundColor: color,
-                        borderRadius: "2px",
+                        borderRadius: "50%",
                         flexShrink: 0,
                       }}
                     />
@@ -149,7 +143,7 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "center",
-                      color: "#1f2937",
+                      color: REPORT_COLORS.textPrimary,
                       fontWeight: 500,
                     }}
                   >
@@ -159,30 +153,30 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "center",
-                      color: "#1f2937",
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        gap: "4px",
+                        gap: "0",
                         alignItems: "center",
+                        height: "6px",
                       }}
                     >
                       <div
                         style={{
-                          height: "8px",
+                          height: "100%",
                           flex: `${revenuePercent} 1 0`,
                           backgroundColor: color,
-                          borderRadius: "2px",
+                          borderRadius: "3px 0 0 3px",
                         }}
                       />
                       <div
                         style={{
-                          height: "8px",
-                          flex: `${100 - parseInt(revenuePercent)} 1 0`,
-                          backgroundColor: "#e5e7eb",
-                          borderRadius: "2px",
+                          height: "100%",
+                          flex: `${100 - revenuePercent} 1 0`,
+                          backgroundColor: REPORT_COLORS.trackBackground,
+                          borderRadius: "0 3px 3px 0",
                         }}
                       />
                     </div>
@@ -191,8 +185,10 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "right",
-                      color: "#1f2937",
+                      color: REPORT_COLORS.textPrimary,
                       fontWeight: 600,
+                      fontFamily: "'Courier New', monospace",
+                      letterSpacing: "0.02em",
                     }}
                   >
                     ${(row.revenue / 100).toFixed(0)}
@@ -201,11 +197,11 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "right",
-                      color: "#1f2937",
+                      color: REPORT_COLORS.textPrimary,
                       fontWeight: 600,
                     }}
                   >
-                    {revenuePercent}%
+                    {revenuePercent.toFixed(0)}%
                   </td>
                 </tr>
               )

@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import { AgCharts } from "ag-charts-react"
+import { getCategoryColor, REPORT_PALETTE } from "../constants/reportColors"
 
 interface RevenueData {
   category: string
@@ -12,40 +13,56 @@ interface Props {
   data: RevenueData[]
 }
 
-const COLORS = ["#667eea", "#764ba2", "#f57c00", "#43a047", "#1e88e5", "#fb8c00", "#e53935"]
-
 const ShareOfRevenue = ({ data }: Props) => {
+  const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0)
+
+  // Sort data by revenue descending to assign ranks
+  const sortedData = [...data].sort((a, b) => b.revenue - a.revenue)
+  const rankMap = new Map(sortedData.map((item, idx) => [item.category, idx]))
+
+  // Build colors array maintaining rank order
+  const colors = data.map((item) => {
+    const rank = rankMap.get(item.category) ?? REPORT_PALETTE.length - 1
+    return getCategoryColor(rank)
+  })
+
   const chartOptions = useMemo(
     () => ({
-      title: {
-        text: "Share of Revenue",
-      },
-      data: data.map((d, idx) => ({
+      data: data.map((d) => ({
         category: d.category || "Uncategorized",
         revenue: d.revenue / 100,
-        color: COLORS[idx % COLORS.length],
       })),
       series: [
         {
           type: "donut",
           angleKey: "revenue",
-          radiusKey: "revenue",
           labelKey: "category",
-          fills: COLORS,
+          fills: colors,
           label: {
-            offset: 0,
-            minimumRequiredAngle: 45,
+            enabled: false,
           },
-          innerRadiusOffset: -50,
+          innerRadiusOffset: -80,
+          strokeWidth: 0,
         },
       ],
       legend: {
+        enabled: false,
+      },
+      tooltip: {
         enabled: true,
-        position: "right",
       },
     }) as unknown,
-    [data],
+    [data, colors],
   )
+
+  // Format total as compact currency (e.g., $28k)
+  const formatCompact = (cents: number): string => {
+    const dollars = cents / 100
+    if (dollars >= 1000) {
+      return `$${(dollars / 1000).toFixed(0)}k`
+    }
+    return `$${Math.round(dollars).toLocaleString()}`
+  }
 
   return (
     <Box>
@@ -58,10 +75,44 @@ const ShareOfRevenue = ({ data }: Props) => {
           marginBottom: "20px",
         }}
       >
-        Share of Revenue
+        Share of revenue
       </Typography>
-      <div style={{ height: "300px", width: "100%" }}>
-        <AgCharts options={chartOptions as any} />
+      <div style={{ position: "relative", height: "320px", width: "100%" }}>
+        <AgCharts options={chartOptions as unknown} />
+        {/* Center label overlay */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            zIndex: 10,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              color: "#6B7280",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              marginBottom: "4px",
+            }}
+          >
+            NET
+          </div>
+          <div
+            style={{
+              fontSize: "1.75rem",
+              fontWeight: 700,
+              color: "#1F2937",
+            }}
+          >
+            {formatCompact(totalRevenue)}
+          </div>
+        </div>
       </div>
     </Box>
   )
