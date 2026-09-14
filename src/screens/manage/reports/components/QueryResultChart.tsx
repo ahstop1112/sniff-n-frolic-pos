@@ -25,8 +25,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               xKey: "period",
               yKey: "revenue",
               yName: "Revenue (CAD)",
-              stroke: "#1976d2",
-              marker: { fill: "#1976d2", size: 4 },
+              stroke: "#667eea",
+              marker: { fill: "#667eea", size: 4 },
             },
             data[0]?.order_count !== undefined
               ? {
@@ -34,8 +34,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
                   xKey: "period",
                   yKey: "order_count",
                   yName: "Orders",
-                  stroke: "#f57c00",
-                  marker: { fill: "#f57c00", size: 4 },
+                  stroke: "#764ba2",
+                  marker: { fill: "#764ba2", size: 4 },
                   yAxis: {
                     type: "number",
                     position: "right",
@@ -77,7 +77,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               xKey,
               yKey: metric === "units" ? "units_sold" : "revenue",
               yName: metric === "units" ? "Units Sold" : "Revenue (CAD)",
-              fill: "#1976d2",
+              fill: "#667eea",
             },
           ],
           axes: [
@@ -105,7 +105,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               xKey: "period",
               yKey: "revenue",
               yName: "Revenue (CAD)",
-              fill: "#1976d2",
+              fill: "#667eea",
             },
           ],
           axes: [
