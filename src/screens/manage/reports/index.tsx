@@ -98,6 +98,20 @@ const ReportScreen = () => {
 
       {/* ── Body ── */}
       <div className={styles.scrollBody}>
+        {/* ── Summary Cards (Key Metrics at Top) ── */}
+        {!queryResult && (
+          <>
+            {isLoading ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
+                <Skeleton variant="rounded" height={80} />
+                <Skeleton variant="rounded" height={80} />
+              </Box>
+            ) : (
+              data.length > 0 && <ReportSummary summary={summary} />
+            )}
+          </>
+        )}
+
         {/* ── Query Interface ── */}
         <QueryInterface onResultsChange={setQueryResult} />
 
@@ -133,7 +147,6 @@ const ReportScreen = () => {
             {isLoading ? (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
                 <Skeleton variant="rounded" height={400} />
-                <Skeleton variant="rounded" height={100} />
               </Box>
             ) : (
               <>
@@ -145,9 +158,6 @@ const ReportScreen = () => {
                 ) : (
                   <div className={styles.emptyState}>No data available for the selected period.</div>
                 )}
-
-                {/* ── Summary ── */}
-                {data.length > 0 && <ReportSummary summary={summary} />}
               </>
             )}
           </>
