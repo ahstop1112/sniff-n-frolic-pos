@@ -94,27 +94,27 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
     <div className={styles.root}>
       {/* ── Question Input ── */}
       <Box className={styles.questionSection}>
-        <TextField
-          fullWidth
-          multiline
-          rows={2}
-          placeholder="Ask about your sales data. e.g., 'Show me revenue for the last 3 months' or 'What are the top 10 products?'"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && e.ctrlKey) {
-              handleSubmitQuestion()
-            }
-          }}
-          disabled={isLoading}
-          sx={{ mb: 1 }}
-        />
-        <Box sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-end" }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            placeholder="Ask about your sales data. e.g., 'Show me revenue for the last 3 months' or 'What are the top 10 products?'"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.ctrlKey) {
+                handleSubmitQuestion()
+              }
+            }}
+            disabled={isLoading}
+          />
           <Button
             variant="contained"
             onClick={handleSubmitQuestion}
             disabled={!question.trim() || isLoading}
             endIcon={isLoading ? <CircularProgress size={20} /> : <SendIcon />}
+            sx={{ minWidth: 120, height: 56 }}
           >
             {isLoading ? "Analyzing..." : "Analyze"}
           </Button>
