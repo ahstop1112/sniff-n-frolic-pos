@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import { AgCharts } from "ag-charts-react"
-import { getCategoryColor, REPORT_PALETTE } from "../constants/reportColors"
+import { assignCategoryColors } from "../constants/reportColors"
 
 interface RevenueData {
   category: string
@@ -11,20 +11,15 @@ interface RevenueData {
 
 interface Props {
   data: RevenueData[]
+  categoryColors?: Array<{ category: string; rank: number; color: string }>
 }
 
-const ShareOfRevenue = ({ data }: Props) => {
+const ShareOfRevenue = ({ data, categoryColors }: Props) => {
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0)
 
-  // Sort data by revenue descending to assign ranks
-  const sortedData = [...data].sort((a, b) => b.revenue - a.revenue)
-  const rankMap = new Map(sortedData.map((item, idx) => [item.category, idx]))
-
-  // Build colors array maintaining rank order
-  const colors = data.map((item) => {
-    const rank = rankMap.get(item.category) ?? REPORT_PALETTE.length - 1
-    return getCategoryColor(rank)
-  })
+  // If colors not provided, assign them here
+  const colors = categoryColors || assignCategoryColors(data)
+  const colorArray = colors.map((c) => c.color)
 
   const chartOptions = useMemo(
     () => ({
@@ -37,7 +32,7 @@ const ShareOfRevenue = ({ data }: Props) => {
           type: "donut",
           angleKey: "revenue",
           labelKey: "category",
-          fills: colors,
+          fills: colorArray,
           label: {
             enabled: false,
           },
@@ -52,7 +47,7 @@ const ShareOfRevenue = ({ data }: Props) => {
         enabled: true,
       },
     }) as unknown,
-    [data, colors],
+    [data, colorArray],
   )
 
   // Format total as compact currency (e.g., $28k)

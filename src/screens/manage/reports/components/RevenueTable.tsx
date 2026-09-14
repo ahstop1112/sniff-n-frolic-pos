@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import { getCategoryColor, REPORT_COLORS, REPORT_PALETTE } from "../constants/reportColors"
+import { assignCategoryColors, REPORT_COLORS } from "../constants/reportColors"
 
 interface RevenueData {
   category: string
@@ -10,14 +10,14 @@ interface RevenueData {
 
 interface Props {
   data: RevenueData[]
+  categoryColors?: Array<{ category: string; rank: number; color: string }>
 }
 
-const RevenueTable = ({ data }: Props) => {
+const RevenueTable = ({ data, categoryColors }: Props) => {
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0)
 
-  // Sort data by revenue descending to assign ranks
-  const sortedData = [...data].sort((a, b) => b.revenue - a.revenue)
-  const rankMap = new Map(sortedData.map((item, idx) => [item.category, idx]))
+  // If colors not provided, assign them here
+  const colors = categoryColors || assignCategoryColors(data)
 
   return (
     <Box>
@@ -111,9 +111,8 @@ const RevenueTable = ({ data }: Props) => {
           </thead>
           <tbody>
             {data.map((row) => {
+              const colorInfo = colors.find((c) => c.category === (row.category || "Uncategorized"))
               const revenuePercent = totalRevenue > 0 ? (row.revenue / totalRevenue) * 100 : 0
-              const rank = rankMap.get(row.category) ?? REPORT_PALETTE.length - 1
-              const color = getCategoryColor(rank)
 
               return (
                 <tr key={row.category} style={{ backgroundColor: REPORT_COLORS.rowBackground, borderBottom: `1px solid ${REPORT_COLORS.rowBorder}` }}>
@@ -132,7 +131,7 @@ const RevenueTable = ({ data }: Props) => {
                       style={{
                         width: "10px",
                         height: "10px",
-                        backgroundColor: color,
+                        backgroundColor: colorInfo?.color || REPORT_COLORS.textMuted,
                         borderRadius: "50%",
                         flexShrink: 0,
                       }}
@@ -167,7 +166,7 @@ const RevenueTable = ({ data }: Props) => {
                         style={{
                           height: "100%",
                           flex: `${revenuePercent} 1 0`,
-                          backgroundColor: color,
+                          backgroundColor: colorInfo?.color || REPORT_COLORS.textMuted,
                           borderRadius: "3px 0 0 3px",
                         }}
                       />

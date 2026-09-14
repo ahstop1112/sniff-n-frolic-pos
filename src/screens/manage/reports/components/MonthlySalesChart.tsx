@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import { AgCharts } from "ag-charts-react"
+import { SERIES_COLORS } from "../constants/reportColors"
 import type { MonthlyReportData } from "@/domains/orders/api/ordersApi"
 
 interface Props {
@@ -25,9 +26,9 @@ const MonthlySalesChart = ({ data }: Props) => {
           xKey: "month",
           yKey: "revenue",
           yName: "Revenue (CAD)",
-          stroke: "#667eea",
+          stroke: SERIES_COLORS.current,
           marker: {
-            fill: "#667eea",
+            fill: SERIES_COLORS.current,
             size: 5,
           },
           label: {
@@ -39,9 +40,9 @@ const MonthlySalesChart = ({ data }: Props) => {
           xKey: "month",
           yKey: "orderCount",
           yName: "Order Count",
-          stroke: "#f57c00",
+          stroke: SERIES_COLORS.prior,
           marker: {
-            fill: "#f57c00",
+            fill: SERIES_COLORS.prior,
             size: 4,
           },
           yAxis: {
@@ -91,7 +92,7 @@ const MonthlySalesChart = ({ data }: Props) => {
         Sales by Day
       </Typography>
       <div style={{ height: "400px", width: "100%" }}>
-        <AgCharts options={chartOptions as any} />
+        <AgCharts options={chartOptions as unknown} />
       </div>
     </Box>
   )
