@@ -98,7 +98,6 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
           <TextField
             fullWidth
             multiline
-            rows={2}
             placeholder="Ask about your sales data. e.g., 'Show me revenue for the last 3 months' or 'What are the top 10 products?'"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -108,6 +107,7 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
               }
             }}
             disabled={isLoading}
+            sx={{ height: 56 }}
           />
           <Button
             variant="contained"
