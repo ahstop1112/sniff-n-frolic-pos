@@ -235,7 +235,7 @@ const OrderDetailScreen = () => {
       <StatusTimeline orderStatus={order.status} />
 
       {/* ── Attention Banner (Full Width) ── */}
-      {order.status.toLowerCase() === "completed" && (
+      {order.status.toLowerCase() !== "completed" && (
         <div className={styles.attentionBanner}>
           <div className={styles.attentionContent}>
             <strong>Order is ready for pickup!</strong> Customer hasn't been notified yet.
