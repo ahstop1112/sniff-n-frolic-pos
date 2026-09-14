@@ -63,6 +63,19 @@
   color: var(--mui-palette-text-secondary);
 }
 
+.orderHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.actionButtonsRow {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .topBarRight {
   display: flex;
   align-items: center;
@@ -222,7 +235,7 @@
   background: var(--mui-palette-background-paper);
   border-bottom: 1px solid var(--mui-palette-divider);
   border-radius: 0;
-  margin: 0 -32px;
+  margin: 0 -32px 24px -32px;
   width: calc(100% + 64px);
   box-sizing: border-box;
 }
