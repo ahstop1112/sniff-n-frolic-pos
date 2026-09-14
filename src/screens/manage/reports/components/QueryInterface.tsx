@@ -107,14 +107,14 @@ const QueryInterface = ({ onResultsChange }: QueryInterfaceProps) => {
               }
             }}
             disabled={isLoading}
-            sx={{ height: 56 }}
+            sx={{ height: 56, "& .MuiInputBase-input": { padding: "16px 14px" } }}
           />
           <Button
             variant="contained"
             onClick={handleSubmitQuestion}
             disabled={!question.trim() || isLoading}
             endIcon={isLoading ? <CircularProgress size={20} /> : <SendIcon />}
-            sx={{ minWidth: 120, height: 56 }}
+            sx={{ minWidth: 120, height: 56, padding: "16px 14px" }}
           >
             {isLoading ? "Analyzing..." : "Analyze"}
           </Button>
