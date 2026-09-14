@@ -7,6 +7,8 @@ import AnalyticsIcon from "@mui/icons-material/Analytics"
 import { useMonthlyReport } from "@/domains/orders/hooks/useMonthlyReport"
 import MonthlySalesChart from "./components/MonthlySalesChart"
 import ReportSummary from "./components/ReportSummary"
+import QueryInterface from "./components/QueryInterface"
+import type { ReportQueryResult } from "@/domains/orders/api/ordersApi"
 import styles from "./ReportScreen.module.scss"
 
 const formatCurrency = (cents: number) =>
@@ -20,6 +22,7 @@ type DateRange = "6-months" | "12-months" | "all-time"
 
 const ReportScreen = () => {
   const [dateRange, setDateRange] = useState<DateRange>("12-months")
+  const [queryResult, setQueryResult] = useState<ReportQueryResult | null>(null)
 
   const { dateFrom, dateTo } = useMemo(() => {
     const today = new Date()
@@ -95,51 +98,58 @@ const ReportScreen = () => {
 
       {/* ── Body ── */}
       <div className={styles.scrollBody}>
-        {/* ── Range Selector ── */}
-        <div className={styles.rangeSelector}>
-          <Button
-            variant={dateRange === "6-months" ? "contained" : "outlined"}
-            size="small"
-            onClick={() => setDateRange("6-months")}
-          >
-            Last 6 months
-          </Button>
-          <Button
-            variant={dateRange === "12-months" ? "contained" : "outlined"}
-            size="small"
-            onClick={() => setDateRange("12-months")}
-          >
-            Last 12 months
-          </Button>
-          <Button
-            variant={dateRange === "all-time" ? "contained" : "outlined"}
-            size="small"
-            onClick={() => setDateRange("all-time")}
-          >
-            All time
-          </Button>
-        </div>
+        {/* ── Query Interface ── */}
+        <QueryInterface onResultsChange={setQueryResult} />
 
-        {error && <Alert severity="error">{error.message}</Alert>}
-
-        {isLoading ? (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
-            <Skeleton variant="rounded" height={400} />
-            <Skeleton variant="rounded" height={100} />
-          </Box>
-        ) : (
+        {/* ── Range Selector (for manual reports) ── */}
+        {!queryResult && (
           <>
-            {/* ── Chart ── */}
-            {data.length > 0 ? (
-              <div className={styles.chartContainer}>
-                <MonthlySalesChart data={data} />
-              </div>
-            ) : (
-              <div className={styles.emptyState}>No data available for the selected period.</div>
-            )}
+            <div className={styles.rangeSelector}>
+              <Button
+                variant={dateRange === "6-months" ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setDateRange("6-months")}
+              >
+                Last 6 months
+              </Button>
+              <Button
+                variant={dateRange === "12-months" ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setDateRange("12-months")}
+              >
+                Last 12 months
+              </Button>
+              <Button
+                variant={dateRange === "all-time" ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setDateRange("all-time")}
+              >
+                All time
+              </Button>
+            </div>
 
-            {/* ── Summary ── */}
-            {data.length > 0 && <ReportSummary summary={summary} />}
+            {error && <Alert severity="error">{error.message}</Alert>}
+
+            {isLoading ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
+                <Skeleton variant="rounded" height={400} />
+                <Skeleton variant="rounded" height={100} />
+              </Box>
+            ) : (
+              <>
+                {/* ── Chart ── */}
+                {data.length > 0 ? (
+                  <div className={styles.chartContainer}>
+                    <MonthlySalesChart data={data} />
+                  </div>
+                ) : (
+                  <div className={styles.emptyState}>No data available for the selected period.</div>
+                )}
+
+                {/* ── Summary ── */}
+                {data.length > 0 && <ReportSummary summary={summary} />}
+              </>
+            )}
           </>
         )}
       </div>
