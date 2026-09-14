@@ -95,10 +95,8 @@ const ReportScreen = () => {
       {/* ── Hero ── */}
       <div className={styles.hero}>
         <div className={styles.heroBrand}>
-          <div>
-            <div className={styles.heroIcon}>
-              <AnalyticsIcon />
-            </div>
+          <div className={styles.heroIcon}>
+            <AnalyticsIcon />
           </div>
           <div className={styles.heroMeta}>
             <span className={styles.heroEyebrow}>Sales · Analytics</span>
@@ -111,22 +109,6 @@ const ReportScreen = () => {
               <span>{formatCurrency(summary.totalRevenue)} revenue</span>
             </div>
           </div>
-          <Button
-            variant="contained"
-            sx={{
-              background: "#f15a24",
-              color: "white",
-              fontWeight: 600,
-              fontSize: "0.85rem",
-              padding: "8px 16px",
-              textTransform: "none",
-              "&:hover": {
-                background: "#e04612",
-              },
-            }}
-          >
-            {data.length} Reports
-          </Button>
         </div>
       </div>
 

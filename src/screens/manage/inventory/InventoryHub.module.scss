@@ -25,9 +25,15 @@
 
 .searchField {
   flex-shrink: 0;
-  width: 200px;
+  width: 230px;
+
+  input{
+    padding: 8px;
+    padding-left: 0;
+  }
 
   :global(.MuiOutlinedInput-root) {
+    padding-left: 8px;
     border-radius: 12px;
     background-color: var(--mui-palette-background-paper);
   }

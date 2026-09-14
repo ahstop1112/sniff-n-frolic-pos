@@ -2,72 +2,84 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f8f9fa;
+  background-color: #f5f9fb;
 }
 
 .hero {
-  background: white;
-  border-bottom: 1px solid #e8eef5;
-  padding: 32px 24px;
+  padding: 24px 28px 28px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  flex-shrink: 0;
 }
 
 .heroBrand {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .heroIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  font-size: 28px;
-  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: #1A2332;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+
+  svg {
+    font-size: 24px;
+  }
 }
 
 .heroMeta {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 2px;
 }
 
 .heroEyebrow {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #8b92a4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: var(--mui-palette-text-secondary);
+  margin-bottom: 2px;
 }
 
 .heroTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a202c;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--mui-palette-text-primary);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .heroSubStats {
   display: flex;
-  gap: 12px;
-  font-size: 0.875rem;
-  color: #606b7b;
-  margin-top: 4px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--mui-palette-text-secondary);
+  margin-top: 8px;
+
+  strong {
+    color: var(--mui-palette-text-primary);
+    font-weight: 700;
+  }
 }
 
 .heroSubDot {
-  color: #d0d4dd;
+  color: var(--mui-palette-divider);
 }
 
 .scrollBody {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 24px;
+  padding: 20px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .rangeSelector {
