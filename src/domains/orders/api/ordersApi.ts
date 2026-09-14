@@ -146,3 +146,41 @@ export const getMonthlyReport = (params: {
     { method: "GET" },
     "Failed to fetch monthly report",
   )
+
+export type ReportIntent =
+  | "revenue_over_time"
+  | "revenue_by_category"
+  | "top_products"
+  | "period_comparison"
+  | "slow_movers"
+  | "unsupported"
+
+export type ChartType = "line" | "bar" | "comparison" | "table"
+
+export interface ReportParams {
+  date_from?: string
+  date_to?: string
+  granularity?: "day" | "week" | "month"
+  metric?: "revenue" | "units" | "orders"
+  top_n?: number
+  compare_from?: string
+  compare_to?: string
+}
+
+export interface ReportQueryResult {
+  intent: ReportIntent
+  params: ReportParams
+  interpretation: string
+  chartType: ChartType
+  data: Array<Record<string, unknown>>
+}
+
+export const queryReport = (question: string): Promise<ReportQueryResult> =>
+  request(
+    buildUrl("/report/query"),
+    {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    },
+    "Failed to process report query",
+  )

@@ -61,7 +61,7 @@ export const theme = createTheme({
         body2: {
             fontSize: "0.875rem", // 14px（次級）
         },
-        button: { fontSize: "1rem", textTransform: "none", fontWeight: 700 },
+        button: { fontSize: "1rem", textTransform: "none", fontWeight: 700, outline: "none" },
         subtitle1: { fontSize: "1rem", fontWeight: 700 },
         caption: { fontSize: "0.8125rem", color: brand.inkMuted },
         overline: {
