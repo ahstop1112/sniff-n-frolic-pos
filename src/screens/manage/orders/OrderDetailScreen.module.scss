@@ -124,7 +124,6 @@
   gap: 16px;
   min-width: 0;
   position: sticky;
-  top: 24px;
   max-height: calc(100vh - 200px);
 }
 
@@ -138,8 +137,7 @@
   background: var(--mui-palette-background-paper);
   border-bottom: 1px solid var(--mui-palette-divider);
   border-radius: 0;
-  margin: 0 -32px 24px -32px;
-  width: calc(100% + 64px);
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -224,7 +222,7 @@
   background: var(--mui-palette-background-paper);
   border-bottom: 1px solid var(--mui-palette-divider);
   border-radius: 0;
-  margin: 0 -32px 24px -32px;
+  margin: 0 -32px;
   width: calc(100% + 64px);
   box-sizing: border-box;
 }
@@ -303,8 +301,8 @@
   border-bottom: 1px solid #FFD8A3;
   border-radius: 0;
   gap: 16px;
-  margin: 0 -32px 24px -32px;
-  width: calc(100% + 64px);
+  margin: 0 0 24px;
+  width: 100%;
   box-sizing: border-box;
 }
 

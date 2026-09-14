@@ -209,13 +209,9 @@ const OrderDetailScreen = () => {
       {order.items && order.items.length > 0 && (
         <div className={styles.productHeader}>
           <div className={styles.productThumbnailLarge}>
-            {order.items[0].product_image_url ? (
-              <img src={order.items[0].product_image_url} alt={order.items[0].product_name} />
-            ) : (
-              <div className={styles.productThumbnailPlaceholder}>
-                <ImageOutlinedIcon sx={{ fontSize: "2.5rem", opacity: 0.3 }} />
-              </div>
-            )}
+            <div className={styles.productThumbnailPlaceholder}>
+              <ImageOutlinedIcon sx={{ fontSize: "2.5rem", opacity: 0.4 }} />
+            </div>
           </div>
           <div className={styles.productInfo}>
             <h3 className={styles.productName}>{order.items[0].product_name}</h3>
@@ -273,13 +269,9 @@ const OrderDetailScreen = () => {
                 {order.items.map((item) => (
                   <div key={item.id} className={styles.itemRow}>
                     <div className={styles.colImage}>
-                      {item.product_image_url ? (
-                        <img src={item.product_image_url} alt={item.product_name} />
-                      ) : (
-                        <div className={styles.itemImagePlaceholder}>
-                          <ImageOutlinedIcon sx={{ fontSize: "1rem", opacity: 0.3 }} />
-                        </div>
-                      )}
+                      <div className={styles.itemImagePlaceholder}>
+                        <ImageOutlinedIcon sx={{ fontSize: "1.2rem", opacity: 0.5 }} />
+                      </div>
                     </div>
                     <span className={styles.colProduct}>{item.product_name}</span>
                     <span className={`${styles.colSku} ${styles.muted}`}>{item.sku || "—"}</span>
