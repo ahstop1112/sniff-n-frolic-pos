@@ -36,13 +36,13 @@ const RevenueTable = ({ data }: Props) => {
           }}
         >
           <thead>
-            <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "2px solid #e8eef5" }}>
+            <tr style={{ backgroundColor: "#1f2937", borderBottom: "3px solid #667eea" }}>
               <th
                 style={{
                   padding: "16px",
                   textAlign: "left",
                   fontWeight: 700,
-                  color: "#1a202c",
+                  color: "#ffffff",
                   textTransform: "uppercase",
                   fontSize: "0.75rem",
                   letterSpacing: "0.5px",
@@ -55,7 +55,7 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "16px",
                   textAlign: "center",
                   fontWeight: 700,
-                  color: "#1a202c",
+                  color: "#ffffff",
                   textTransform: "uppercase",
                   fontSize: "0.75rem",
                   letterSpacing: "0.5px",
@@ -68,7 +68,7 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "16px",
                   textAlign: "right",
                   fontWeight: 700,
-                  color: "#1a202c",
+                  color: "#ffffff",
                   textTransform: "uppercase",
                   fontSize: "0.75rem",
                   letterSpacing: "0.5px",
@@ -81,7 +81,7 @@ const RevenueTable = ({ data }: Props) => {
                   padding: "16px",
                   textAlign: "right",
                   fontWeight: 700,
-                  color: "#1a202c",
+                  color: "#ffffff",
                   textTransform: "uppercase",
                   fontSize: "0.75rem",
                   letterSpacing: "0.5px",
@@ -94,8 +94,9 @@ const RevenueTable = ({ data }: Props) => {
           <tbody>
             {data.map((row, idx) => {
               const revenuePercent = totalRevenue > 0 ? ((row.revenue / totalRevenue) * 100).toFixed(1) : "0"
+              const isEven = idx % 2 === 0
               return (
-                <tr key={idx} style={{ borderBottom: "1px solid #e8eef5" }}>
+                <tr key={idx} style={{ backgroundColor: isEven ? "#ffffff" : "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
                   <td
                     style={{
                       padding: "14px 16px",
@@ -110,7 +111,8 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "center",
-                      color: "#606b7b",
+                      color: "#4b5563",
+                      fontWeight: 500,
                     }}
                   >
                     {row.order_count}
@@ -119,7 +121,7 @@ const RevenueTable = ({ data }: Props) => {
                     style={{
                       padding: "14px 16px",
                       textAlign: "right",
-                      color: "#1a202c",
+                      color: "#10b981",
                       fontWeight: 600,
                     }}
                   >
@@ -138,12 +140,12 @@ const RevenueTable = ({ data }: Props) => {
                 </tr>
               )
             })}
-            <tr style={{ backgroundColor: "#f8f9fa", borderTop: "2px solid #e8eef5" }}>
+            <tr style={{ backgroundColor: "#f0f4ff", borderTop: "3px solid #667eea" }}>
               <td
                 style={{
                   padding: "14px 16px",
                   textAlign: "left",
-                  color: "#1a202c",
+                  color: "#1f2937",
                   fontWeight: 700,
                 }}
               >
@@ -153,7 +155,7 @@ const RevenueTable = ({ data }: Props) => {
                 style={{
                   padding: "14px 16px",
                   textAlign: "center",
-                  color: "#1a202c",
+                  color: "#1f2937",
                   fontWeight: 700,
                 }}
               >
@@ -163,7 +165,7 @@ const RevenueTable = ({ data }: Props) => {
                 style={{
                   padding: "14px 16px",
                   textAlign: "right",
-                  color: "#1a202c",
+                  color: "#10b981",
                   fontWeight: 700,
                 }}
               >
