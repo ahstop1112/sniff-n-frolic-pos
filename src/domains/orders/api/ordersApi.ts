@@ -123,3 +123,26 @@ export const getOrders = (params: {
 
 export const getOrder = (id: string): Promise<OrderDetail> =>
   request(buildUrl(`/${id}`), { method: "GET" }, "Failed to fetch order")
+
+export interface MonthlyReportData {
+  month: string
+  order_count: number
+  revenue: number
+  cancelled_count: number
+  avg_order_value: number
+}
+
+export const getMonthlyReport = (params: {
+  date_from?: string
+  date_to?: string
+  branch_id?: string
+} = {}): Promise<MonthlyReportData[]> =>
+  request(
+    buildUrl("/report/monthly", {
+      date_from: params.date_from,
+      date_to: params.date_to,
+      branch_id: params.branch_id,
+    }),
+    { method: "GET" },
+    "Failed to fetch monthly report",
+  )

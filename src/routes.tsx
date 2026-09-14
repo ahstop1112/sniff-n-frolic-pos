@@ -14,6 +14,7 @@ import MovementsScreen from "./screens/manage/inventory/MovementsScreen"
 import OrdersScreen from "./screens/manage/orders"
 import OrdersHubScreen from "./screens/manage/orders/OrdersHub"
 import OrderDetailScreen from "./screens/manage/orders/OrderDetailScreen"
+import ReportScreen from "./screens/manage/reports"
 import AppShell from "./screens/layout/AppShell"
 
 const AppRoutes = () => {
@@ -42,6 +43,7 @@ const AppRoutes = () => {
                 <Route index element={<OrdersHubScreen />} />
                 <Route path=":orderId" element={<OrderDetailScreen />} />
               </Route>
+              <Route path="reports" element={<ReportScreen />} />
             </Route>
 
             {/* Sales requires an active shift */}
