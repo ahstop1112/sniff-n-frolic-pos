@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
+import Chip from "@mui/material/Chip"
 import Skeleton from "@mui/material/Skeleton"
 import Alert from "@mui/material/Alert"
 import AnalyticsIcon from "@mui/icons-material/Analytics"
@@ -18,20 +19,22 @@ const formatCurrency = (cents: number) =>
     maximumFractionDigits: 0,
   }).format(cents / 100)
 
-type DateRange = "6-months" | "12-months" | "all-time"
+type DateRange = "7-days" | "30-days" | "90-days" | "all-time"
 
 const ReportScreen = () => {
-  const [dateRange, setDateRange] = useState<DateRange>("12-months")
+  const [dateRange, setDateRange] = useState<DateRange>("30-days")
   const [queryResult, setQueryResult] = useState<ReportQueryResult | null>(null)
 
   const { dateFrom, dateTo } = useMemo(() => {
     const today = new Date()
     let from: Date
 
-    if (dateRange === "6-months") {
-      from = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate())
-    } else if (dateRange === "12-months") {
-      from = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
+    if (dateRange === "7-days") {
+      from = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+    } else if (dateRange === "30-days") {
+      from = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+    } else if (dateRange === "90-days") {
+      from = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
     } else {
       from = new Date(2000, 0, 1)
     }
@@ -79,8 +82,10 @@ const ReportScreen = () => {
       {/* ── Hero ── */}
       <div className={styles.hero}>
         <div className={styles.heroBrand}>
-          <div className={styles.heroIcon}>
-            <AnalyticsIcon />
+          <div>
+            <div className={styles.heroIcon}>
+              <AnalyticsIcon />
+            </div>
           </div>
           <div className={styles.heroMeta}>
             <span className={styles.heroEyebrow}>Sales · Analytics</span>
@@ -93,6 +98,22 @@ const ReportScreen = () => {
               <span>{formatCurrency(summary.totalRevenue)} revenue</span>
             </div>
           </div>
+          <Button
+            variant="contained"
+            sx={{
+              background: "#f15a24",
+              color: "white",
+              fontWeight: 600,
+              fontSize: "0.85rem",
+              padding: "8px 16px",
+              textTransform: "none",
+              "&:hover": {
+                background: "#e04612",
+              },
+            }}
+          >
+            {data.length} Reports
+          </Button>
         </div>
       </div>
 
@@ -120,18 +141,25 @@ const ReportScreen = () => {
           <>
             <div className={styles.rangeSelector}>
               <Button
-                variant={dateRange === "6-months" ? "contained" : "outlined"}
+                variant={dateRange === "7-days" ? "contained" : "outlined"}
                 size="small"
-                onClick={() => setDateRange("6-months")}
+                onClick={() => setDateRange("7-days")}
               >
-                Last 6 months
+                Last 7 days
               </Button>
               <Button
-                variant={dateRange === "12-months" ? "contained" : "outlined"}
+                variant={dateRange === "30-days" ? "contained" : "outlined"}
                 size="small"
-                onClick={() => setDateRange("12-months")}
+                onClick={() => setDateRange("30-days")}
               >
-                Last 12 months
+                Last 30 days
+              </Button>
+              <Button
+                variant={dateRange === "90-days" ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setDateRange("90-days")}
+              >
+                Last 90 days
               </Button>
               <Button
                 variant={dateRange === "all-time" ? "contained" : "outlined"}

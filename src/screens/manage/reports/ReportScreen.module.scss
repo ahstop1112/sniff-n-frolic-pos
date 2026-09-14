@@ -13,9 +13,9 @@
 
 .heroBrand {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
 }
 
 .heroIcon {
@@ -72,13 +72,40 @@
 
 .rangeSelector {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 32px;
   background: white;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 8px;
+  border-radius: 10px;
   border: 1px solid #e8eef5;
   width: fit-content;
+
+  button {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+
+    &.MuiButton-outlined {
+      border-color: #e8eef5;
+      color: #606b7b;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #d0d4dd;
+      }
+    }
+
+    &.MuiButton-contained {
+      background: #667eea;
+      color: white;
+
+      &:hover {
+        background: #5568d3;
+      }
+    }
+  }
 }
 
 .chartContainer {
