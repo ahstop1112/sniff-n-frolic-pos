@@ -6,9 +6,12 @@ import Skeleton from "@mui/material/Skeleton"
 import Alert from "@mui/material/Alert"
 import AnalyticsIcon from "@mui/icons-material/Analytics"
 import { useMonthlyReport } from "@/domains/orders/hooks/useMonthlyReport"
+import { useRevenueBreakdown } from "@/domains/orders/hooks/useRevenueBreakdown"
 import MonthlySalesChart from "./components/MonthlySalesChart"
 import ReportSummary from "./components/ReportSummary"
 import QueryInterface from "./components/QueryInterface"
+import RevenueBreakdown from "./components/RevenueBreakdown"
+import ShareOfRevenue from "./components/ShareOfRevenue"
 import type { ReportQueryResult } from "@/domains/orders/api/ordersApi"
 import styles from "./ReportScreen.module.scss"
 
@@ -50,7 +53,16 @@ const ReportScreen = () => {
     date_to: dateTo,
   })
 
+  const breakdownQuery = useRevenueBreakdown({
+    date_from: dateFrom,
+    date_to: dateTo,
+  })
+
   const data = useMemo(() => query.data ?? [], [query.data])
+  const breakdownData = useMemo(
+    () => (breakdownQuery.data?.data ?? []) as Array<{ category: string; revenue: number; order_count: number }>,
+    [breakdownQuery.data],
+  )
   const isLoading = query.isLoading
   const error = query.error as Error | null
 
@@ -185,6 +197,18 @@ const ReportScreen = () => {
                   </div>
                 ) : (
                   <div className={styles.emptyState}>No data available for the selected period.</div>
+                )}
+
+                {/* ── Revenue Breakdown & Share ── */}
+                {breakdownData.length > 0 && (
+                  <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 3, mt: 3 }}>
+                    <div className={styles.chartContainer}>
+                      <RevenueBreakdown data={breakdownData} />
+                    </div>
+                    <div className={styles.chartContainer}>
+                      <ShareOfRevenue data={breakdownData} />
+                    </div>
+                  </Box>
                 )}
               </>
             )}
