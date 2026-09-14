@@ -176,33 +176,30 @@ const OrderDetailScreen = () => {
     <div className={styles.screen}>
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
-        <div className={styles.topBarContent}>
+        <div className={styles.topBarWrapper}>
           <div className={styles.topBarLeft}>
-            <button className={styles.backLink} onClick={() => navigate(-1)}>
+            <button className={styles.breadcrumb} onClick={() => navigate(-1)}>
               ← Orders
             </button>
-            <div className={styles.orderHeaderRow}>
-              <h1 className={styles.pageTitle}>{order.order_number}</h1>
-              <div className={styles.actionButtonsRow}>
-                <button className={styles.actionBtn} title="Packing slip">
-                  <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-                  <span>Packing slip</span>
-                </button>
-                <button className={styles.actionBtn} title="Duplicate">
-                  <ContentCopyOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-                  <span>Duplicate</span>
-                </button>
-                <button className={styles.actionBtn} title="Refund">
-                  <MoneyOffOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-                  <span>Refund</span>
-                </button>
-                <button className={styles.actionBtn} title="Notify customer">
-                  <NotificationsOutlinedIcon sx={{ fontSize: "1.25rem" }} />
-                  <span>Notify customer</span>
-                </button>
-              </div>
-            </div>
-            <span className={styles.pageSubtitle}>status & fulfillment</span>
+            <h1 className={styles.pageTitle}>{order.order_number}</h1>
+          </div>
+          <div className={styles.actionButtonsRow}>
+            <button className={styles.actionBtn} title="Packing slip">
+              <FileDownloadOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Packing slip</span>
+            </button>
+            <button className={styles.actionBtn} title="Duplicate">
+              <ContentCopyOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Duplicate</span>
+            </button>
+            <button className={styles.actionBtn} title="Refund">
+              <MoneyOffOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Refund</span>
+            </button>
+            <button className={styles.actionBtn} title="Notify customer">
+              <NotificationsOutlinedIcon sx={{ fontSize: "1.25rem" }} />
+              <span>Notify customer</span>
+            </button>
           </div>
         </div>
       </div>
