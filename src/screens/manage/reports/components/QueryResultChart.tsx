@@ -160,21 +160,28 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
           <tbody>
             {result.data.map((row, idx) => (
               <tr key={idx} style={{ borderBottom: "1px solid #eee" }}>
-                {Object.entries(row).map(([key, value]) => (
-                  <td
-                    key={key}
-                    style={{
-                      padding: "12px",
-                      textAlign: key.includes("count") ? "center" : "left",
-                    }}
-                  >
-                    {typeof value === "number" && key.includes("revenue")
-                      ? `$${(value / 100).toFixed(2)}`
-                      : typeof value === "number"
-                        ? value.toFixed(2)
-                        : value}
-                  </td>
-                ))}
+                {Object.entries(row).map(([key, value]) => {
+                  let displayValue: string = ""
+                  if (typeof value === "number" && key.includes("revenue")) {
+                    displayValue = `$${(value / 100).toFixed(2)}`
+                  } else if (typeof value === "number") {
+                    displayValue = value.toFixed(2)
+                  } else if (value !== null && value !== undefined) {
+                    displayValue = String(value)
+                  }
+
+                  return (
+                    <td
+                      key={key}
+                      style={{
+                        padding: "12px",
+                        textAlign: key.includes("count") ? "center" : "left",
+                      }}
+                    >
+                      {displayValue}
+                    </td>
+                  )
+                })}
               </tr>
             ))}
           </tbody>
@@ -183,9 +190,13 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
     )
   }
 
+  if (!chartOptions) {
+    return <div>No chart data available</div>
+  }
+
   return (
     <div style={{ height: "400px", width: "100%" }}>
-      {chartOptions && <AgCharts options={chartOptions as unknown} />}
+      <AgCharts options={chartOptions as any} />
     </div>
   )
 }
