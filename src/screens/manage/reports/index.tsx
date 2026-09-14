@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
-import Chip from "@mui/material/Chip"
 import Skeleton from "@mui/material/Skeleton"
 import Alert from "@mui/material/Alert"
 import AnalyticsIcon from "@mui/icons-material/Analytics"
@@ -65,6 +64,8 @@ const ReportScreen = () => {
   )
   const isLoading = query.isLoading
   const error = query.error as Error | null
+  const breakdownError = breakdownQuery.error as Error | null
+  const isBreakdownLoading = breakdownQuery.isLoading
 
   const summary = useMemo(() => {
     if (!data.length) {
@@ -200,7 +201,19 @@ const ReportScreen = () => {
                 )}
 
                 {/* ── Revenue Table & Share of Revenue ── */}
-                {breakdownData.length > 0 && (
+                {isBreakdownLoading && (
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2, mt: 3 }}>
+                    <Skeleton variant="rounded" height={300} />
+                  </Box>
+                )}
+
+                {breakdownError && (
+                  <Alert severity="error" sx={{ mt: 3 }}>
+                    Failed to load revenue breakdown: {breakdownError.message}
+                  </Alert>
+                )}
+
+                {!isBreakdownLoading && !breakdownError && breakdownData.length > 0 && (
                   <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 3, mt: 3 }}>
                     <div className={styles.chartContainer}>
                       <RevenueTable data={breakdownData} />
@@ -209,6 +222,12 @@ const ReportScreen = () => {
                       <ShareOfRevenue data={breakdownData} />
                     </div>
                   </Box>
+                )}
+
+                {!isBreakdownLoading && !breakdownError && breakdownData.length === 0 && (
+                  <div className={styles.emptyState} style={{ marginTop: "24px" }}>
+                    No revenue breakdown data available for the selected period.
+                  </div>
                 )}
               </>
             )}
