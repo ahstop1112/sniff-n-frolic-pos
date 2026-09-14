@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { AgCharts } from "ag-charts-react"
 import type { ReportQueryResult, ReportParams } from "@/domains/orders/api/ordersApi"
+import { SERIES_COLORS } from "../constants/reportColors"
 
 interface Props {
   result: ReportQueryResult
@@ -95,17 +96,40 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
       }
 
       case "comparison": {
-        // period_comparison: show side-by-side bars
+        // period_comparison: show side-by-side bars with actual date ranges
+        const enrichedData = data.map((d: Record<string, unknown>, idx: number) => {
+          const isPeriodA = idx === 0;
+          const dateFrom = isPeriodA ? displayParams.period_a_from : displayParams.period_b_from;
+          const dateTo = isPeriodA ? displayParams.period_a_to : displayParams.period_b_to;
+
+          const formatDateRange = (from?: string, to?: string) => {
+            if (!from || !to) return d.period as string;
+            const fromDate = new Date(from);
+            const toDate = new Date(to);
+            const fromStr = fromDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const toStr = toDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+            return `${fromStr} - ${toStr}`;
+          };
+
+          return {
+            ...d,
+            periodLabel: formatDateRange(dateFrom, dateTo),
+          };
+        });
+
         return {
           title: { text: "Period Comparison" },
-          data,
+          data: enrichedData,
           series: [
             {
               type: "bar",
-              xKey: "period",
+              xKey: "periodLabel",
               yKey: "revenue",
               yName: "Revenue (CAD)",
-              fill: "#667eea",
+              fill: SERIES_COLORS.current,
+              formatter: (params: { value: number }) => {
+                return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+              },
             },
           ],
           axes: [
@@ -114,6 +138,11 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               type: "number",
               position: "left",
               title: { text: "Revenue (CAD)" },
+              label: {
+                formatter: (params: { value: number }) => {
+                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+                },
+              },
             },
           ],
           legend: { enabled: false },
@@ -196,7 +225,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
 
   return (
     <div style={{ height: "400px", width: "100%" }}>
-      <AgCharts options={chartOptions as any} />
+      <AgCharts options={chartOptions as unknown} />
     </div>
   )
 }

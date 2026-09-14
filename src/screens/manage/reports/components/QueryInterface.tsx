@@ -55,6 +55,12 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
         question: question.trim(),
         context: context || {},
       })
+      console.log('Query result received:', {
+        intent: res.intent,
+        params: res.params,
+        data: res.data,
+        interpretation: res.interpretation,
+      })
       setResult(res)
       setEditParams(res.params || {})
       setEditMode(false)
@@ -65,7 +71,12 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
   }
 
   const handleConfirmInterpretation = () => {
-    if (!result) return
+    console.log('handleConfirmInterpretation called, result:', result)
+    if (!result) {
+      console.log('No result, returning early')
+      return
+    }
+    console.log('Setting editMode to false, calling onResultsChange')
     setEditMode(false)
     // If params were edited, we need to re-render with the new params
     // The result stays the same, but we'll update the data display
@@ -239,9 +250,12 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
 
       {/* ── Results Chart ── */}
       {result && !editMode && result.intent !== "unsupported" && (
-        <Box className={styles.resultSection}>
-          <QueryResultChart result={result} editedParams={editParams} />
-        </Box>
+        <>
+          {console.log('Rendering chart: result=', result, 'editMode=', editMode, 'intent=', result.intent)}
+          <Box className={styles.resultSection}>
+            <QueryResultChart result={result} editedParams={editParams} />
+          </Box>
+        </>
       )}
 
       {/* ── Unsupported Message ── */}
