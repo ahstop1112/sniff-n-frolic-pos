@@ -146,7 +146,14 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
       {result && (
         <Box className={styles.interpretationSection}>
           <Box className={styles.interpretationCard}>
-            <div className={styles.interpretationText}>{result.interpretation}</div>
+            <div className={styles.interpretationText}>
+              {result.interpretation}
+              {result.params?.period_a_from && result.params?.period_b_to && (
+                <div style={{ fontSize: "0.875rem", color: "#666", marginTop: "8px" }}>
+                  ({new Date(result.params.period_a_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(result.params.period_b_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
+                </div>
+              )}
+            </div>
             <Box sx={{ display: "flex", gap: 1 }}>
               <Button
                 size="small"

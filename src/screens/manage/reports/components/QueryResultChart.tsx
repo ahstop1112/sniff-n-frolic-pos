@@ -96,6 +96,14 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
       }
 
       case "comparison": {
+        // Check if this is a meaningful change
+        const isMeaningful = data.length > 0 && (data[0] as Record<string, unknown>).is_meaningful_change === true;
+
+        if (!isMeaningful) {
+          // Show "no meaningful change" message instead of chart
+          return null; // Will be handled separately in component
+        }
+
         // period_comparison: show side-by-side bars with actual date ranges
         const enrichedData = data.map((d: Record<string, unknown>, idx: number) => {
           const isPeriodA = idx === 0;
@@ -220,6 +228,19 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
   }
 
   if (!chartOptions) {
+    if (result.chartType === "comparison") {
+      const isMeaningful = result.data.length > 0 && (result.data[0] as Record<string, unknown>).is_meaningful_change === true;
+      if (!isMeaningful) {
+        return (
+          <div style={{ padding: "24px", textAlign: "center", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+            <div style={{ fontSize: "1.125rem", fontWeight: 500, color: "#333" }}>No meaningful change</div>
+            <div style={{ fontSize: "0.875rem", color: "#666", marginTop: "8px" }}>
+              The difference between these periods is less than 5%, indicating no significant change in revenue.
+            </div>
+          </div>
+        );
+      }
+    }
     return <div>No chart data available</div>
   }
 
