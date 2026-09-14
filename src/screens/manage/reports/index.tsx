@@ -12,6 +12,7 @@ import ReportSummary from "./components/ReportSummary"
 import QueryInterface from "./components/QueryInterface"
 import RevenueBreakdown from "./components/RevenueBreakdown"
 import ShareOfRevenue from "./components/ShareOfRevenue"
+import RevenueTable from "./components/RevenueTable"
 import type { ReportQueryResult } from "@/domains/orders/api/ordersApi"
 import styles from "./ReportScreen.module.scss"
 
@@ -201,14 +202,21 @@ const ReportScreen = () => {
 
                 {/* ── Revenue Breakdown & Share ── */}
                 {breakdownData.length > 0 && (
-                  <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 3, mt: 3 }}>
-                    <div className={styles.chartContainer}>
-                      <RevenueBreakdown data={breakdownData} />
+                  <>
+                    <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" }, gap: 3, mt: 3 }}>
+                      <div className={styles.chartContainer}>
+                        <RevenueBreakdown data={breakdownData} />
+                      </div>
+                      <div className={styles.chartContainer}>
+                        <ShareOfRevenue data={breakdownData} />
+                      </div>
+                    </Box>
+
+                    {/* ── Revenue Table ── */}
+                    <div className={styles.chartContainer} style={{ marginTop: 32 }}>
+                      <RevenueTable data={breakdownData} />
                     </div>
-                    <div className={styles.chartContainer}>
-                      <ShareOfRevenue data={breakdownData} />
-                    </div>
-                  </Box>
+                  </>
                 )}
               </>
             )}
