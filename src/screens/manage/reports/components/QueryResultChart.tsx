@@ -268,7 +268,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
                 {Object.entries(row).map(([key, value]) => {
                   let displayValue: string = ""
                   if (typeof value === "number" && key.includes("revenue")) {
-                    displayValue = `$${(value / 100).toFixed(2)}`
+                    // API returns dollars, no need to divide by 100
+                    displayValue = `$${value.toFixed(2)}`
                   } else if (typeof value === "number") {
                     displayValue = value.toFixed(2)
                   } else if (value !== null && value !== undefined) {

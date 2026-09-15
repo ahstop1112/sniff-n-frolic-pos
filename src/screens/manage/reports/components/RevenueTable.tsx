@@ -190,7 +190,7 @@ const RevenueTable = ({ data, categoryColors }: Props) => {
                       letterSpacing: "0.02em",
                     }}
                   >
-                    ${(row.revenue / 100).toFixed(0)}
+                    ${row.revenue.toFixed(0)}
                   </td>
                   <td
                     style={{
