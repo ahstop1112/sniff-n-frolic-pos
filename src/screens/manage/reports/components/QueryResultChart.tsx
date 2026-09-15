@@ -90,7 +90,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
         const yKey = isRevenue ? "revenue" : "units_sold"
         const yName = isRevenue ? "Revenue (CAD)" : "Units Sold"
 
-        // Top products: horizontal bar chart
+        // Top products: bar chart with value labels
         if (isTopProducts) {
           const currencyFormatter = (value: number) =>
             `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
@@ -101,10 +101,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
             series: [
               {
                 type: "bar",
-                direction: "horizontal",
-                xKey: yKey,
-                yKey: "product_name",
-                xName: yName,
+                xKey: "product_name",
+                yKey: yKey,
+                yName: yName,
                 fill: "#1F4E5F",
                 label: isRevenue ? {
                   formatter: (params: { value: number }) => currencyFormatter(params.value),
@@ -114,12 +113,12 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
             axes: [
               {
                 type: "category",
-                position: "left",
+                position: "bottom",
                 title: { text: "Product" },
               },
               {
                 type: "number",
-                position: "bottom",
+                position: "left",
                 title: { text: yName },
                 label: isRevenue ? {
                   formatter: (params: { value: number }) => currencyFormatter(params.value),
