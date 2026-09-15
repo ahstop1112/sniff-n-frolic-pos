@@ -21,6 +21,13 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
   const chartOptions = useMemo(() => {
     const { chartType, data } = result
 
+    // Reusable currency axis formatter config
+    const currencyAxisLabel = {
+      formatter: (params: { value: number }) => {
+        return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+      },
+    }
+
     switch (chartType) {
       case "line": {
         // revenue_over_time: show revenue as line, optionally with order count
@@ -66,11 +73,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               type: "number",
               position: "left",
               title: { text: "Revenue (CAD)" },
-              label: {
-                formatter: (params: { value: number }) => {
-                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-                },
-              },
+              label: displayParams.metric !== "units" && displayParams.metric !== "orders" ? currencyAxisLabel : undefined,
             },
             data[0]?.order_count !== undefined ? {
               type: "number",
@@ -85,16 +88,16 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
       case "bar": {
         // revenue_by_category (vertical) or top_products (horizontal to avoid label rotation)
         const isTopProducts = result.intent === "top_products"
-        const metric = displayParams.metric || "revenue"
-        const isRevenue = metric === "revenue"
+        const metric = displayParams.metric
+        const isRevenue = metric !== "units" && metric !== "orders"
         const yKey = isRevenue ? "revenue" : "units_sold"
         const yName = isRevenue ? "Revenue (CAD)" : "Units Sold"
 
+        const currencyFormatter = (value: number) =>
+          `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+
         // Top products: horizontal bar chart
         if (isTopProducts) {
-          const currencyFormatter = (value: number) =>
-            `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-
           const config = {
             title: { text: `Top ${displayParams.top_n || 10} Products` },
             data,
@@ -102,9 +105,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               {
                 type: "bar",
                 direction: "horizontal",
-                xKey: yKey,
-                yKey: "product_name",
-                xName: yName,
+                xKey: "product_name",
+                yKey: yKey,
+                yName: yName,
                 fill: "#1F4E5F",
                 label: isRevenue ? {
                   formatter: (params: { value: number }) => currencyFormatter(params.value),
@@ -121,9 +124,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
                 type: "number",
                 position: "bottom",
                 title: { text: yName },
-                label: isRevenue ? {
-                  formatter: (params: { value: number }) => currencyFormatter(params.value),
-                } : undefined,
+                ...(isRevenue ? { label: currencyAxisLabel } : {}),
               },
             ],
             legend: { enabled: false },
@@ -142,10 +143,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               yKey: yKey,
               yName: yName,
               fill: SERIES_COLORS.current,
-              formatter: isRevenue ? {
-                formatter: (params: { value: number }) => {
-                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-                },
+              label: isRevenue ? {
+                formatter: (params: { value: number }) => currencyFormatter(params.value),
               } : undefined,
             },
           ],
@@ -155,11 +154,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               type: "number",
               position: "left",
               title: { text: yName },
-              label: isRevenue ? {
-                formatter: (params: { value: number }) => {
-                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-                },
-              } : undefined,
+              ...(isRevenue ? { label: currencyAxisLabel } : {}),
             },
           ],
           legend: { enabled: false },
@@ -196,6 +191,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
           };
         });
 
+        const currencyFormatter = (value: number) =>
+          `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+
         return {
           title: { text: "Period Comparison" },
           data: enrichedData,
@@ -206,8 +204,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               yKey: "revenue",
               yName: "Revenue (CAD)",
               fill: SERIES_COLORS.current,
-              formatter: (params: { value: number }) => {
-                return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+              label: {
+                formatter: (params: { value: number }) => currencyFormatter(params.value),
               },
             },
           ],
@@ -217,11 +215,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               type: "number",
               position: "left",
               title: { text: "Revenue (CAD)" },
-              label: {
-                formatter: (params: { value: number }) => {
-                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-                },
-              },
+              label: displayParams.metric !== "units" && displayParams.metric !== "orders" ? currencyAxisLabel : undefined,
             },
           ],
           legend: { enabled: false },
