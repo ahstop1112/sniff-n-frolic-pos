@@ -18,6 +18,8 @@ import type { ReportQueryResult, ReportParams } from "@/domains/orders/api/order
 import QueryResultChart from "./QueryResultChart"
 import styles from "./QueryInterface.module.scss"
 
+type QueryStatus = "idle" | "interpreting" | "editing" | "confirmed"
+
 const SUPPORTED_INTENTS = [
   { id: "revenue_over_time", label: "Revenue trends over time" },
   { id: "revenue_by_category", label: "Revenue by product category" },
@@ -40,7 +42,7 @@ interface QueryInterfaceProps {
 const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
   const [question, setQuestion] = useState("")
   const [result, setResult] = useState<ReportQueryResult | null>(null)
-  const [editMode, setEditMode] = useState(false)
+  const [status, setStatus] = useState<QueryStatus>("idle")
   const [editParams, setEditParams] = useState<ReportParams>({})
 
   const mutation = useReportQuery()
@@ -55,38 +57,25 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
         question: question.trim(),
         context: context || {},
       })
-      console.log('Query result received:', {
-        intent: res.intent,
-        params: res.params,
-        data: res.data,
-        interpretation: res.interpretation,
-      })
       setResult(res)
       setEditParams(res.params || {})
-      setEditMode(false)
-      onResultsChange?.(res)
+      setStatus("interpreting")
     } catch {
       setResult(null)
+      setStatus("idle")
     }
   }
 
   const handleConfirmInterpretation = () => {
-    console.log('handleConfirmInterpretation called, result:', result)
-    if (!result) {
-      console.log('No result, returning early')
-      return
-    }
-    console.log('Setting editMode to false, calling onResultsChange')
-    setEditMode(false)
-    // If params were edited, we need to re-render with the new params
-    // The result stays the same, but we'll update the data display
+    if (!result) return
+    setStatus("confirmed")
     onResultsChange?.(result)
   }
 
   const handleEditInterpretation = () => {
     if (!result) return
-    setEditMode(true)
     setEditParams(result.params || {})
+    setStatus("editing")
   }
 
   const handleUpdateParams = (key: keyof ReportParams, value: unknown) => {
@@ -98,14 +87,21 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
 
   const handleConfirmEdit = () => {
     if (!result) return
-    // Update the result with edited params
     const updatedResult = {
       ...result,
       params: editParams,
     }
     setResult(updatedResult)
-    setEditMode(false)
+    setStatus("confirmed")
     onResultsChange?.(updatedResult)
+  }
+
+  const handleNewQuestion = () => {
+    setQuestion("")
+    setResult(null)
+    setStatus("idle")
+    setEditParams({})
+    onResultsChange?.(null)
   }
 
   return (
@@ -142,8 +138,8 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
       {/* ── Error ── */}
       {error && <Alert severity="error">{error.message}</Alert>}
 
-      {/* ── Interpretation Display ── */}
-      {result && (
+      {/* ── Interpretation Display (only in 'interpreting' status) ── */}
+      {result && status === "interpreting" && (
         <Box className={styles.interpretationSection}>
           <Box className={styles.interpretationCard}>
             <div className={styles.interpretationText}>
@@ -174,8 +170,8 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
         </Box>
       )}
 
-      {/* ── Edit Dialog ── */}
-      <Dialog open={editMode} onClose={() => setEditMode(false)} maxWidth="sm" fullWidth>
+      {/* ── Edit Dialog (shown when status is 'editing') ── */}
+      <Dialog open={status === "editing"} onClose={() => setStatus("interpreting")} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Query Parameters</DialogTitle>
         <DialogContent sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Date Range */}
@@ -248,21 +244,18 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditMode(false)}>Cancel</Button>
+          <Button onClick={() => setStatus("interpreting")}>Cancel</Button>
           <Button onClick={handleConfirmEdit} variant="contained">
             Apply Changes
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* ── Results Chart ── */}
-      {result && !editMode && result.intent !== "unsupported" && (
-        <>
-          {console.log('Rendering chart: result=', result, 'editMode=', editMode, 'intent=', result.intent)}
-          <Box className={styles.resultSection}>
-            <QueryResultChart result={result} editedParams={editParams} />
-          </Box>
-        </>
+      {/* ── Results Chart (only shown after Confirm, in 'confirmed' status) ── */}
+      {result && status === "confirmed" && result.intent !== "unsupported" && (
+        <Box className={styles.resultSection}>
+          <QueryResultChart result={result} editedParams={editParams} />
+        </Box>
       )}
 
       {/* ── Unsupported Message ── */}
