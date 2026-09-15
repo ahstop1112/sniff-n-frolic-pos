@@ -14,6 +14,9 @@ import RevenueTable from "./components/RevenueTable"
 import type { ReportQueryResult } from "@/domains/orders/api/ordersApi"
 import styles from "./ReportScreen.module.scss"
 
+// CURRENCY RULE: All API endpoints return values in cents (integers).
+// The ONLY place values are converted to dollars is in formatCurrency().
+// No other division by 100 should occur anywhere in the codebase.
 const formatCurrency = (cents: number) =>
   new Intl.NumberFormat(undefined, {
     style: "currency",
