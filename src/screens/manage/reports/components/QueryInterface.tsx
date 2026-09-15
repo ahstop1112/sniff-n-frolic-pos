@@ -18,7 +18,7 @@ import type { ReportQueryResult, ReportParams } from "@/domains/orders/api/order
 import QueryResultChart from "./QueryResultChart"
 import styles from "./QueryInterface.module.scss"
 
-type QueryStatus = "idle" | "interpreting" | "editing" | "confirmed"
+type QueryStatus = "idle" | "loading" | "ready" | "editing"
 
 const SUPPORTED_INTENTS = [
   { id: "revenue_over_time", label: "Revenue trends over time" },
@@ -52,6 +52,7 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
   const handleSubmitQuestion = async () => {
     if (!question.trim()) return
 
+    setStatus("loading")
     try {
       const res = await mutation.mutateAsync({
         question: question.trim(),
@@ -59,20 +60,15 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
       })
       setResult(res)
       setEditParams(res.params || {})
-      setStatus("interpreting")
+      setStatus("ready")
+      onResultsChange?.(res)
     } catch {
       setResult(null)
       setStatus("idle")
     }
   }
 
-  const handleConfirmInterpretation = () => {
-    if (!result) return
-    setStatus("confirmed")
-    onResultsChange?.(result)
-  }
-
-  const handleEditInterpretation = () => {
+  const handleEditClick = () => {
     if (!result) return
     setEditParams(result.params || {})
     setStatus("editing")
@@ -85,23 +81,28 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
     }))
   }
 
-  const handleConfirmEdit = () => {
+  const handleApplyEdit = async () => {
     if (!result) return
-    const updatedResult = {
-      ...result,
-      params: editParams,
+    setStatus("loading")
+    try {
+      const res = await mutation.mutateAsync({
+        question: question.trim(),
+        context: {
+          ...context,
+          date_from: editParams.date_from,
+          date_to: editParams.date_to,
+        },
+      })
+      const updatedResult = {
+        ...res,
+        params: editParams,
+      }
+      setResult(updatedResult)
+      setStatus("ready")
+      onResultsChange?.(updatedResult)
+    } catch {
+      setStatus("ready")
     }
-    setResult(updatedResult)
-    setStatus("confirmed")
-    onResultsChange?.(updatedResult)
-  }
-
-  const handleNewQuestion = () => {
-    setQuestion("")
-    setResult(null)
-    setStatus("idle")
-    setEditParams({})
-    onResultsChange?.(null)
   }
 
   return (
@@ -138,40 +139,36 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
       {/* ── Error ── */}
       {error && <Alert severity="error">{error.message}</Alert>}
 
-      {/* ── Interpretation Display (only in 'interpreting' status) ── */}
-      {result && status === "interpreting" && (
-        <Box className={styles.interpretationSection}>
-          <Box className={styles.interpretationCard}>
-            <div className={styles.interpretationText}>
-              {result.interpretation}
-              {result.params?.period_a_from && result.params?.period_b_to && (
-                <div style={{ fontSize: "0.875rem", color: "#666", marginTop: "8px" }}>
-                  ({new Date(result.params.period_a_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(result.params.period_b_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
-                </div>
-              )}
-            </div>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                size="small"
-                variant="contained"
-                onClick={handleConfirmInterpretation}
-              >
-                Confirm
-              </Button>
+      {/* ── Results: Interpretation + Chart (shown when ready) ── */}
+      {result && status === "ready" && result.intent !== "unsupported" && (
+        <>
+          <Box className={styles.interpretationSection}>
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, justifyContent: "space-between" }}>
+              <div className={styles.interpretationText}>
+                {result.interpretation}
+                {result.params?.period_a_from && result.params?.period_b_to && (
+                  <div style={{ fontSize: "0.875rem", color: "#666", marginTop: "8px" }}>
+                    ({new Date(result.params.period_a_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(result.params.period_b_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
+                  </div>
+                )}
+              </div>
               <Button
                 size="small"
                 variant="outlined"
-                onClick={handleEditInterpretation}
+                onClick={handleEditClick}
               >
-                Edit
+                Adjust
               </Button>
             </Box>
           </Box>
-        </Box>
+          <Box className={styles.resultSection}>
+            <QueryResultChart result={result} editedParams={editParams} />
+          </Box>
+        </>
       )}
 
       {/* ── Edit Dialog (shown when status is 'editing') ── */}
-      <Dialog open={status === "editing"} onClose={() => setStatus("interpreting")} maxWidth="sm" fullWidth>
+      <Dialog open={status === "editing"} onClose={() => setStatus("ready")} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Query Parameters</DialogTitle>
         <DialogContent sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Date Range */}
@@ -244,19 +241,12 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setStatus("interpreting")}>Cancel</Button>
-          <Button onClick={handleConfirmEdit} variant="contained">
-            Apply Changes
+          <Button onClick={() => setStatus("ready")}>Cancel</Button>
+          <Button onClick={handleApplyEdit} variant="contained" disabled={isLoading}>
+            {isLoading ? "Applying..." : "Apply"}
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* ── Results Chart (only shown after Confirm, in 'confirmed' status) ── */}
-      {result && status === "confirmed" && result.intent !== "unsupported" && (
-        <Box className={styles.resultSection}>
-          <QueryResultChart result={result} editedParams={editParams} />
-        </Box>
-      )}
 
       {/* ── Unsupported Message ── */}
       {result && result.intent === "unsupported" && (
