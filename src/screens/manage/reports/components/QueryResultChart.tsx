@@ -46,7 +46,15 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               : null,
           ].filter(Boolean),
           axes: [
-            { type: "category", position: "bottom", title: { text: "Period" } },
+            {
+              type: "category",
+              position: "bottom",
+              title: { text: "Period" },
+              label: {
+                interval: 2,
+                rotation: 0
+              }
+            },
             {
               type: "number",
               position: "left",
