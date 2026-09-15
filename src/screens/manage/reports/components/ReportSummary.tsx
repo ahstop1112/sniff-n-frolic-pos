@@ -12,6 +12,15 @@ interface Props {
   summary: SummaryData
 }
 
+// Report endpoints return dollars — no conversion needed
+const formatDollars = (dollars: number) =>
+  new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "CAD",
+    maximumFractionDigits: 0,
+  }).format(dollars)
+
+// Other endpoints return cents — convert to dollars
 const formatCurrency = (cents: number) =>
   new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -23,10 +32,12 @@ const SummaryCard = ({
   label,
   value,
   isCurrency = false,
+  isDollars = false,
 }: {
   label: string
   value: number | string
   isCurrency?: boolean
+  isDollars?: boolean
 }) => (
   <Box
     sx={{
@@ -60,7 +71,7 @@ const SummaryCard = ({
         color: "#1a202c",
       }}
     >
-      {isCurrency ? formatCurrency(value as number) : value}
+      {isDollars ? formatDollars(value as number) : isCurrency ? formatCurrency(value as number) : value}
     </Typography>
   </Box>
 )
@@ -78,9 +89,10 @@ const ReportSummary = ({ summary }: Props) => (
         gap: 3,
       }}
     >
-      <SummaryCard label="Total Revenue" value={summary.totalRevenue} isCurrency />
+      {/* Report endpoints return dollars, no conversion needed */}
+      <SummaryCard label="Total Revenue" value={summary.totalRevenue} isDollars />
       <SummaryCard label="Total Orders" value={summary.totalOrders} />
-      <SummaryCard label="Average Order Value" value={summary.averageOrderValue} isCurrency />
+      <SummaryCard label="Average Order Value" value={summary.averageOrderValue} isDollars />
       <SummaryCard label="Cancelled Orders" value={summary.cancelledOrders} />
     </Box>
   </Box>
