@@ -102,9 +102,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               {
                 type: "bar",
                 direction: "horizontal",
-                xKey: "product_name",
-                yKey: yKey,
-                yName: yName,
+                xKey: yKey,
+                yKey: "product_name",
+                xName: yName,
                 fill: "#1F4E5F",
                 label: isRevenue ? {
                   formatter: (params: { value: number }) => currencyFormatter(params.value),
