@@ -15,9 +15,10 @@ const MonthlySalesChart = ({ data }: Props) => {
       title: {
         text: "Monthly Sales Trend",
       },
+      // API returns dollars, no need to divide by 100
       data: data.map((d) => ({
         month: d.month,
-        revenue: d.revenue / 100,
+        revenue: d.revenue,
         orderCount: d.order_count,
       })),
       series: [

@@ -23,9 +23,10 @@ const ShareOfRevenue = ({ data, categoryColors }: Props) => {
 
   const chartOptions = useMemo(
     () => ({
+      // API returns dollars, no need to divide by 100
       data: data.map((d) => ({
         category: d.category || "Uncategorized",
-        revenue: d.revenue / 100,
+        revenue: d.revenue,
       })),
       series: [
         {
@@ -51,8 +52,8 @@ const ShareOfRevenue = ({ data, categoryColors }: Props) => {
   )
 
   // Format total as compact currency (e.g., $28k)
-  const formatCompact = (cents: number): string => {
-    const dollars = cents / 100
+  // API returns dollars, no need to divide by 100
+  const formatCompact = (dollars: number): string => {
     if (dollars >= 1000) {
       return `$${(dollars / 1000).toFixed(0)}k`
     }

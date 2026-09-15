@@ -19,9 +19,10 @@ const RevenueBreakdown = ({ data }: Props) => {
       title: {
         text: "Product Performance",
       },
+      // API returns dollars, no need to divide by 100
       data: data.map((d) => ({
         category: d.category || "Uncategorized",
-        revenue: d.revenue / 100,
+        revenue: d.revenue,
         orders: d.order_count,
       })),
       series: [

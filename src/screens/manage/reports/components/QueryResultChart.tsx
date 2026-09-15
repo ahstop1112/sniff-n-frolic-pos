@@ -22,9 +22,10 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
     const { chartType, data } = result
 
     // Reusable currency axis formatter config
+    // API returns dollars, formatter only adds $ and thousand separators (no /100)
     const currencyAxisLabel = {
       formatter: (params: { value: number }) => {
-        return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+        return `$${params.value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
       },
     }
 
@@ -93,8 +94,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
         const yKey = isRevenue ? "revenue" : "units_sold"
         const yName = isRevenue ? "Revenue (CAD)" : "Units Sold"
 
+        // API returns dollars, formatter only adds $ and thousand separators (no /100)
         const currencyFormatter = (value: number) =>
-          `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+          `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
 
         // Top products: horizontal bar chart
         if (isTopProducts) {
@@ -191,8 +193,9 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
           };
         });
 
+        // API returns dollars, formatter only adds $ and thousand separators (no /100)
         const currencyFormatter = (value: number) =>
-          `$${(value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+          `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
 
         return {
           title: { text: "Period Comparison" },
