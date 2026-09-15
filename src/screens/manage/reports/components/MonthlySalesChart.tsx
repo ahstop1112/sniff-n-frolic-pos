@@ -68,6 +68,11 @@ const MonthlySalesChart = ({ data }: Props) => {
           title: {
             text: "Revenue (CAD)",
           },
+          label: {
+            formatter: (params: { value: number }) => {
+              return `$${params.value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+            },
+          },
         },
       ],
       legend: {

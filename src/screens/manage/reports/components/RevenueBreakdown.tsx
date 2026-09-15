@@ -43,6 +43,11 @@ const RevenueBreakdown = ({ data }: Props) => {
           type: "number",
           position: "left",
           title: { text: "Revenue (CAD)" },
+          label: {
+            formatter: (params: { value: number }) => {
+              return `$${params.value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+            },
+          },
         },
       ],
       legend: { enabled: false },
