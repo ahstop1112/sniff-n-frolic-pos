@@ -26,8 +26,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               xKey: "period",
               yKey: "revenue",
               yName: "Revenue (CAD)",
-              stroke: "#667eea",
-              marker: { fill: "#667eea", size: 4 },
+              stroke: SERIES_COLORS.current,
+              marker: { fill: SERIES_COLORS.current, size: 4 },
             },
             data[0]?.order_count !== undefined
               ? {
@@ -35,8 +35,8 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
                   xKey: "period",
                   yKey: "order_count",
                   yName: "Orders",
-                  stroke: "#764ba2",
-                  marker: { fill: "#764ba2", size: 4 },
+                  stroke: SERIES_COLORS.prior,
+                  marker: { fill: SERIES_COLORS.prior, size: 4 },
                   yAxis: {
                     type: "number",
                     position: "right",
@@ -58,37 +58,84 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
       }
 
       case "bar": {
-        // revenue_by_category or top_products
+        // revenue_by_category (vertical) or top_products (horizontal to avoid label rotation)
         const isByCategory = result.intent === "revenue_by_category"
-        const xKey = isByCategory ? "category" : "product_name"
-        const xLabel = isByCategory ? "Category" : "Product"
+        const isTopProducts = result.intent === "top_products"
         const metric = displayParams.metric || "revenue"
+        const isRevenue = metric === "revenue"
+        const yKey = isRevenue ? "revenue" : "units_sold"
+        const yName = isRevenue ? "Revenue (CAD)" : "Units Sold"
 
+        // Top products: horizontal bar chart (swapped axes, direction="horizontal")
+        if (isTopProducts) {
+          return {
+            title: { text: `Top ${displayParams.top_n || 10} Products` },
+            data,
+            series: [
+              {
+                type: "bar",
+                xKey: yKey,
+                yKey: "product_name",
+                xName: yName,
+                fill: SERIES_COLORS.current,
+                formatter: isRevenue ? {
+                  formatter: (params: { value: number }) => {
+                    return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                  },
+                } : undefined,
+              },
+            ],
+            axes: [
+              {
+                type: "number",
+                position: "bottom",
+                title: { text: yName },
+                label: isRevenue ? {
+                  formatter: (params: { value: number }) => {
+                    return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                  },
+                } : undefined,
+              },
+              {
+                type: "category",
+                position: "left",
+                title: { text: "Product" },
+              },
+            ],
+            legend: { enabled: false },
+            direction: "horizontal",
+          } as unknown
+        }
+
+        // Revenue by category: vertical bar chart
         return {
-          title: {
-            text:
-              result.intent === "revenue_by_category"
-                ? "Revenue by Category"
-                : `Top ${displayParams.top_n || 10} Products`,
-          },
+          title: { text: "Revenue by Category" },
           data,
           series: [
             {
               type: "bar",
-              xKey,
-              yKey: metric === "units" ? "units_sold" : "revenue",
-              yName: metric === "units" ? "Units Sold" : "Revenue (CAD)",
-              fill: "#667eea",
+              xKey: "category",
+              yKey: yKey,
+              yName: yName,
+              fill: SERIES_COLORS.current,
+              formatter: isRevenue ? {
+                formatter: (params: { value: number }) => {
+                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                },
+              } : undefined,
             },
           ],
           axes: [
-            { type: "category", position: "bottom", title: { text: xLabel } },
+            { type: "category", position: "bottom", title: { text: "Category" } },
             {
               type: "number",
               position: "left",
-              title: {
-                text: metric === "units" ? "Units Sold" : "Revenue (CAD)",
-              },
+              title: { text: yName },
+              label: isRevenue ? {
+                formatter: (params: { value: number }) => {
+                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                },
+              } : undefined,
             },
           ],
           legend: { enabled: false },

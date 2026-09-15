@@ -151,6 +151,11 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
                     ({new Date(result.params.period_a_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(result.params.period_b_to).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
                   </div>
                 )}
+                {(result.intent === "top_products" || result.intent === "revenue_by_category") && (
+                  <div style={{ fontSize: "0.875rem", color: "#666", marginTop: "8px" }}>
+                    ({result.params?.metric || "revenue"} by {result.params?.date_from ? `${new Date(result.params.date_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(result.params.date_to || new Date()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : "all time"})
+                  </div>
+                )}
               </div>
               <Button
                 size="small"
