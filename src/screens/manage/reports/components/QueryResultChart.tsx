@@ -51,15 +51,24 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
               type: "number",
               position: "left",
               title: { text: "Revenue (CAD)" },
+              label: {
+                formatter: (params: { value: number }) => {
+                  return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+                },
+              },
             },
-          ],
+            data[0]?.order_count !== undefined ? {
+              type: "number",
+              position: "right",
+              title: { text: "Order Count" },
+            } : undefined,
+          ].filter(Boolean),
           legend: { enabled: true, position: "bottom" },
         } as unknown
       }
 
       case "bar": {
         // revenue_by_category (vertical) or top_products (horizontal to avoid label rotation)
-        const isByCategory = result.intent === "revenue_by_category"
         const isTopProducts = result.intent === "top_products"
         const metric = displayParams.metric || "revenue"
         const isRevenue = metric === "revenue"
