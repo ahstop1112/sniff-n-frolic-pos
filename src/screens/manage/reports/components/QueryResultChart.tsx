@@ -90,7 +90,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
         const yKey = isRevenue ? "revenue" : "units_sold"
         const yName = isRevenue ? "Revenue (CAD)" : "Units Sold"
 
-        // Top products: horizontal bar chart
+        // Top products: horizontal bar chart (product names on Y axis, values on X axis)
         if (isTopProducts) {
           const config = {
             title: { text: `Top ${displayParams.top_n || 10} Products` },
@@ -98,10 +98,10 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
             series: [
               {
                 type: "bar",
-                xKey: "product_name",
-                yKey: yKey,
-                yName: yName,
-                fill: SERIES_COLORS.current,
+                xKey: yKey,
+                yKey: "product_name",
+                xName: yName,
+                fill: "#1F4E5F",
                 formatter: isRevenue ? {
                   formatter: (params: { value: number }) => {
                     return `$${(params.value / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
@@ -128,7 +128,7 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
             ],
             legend: { enabled: false },
           }
-          console.debug('🔍 Top products chart config:', { xKey: "product_name", yKey: yKey, dataLength: data?.length, firstRow: data?.[0] })
+          console.debug('🔍 Top products chart config:', { xKey: yKey, yKey: "product_name", dataLength: data?.length })
           return config as unknown
         }
 
