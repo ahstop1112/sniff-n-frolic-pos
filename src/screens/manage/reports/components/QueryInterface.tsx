@@ -50,7 +50,11 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
   const error = mutation.error as Error | null
 
   const handleSubmitQuestion = async () => {
-    if (!question.trim()) return
+    // If empty query, clear back to overview
+    if (!question.trim()) {
+      handleClearResults()
+      return
+    }
 
     setStatus("loading")
     try {
@@ -105,6 +109,20 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
     }
   }
 
+  const handleClearResults = () => {
+    setResult(null)
+    setStatus("idle")
+    onResultsChange?.(null)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && e.ctrlKey) {
+      handleSubmitQuestion()
+    } else if (e.key === "Escape") {
+      handleClearResults()
+    }
+  }
+
   return (
     <div className={styles.root}>
       {/* ── Question Input ── */}
@@ -116,11 +134,7 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
             placeholder="Ask about your sales data. e.g., 'Show me revenue for the last 3 months' or 'What are the top 10 products?'"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && e.ctrlKey) {
-                handleSubmitQuestion()
-              }
-            }}
+            onKeyDown={handleKeyDown}
             disabled={isLoading}
             sx={{ height: 56, "& .MuiInputBase-input": { padding: 0 } }}
           />
@@ -157,13 +171,23 @@ const QueryInterface = ({ onResultsChange, context }: QueryInterfaceProps) => {
                   </div>
                 )}
               </div>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={handleEditClick}
-              >
-                Adjust
-              </Button>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={handleEditClick}
+                >
+                  Adjust
+                </Button>
+                <Button
+                  size="small"
+                  variant="text"
+                  onClick={handleClearResults}
+                  sx={{ minWidth: "auto", px: 1 }}
+                >
+                  ✕
+                </Button>
+              </Box>
             </Box>
           </Box>
           <Box className={styles.resultSection}>
