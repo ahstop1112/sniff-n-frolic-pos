@@ -100,8 +100,10 @@ const QueryResultChart = ({ result, editedParams }: Props) => {
 
         // Top products: horizontal bar chart
         if (isTopProducts) {
+          const categoryLabel = displayParams.category ? ` ${displayParams.category}` : "";
+          const actualCount = data.length;
           const config = {
-            title: { text: `Top ${displayParams.top_n || 10} Products` },
+            title: { text: `Top ${actualCount} Products${categoryLabel}` },
             data,
             series: [
               {
