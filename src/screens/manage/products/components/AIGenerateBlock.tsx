@@ -92,19 +92,14 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
     generate({ url: url || undefined, rawText: rawText || undefined, categorySlug })
   }
 
-  const handleConfirm = (field: string, value: string) => {
-    if (field === "description") {
+  const handleConfirm = (aiField: string, formField: string, value: string) => {
+    if (aiField === "description") {
       // description is the assembled HTML
-      onChange("description", assembledDescription)
-    } else if (field === "slug") {
-      onChange("slug", value)
-    } else if (field === "benefits" || field === "treatSuggestions") {
-      // These are arrays, but they're not shown as editable in the form yet
-      onChange(field, value)
+      onChange(formField, assembledDescription)
     } else {
-      onChange(field, value)
+      onChange(formField, value)
     }
-    setConfirmedFields(prev => new Set(prev).add(field))
+    setConfirmedFields(prev => new Set(prev).add(aiField))
     setEditingField(null)
   }
 
@@ -122,8 +117,8 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
     setEditValues(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleEditSave = (field: string) => {
-    handleConfirm(field, editValues[field])
+  const handleEditSave = (aiField: string, formField: string) => {
+    handleConfirm(aiField, formField, editValues[aiField])
   }
 
   const handleEditCancel = () => {
@@ -132,15 +127,16 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
   }
 
   // Fields to display (excluding arrays and HTML)
+  // Each field maps: aiField (from API response) → formField (form state key)
   const displayFields = useMemo(() => {
     if (!result) return []
     return [
-      { label: "Product Name", field: "productName", value: result.productName },
-      { label: "Short Description", field: "shortDescription", value: result.shortDescription },
-      { label: "Description", field: "description", value: assembledDescription, isHtml: true },
-      { label: "Meta Title", field: "metaTitle", value: result.metaTitle },
-      { label: "Meta Description", field: "metaDescription", value: result.metaDescription },
-      { label: "Slug", field: "slug", value: result.computedSlug },
+      { label: "Product Name", aiField: "productName", formField: "name", value: result.productName },
+      { label: "Short Description", aiField: "shortDescription", formField: "short_description", value: result.shortDescription },
+      { label: "Description", aiField: "description", formField: "description", value: assembledDescription, isHtml: true },
+      { label: "Meta Title", aiField: "metaTitle", formField: "meta_title", value: result.metaTitle },
+      { label: "Meta Description", aiField: "metaDescription", formField: "meta_description", value: result.metaDescription },
+      { label: "Slug", aiField: "slug", formField: "slug", value: result.computedSlug },
     ]
   }, [result, assembledDescription])
 
@@ -245,10 +241,10 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
             </Box>
 
             {displayFields.map((item, idx) => {
-              const fieldFlags = getFlagsForField(item.field)
-              const isConfirmed = confirmedFields.has(item.field)
-              const isIgnored = ignoredFields.has(item.field)
-              const isEditing = editingField === item.field
+              const fieldFlags = getFlagsForField(item.aiField)
+              const isConfirmed = confirmedFields.has(item.aiField)
+              const isIgnored = ignoredFields.has(item.aiField)
+              const isEditing = editingField === item.aiField
 
               const statusColor = isConfirmed ? "#50C878" : isIgnored ? "rgba(0,0,0,0.38)" : "inherit"
               const statusBg = isConfirmed ? "rgba(80, 200, 120, 0.08)" : "transparent"
@@ -315,17 +311,17 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
                   {isEditing ? (
                     <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
                       <TextField
-                        value={editValues[item.field] || ""}
-                        onChange={e => handleEditChange(item.field, e.target.value)}
+                        value={editValues[item.aiField] || ""}
+                        onChange={e => handleEditChange(item.aiField, e.target.value)}
                         size="small"
                         fullWidth
-                        multiline={item.field === "description" || item.field === "metaDescription"}
-                        rows={item.field === "description" ? 4 : item.field === "metaDescription" ? 2 : 1}
+                        multiline={item.aiField === "description" || item.aiField === "metaDescription"}
+                        rows={item.aiField === "description" ? 4 : item.aiField === "metaDescription" ? 2 : 1}
                       />
                       <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
                         <IconButton
                           size="small"
-                          onClick={() => handleEditSave(item.field)}
+                          onClick={() => handleEditSave(item.aiField, item.formField)}
                           sx={{ color: "#50C878" }}
                         >
                           <CheckIcon fontSize="small" />
@@ -347,7 +343,7 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
                           <Button
                             size="small"
                             variant="contained"
-                            onClick={() => handleConfirm(item.field, item.value)}
+                            onClick={() => handleConfirm(item.aiField, item.formField, item.value)}
                             sx={{ textTransform: "none", fontSize: 12 }}
                           >
                             Confirm
@@ -356,7 +352,7 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
                             size="small"
                             variant="outlined"
                             startIcon={<EditIcon fontSize="small" />}
-                            onClick={() => handleEdit(item.field, item.value)}
+                            onClick={() => handleEdit(item.aiField, item.value)}
                             sx={{ textTransform: "none", fontSize: 12 }}
                           >
                             Edit
@@ -364,7 +360,7 @@ const AIGenerateBlock = ({ categorySlug, onChange }: AIGenerateBlockProps) => {
                           <Button
                             size="small"
                             variant="text"
-                            onClick={() => handleIgnore(item.field)}
+                            onClick={() => handleIgnore(item.aiField)}
                             sx={{ textTransform: "none", fontSize: 12, color: "text.secondary" }}
                           >
                             Ignore
